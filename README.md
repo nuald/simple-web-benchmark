@@ -2,7 +2,7 @@
 
 A simple web benchmark of Go, Rust, Scala and Node.js.
 
-## Performance Tests
+## Testing
 
 The stats gathered by the [hey](https://github.com/rakyll/hey) tool:
 
@@ -12,13 +12,13 @@ The stats gathered by the [hey](https://github.com/rakyll/hey) tool:
 ### MacOS Note
 
 By default, MacOS has low limits on the number of concurrent connections, so
-few kernel parameters tweak may be required:
+few kernel parameters tweaks may be required:
 
     sudo sysctl -w kern.ipc.somaxconn=12000
     sudo sysctl -w kern.maxfilesperproc=1048576
     sudo sysctl -w kern.maxfiles=1148576
 
-## Servers run instructions
+## Usage
 
 Please change the required directory before running the server.
 
