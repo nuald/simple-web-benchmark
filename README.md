@@ -23,13 +23,15 @@ few kernel parameters tweaks may be required:
 
 Please use the Scala script to run all the test automatically:
 
-    scala run.scala
+    scala run.scala <list of languages>
+
+Please specify the required languages separated by space (* wildcard is supported for all).
 
 ### Preliminary Results
 
 Hardware: MacBook Pro (CPU: 2.3 GHz Intel Core i7, Mem: 16 GB 1600 MHz DDR3)
 
-Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js v8.5.0, D v2.076.0
+Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, LDC 1.3.0.
 
 Results for http://127.0.0.1:3000/:
 
@@ -39,7 +41,7 @@ Results for http://127.0.0.1:3000/:
 | Rust     | 0.0061        | 41174        |
 | Scala    | 0.0063        | 28951        |
 | Node.js  | 0.0074        | 31451        |
-| D        | 0.0091        | 25009        |
+| D        | 0.0080        | 31920        |
 
 Results for http://127.0.0.1:3000/greeting/hello:
 
@@ -49,7 +51,7 @@ Results for http://127.0.0.1:3000/greeting/hello:
 | Rust     | 0.0082        | 30847        |
 | Scala    | 0.0063        | 35139        |
 | Node.js  | 0.0066        | 31006        |
-| D        | 0.0085        | 25166        |
+| D        | 0.0078        | 32506        |
 
 ## Usage
 
@@ -65,7 +67,11 @@ Please change the required directory before running the server.
 
 ### D
 
-    dub run --build=release
+Please use LLVM based [LDC](https://github.com/ldc-developers/ldc#installation)
+compiler as DMD is a reference D compiler that provides only basic optimizations.
+If ldc2 executable is not in path, please use the fully qualified path name.
+
+    dub run --compiler=ldc2 --build=release
 
 ### Scala
 
@@ -74,4 +80,3 @@ Please change the required directory before running the server.
 ### Node.js
 
     node main.js
-
