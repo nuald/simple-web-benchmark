@@ -10,6 +10,6 @@
         "vibe-d": "libevent"
     },
     "versions": [
-        "VibeDefaultMain"
+        "VibeDefaultMain", "VibeManualMemoryManagement"
     ]
 }
