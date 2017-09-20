@@ -1,0 +1,12 @@
+{
+    "name": "vibedtest",
+    "targetName": "vibedtest",
+    "targetType": "executable",
+    "targetPath": "bin",
+    "dependencies": {
+        "vibe-d": "~>0.8.1"
+    },
+    "versions": [
+        "VibeDefaultMain"
+    ]
+}
