@@ -4,7 +4,7 @@ extern crate regex;
 
 #[macro_use] extern crate lazy_static;
 
-use futures::future::Future;
+use futures::future::FutureResult;
 use hyper::Method;
 use hyper::server::{Http, Request, Response, Service};
 use regex::Regex;
@@ -18,7 +18,7 @@ impl Service for HelloWorld {
     type Error = hyper::Error;
     // The future representing the eventual Response your call will
     // resolve to. This can change to whatever Future you need.
-    type Future = Box<Future<Item=Self::Response, Error=Self::Error>>;
+    type Future = FutureResult<Self::Response, Self::Error>;
 
     fn call(&self, req: Request) -> Self::Future {
         lazy_static! {
@@ -35,7 +35,7 @@ impl Service for HelloWorld {
                 response.set_body(format!("Hello, {}", cap.get(1).unwrap().as_str()));
             }
         };
-        Box::new(futures::future::ok(response))
+        futures::future::ok(response)
     }
 }
 
