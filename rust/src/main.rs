@@ -32,7 +32,7 @@ impl Service for HelloWorld {
             },
             _ => {
                 let cap = GREETING_RE.captures(req.path()).unwrap();
-                response.set_body(format!("Hello, {}", cap.at(1).unwrap()));
+                response.set_body(format!("Hello, {}", cap.get(1).unwrap().as_str()));
             }
         };
         Box::new(futures::future::ok(response))
