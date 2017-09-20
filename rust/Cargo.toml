@@ -1,10 +1,10 @@
 [package]
-name = "rust-hello-world"
+name = "simple-web-server"
 version = "0.0.1"
 authors = ["Alexander Slesarev <alex.slesarev@gmail.com>"]
 
 [dependencies]
-regex = "0.1.44"
-lazy_static = "0.1.15"
-futures = "0.1.14"
+regex = "0.2.2"
+lazy_static = "0.2.8"
+futures = "0.1.16"
 hyper = "0.11.2"
