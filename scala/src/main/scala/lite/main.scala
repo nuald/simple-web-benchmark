@@ -3,8 +3,11 @@ package lite
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
-import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.model.Uri.Path._
+import akka.http.scaladsl.server.{Route, RouteResult}
 import akka.stream.ActorMaterializer
+
+import scala.concurrent.Future
 import scala.io.StdIn
 
 object WebServer {
@@ -13,19 +16,17 @@ object WebServer {
     implicit val system = ActorSystem("my-system")
     implicit val materializer = ActorMaterializer()
     // needed for the future flatMap/onComplete in the end
-    implicit val executionContext = system.dispatcher
+    import system.dispatcher
 
-    val route =
-      path("greeting" / Segment) { user =>
-        get {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Hello, " + user))
-        }
-      } ~
-      path("") {
-        get {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Hello World!"))
-        }
-      }
+    def response(s: String) = Future.successful{RouteResult.Complete{HttpResponse(
+      status = StatusCodes.OK,
+      entity = HttpEntity(ContentTypes.`text/html(UTF-8)`, s)
+    )}}
+
+    val route: Route = request => response(request.unmatchedPath match {
+      case SingleSlash => "Hello World!"
+      case Slash(Segment("greeting", Slash(Segment(user, Empty)))) => "Hello, " + user
+    })
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 3000)
 
