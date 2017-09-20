@@ -1,6 +1,6 @@
 # Simple Web Benchmark
 
-A simple web benchmark of Go, Rust, Scala and Node.js.
+A simple web benchmark of Go, Rust, D, Scala and Node.js.
 
 ## Testing
 
@@ -55,6 +55,10 @@ Please change the required directory before running the server.
 
     cargo run --release
 
+### D
+
+    dub run --build=release
+
 ### Scala
 
     sbt run
@@ -62,3 +66,4 @@ Please change the required directory before running the server.
 ### Node.js
 
     node main.js
+
