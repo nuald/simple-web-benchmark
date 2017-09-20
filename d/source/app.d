@@ -7,6 +7,7 @@ shared static this()
 {
     auto settings = new HTTPServerSettings;
     settings.port = 3000;
+    settings.bindAddresses = ["0.0.0.0"];
 
     listenHTTP(settings, &handleRequest);
 }
