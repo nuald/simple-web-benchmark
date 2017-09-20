@@ -19,29 +19,37 @@ few kernel parameters tweaks may be required:
     sudo sysctl -w kern.maxfilesperproc=1048576
     sudo sysctl -w kern.maxfiles=1148576
 
+### Automation
+
+Please use the Scala script to run all the test automatically:
+
+    scala run.scala
+
 ### Preliminary Results
 
 Hardware: MacBook Pro (CPU: 2.3 GHz Intel Core i7, Mem: 16 GB 1600 MHz DDR3)
 
-Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js v8.5.0
+Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js v8.5.0, D v2.076.0
 
 Results for http://127.0.0.1:3000/:
 
 | Language | Average, secs | Requests/sec |
 |----------|---------------|--------------|
-| Go       | 0.0041        | 61587        |
-| Rust     | 0.0054        | 46337        |
-| Scala    | 0.0066        | 34157        |
-| Node.js  | 0.0070        | 34202        |
+| Go       | 0.0041        | 61263        |
+| Rust     | 0.0061        | 41174        |
+| Scala    | 0.0063        | 28951        |
+| Node.js  | 0.0074        | 31451        |
+| D        | 0.0091        | 25009        |
 
 Results for http://127.0.0.1:3000/greeting/hello:
 
 | Language | Average, secs | Requests/sec |
 |----------|---------------|--------------|
-| Go       | 0.0044        | 57509        |
-| Rust     | 0.0059        | 42767        |
-| Scala    | 0.0055        | 36823        |
-| Node.js  | 0.0064        | 36792        |
+| Go       | 0.0046        | 53842        |
+| Rust     | 0.0082        | 30847        |
+| Scala    | 0.0063        | 35139        |
+| Node.js  | 0.0066        | 31006        |
+| D        | 0.0085        | 25166        |
 
 ## Usage
 
