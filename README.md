@@ -41,7 +41,7 @@ Results for http://127.0.0.1:3000/:
 | Rust     | 0.0061        | 41174        |
 | Scala    | 0.0063        | 28951        |
 | Node.js  | 0.0074        | 31451        |
-| D        | 0.0080        | 31920        |
+| D        | 0.0071        | 35526        |
 
 Results for http://127.0.0.1:3000/greeting/hello:
 
@@ -51,7 +51,7 @@ Results for http://127.0.0.1:3000/greeting/hello:
 | Rust     | 0.0082        | 30847        |
 | Scala    | 0.0063        | 35139        |
 | Node.js  | 0.0066        | 31006        |
-| D        | 0.0078        | 32506        |
+| D        | 0.0080        | 31448        |
 
 ## Usage
 
