@@ -25,7 +25,7 @@ object WebServer {
 
     val route: Route = request => response(request.unmatchedPath match {
       case SingleSlash => "Hello World!"
-      case Slash(Segment("greeting", Slash(Segment(user, _)))) => "Hello, " + user
+      case Slash(Segment("greeting", Slash(Segment(user, Empty)))) => "Hello, " + user
     })
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 3000)
