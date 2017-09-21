@@ -5,10 +5,18 @@ auto reg = ctRegex!"^/greeting/([a-z]+)$";
 
 void main()
 {
-    runWorkerTaskDist({
-        listenHTTP("0.0.0.0:3000", &handleRequest);
-    });
+    setupWorkerThreads(logicalProcessorCount + 1);
+    runWorkerTaskDist(&runServer);
     runApplication();
+}
+
+void runServer()
+{
+    auto settings = new HTTPServerSettings;
+    settings.options |= HTTPServerOption.reusePort;
+    settings.port = 3000;
+    settings.serverString = null;
+    listenHTTP(settings, &handleRequest);
 }
 
 void handleRequest(HTTPServerRequest req,
