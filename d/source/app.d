@@ -3,12 +3,12 @@ import std.regex;
 
 auto reg = ctRegex!"^/greeting/([a-z]+)$";
 
-shared static this()
+void main()
 {
-    auto settings = new HTTPServerSettings;
-    settings.port = 3000;
-
-    listenHTTP(settings, &handleRequest);
+    runWorkerTaskDist({
+        listenHTTP("0.0.0.0:3000", &handleRequest);
+    });
+    runApplication();
 }
 
 void handleRequest(HTTPServerRequest req,
@@ -19,3 +19,4 @@ void handleRequest(HTTPServerRequest req,
     else if (auto m = matchFirst(req.path, reg))
         res.writeBody("Hello, " ~ m[1], "text/plain");
 }
+
