@@ -4,6 +4,16 @@
     "targetType": "executable",
     "targetPath": "bin",
     "dependencies": {
-        "vibe-d": "~>0.8.1"
+        "vibe-d": "~>0.8.2-alpha.1"
+    },
+    "subConfigurations": {"vibe-d": "libevent"},
+    "versions": [
+        "VibeManualMemoryManagement"
+    ],
+    "buildTypes": {
+        "release": { 
+             "buildOptions": ["releaseMode", "optimize", "inline"],
+             "dflags-posix-ldc": ["-flto=thin", "-Xcc=-fuse-ld=gold"]
+        }
     }
 }
