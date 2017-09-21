@@ -5,11 +5,5 @@
     "targetPath": "bin",
     "dependencies": {
         "vibe-d": "~>0.8.1"
-    },
-    "subConfigurations": {
-        "vibe-d": "libevent"
-    },
-    "versions": [
-        "VibeDefaultMain", "VibeManualMemoryManagement"
-    ]
+    }
 }
