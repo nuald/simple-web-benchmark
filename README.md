@@ -19,29 +19,23 @@ few kernel parameters tweaks may be required:
     sudo sysctl -w kern.maxfilesperproc=1048576
     sudo sysctl -w kern.maxfiles=1148576
 
+### Automation
+
+Please use the Scala script
+(using (sbt Script runner)[http://www.scala-sbt.org/1.x/docs/Scripts.html#sbt+Script+runner])
+to run all the test automatically:
+
+    ./run.scala <list of languages>
+
+Please specify the required languages separated by space (* wildcard is supported for all).
+
 ### Preliminary Results
 
 Hardware: MacBook Pro (CPU: 2.3 GHz Intel Core i7, Mem: 16 GB 1600 MHz DDR3)
 
-Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js v8.5.0
+Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, LDC 1.3.0.
 
-Results for http://127.0.0.1:3000/:
-
-| Language | Average, secs | Requests/sec |
-|----------|---------------|--------------|
-| Go       | 0.0041        | 61587        |
-| Rust     | 0.0054        | 46337        |
-| Scala    | 0.0066        | 34157        |
-| Node.js  | 0.0070        | 34202        |
-
-Results for http://127.0.0.1:3000/greeting/hello:
-
-| Language | Average, secs | Requests/sec |
-|----------|---------------|--------------|
-| Go       | 0.0044        | 57509        |
-| Rust     | 0.0059        | 42767        |
-| Scala    | 0.0055        | 36823        |
-| Node.js  | 0.0064        | 36792        |
+![](results/mac.png?raw=true)
 
 ## Usage
 
@@ -57,7 +51,11 @@ Please change the required directory before running the server.
 
 ### D
 
-    dub run --build=release
+Please use LLVM based [LDC](https://github.com/ldc-developers/ldc#installation)
+compiler as DMD is a reference D compiler that provides only basic optimizations.
+If ldc2 executable is not in path, please use the fully qualified path name.
+
+    dub run --compiler=ldc2 --build=release
 
 ### Scala
 
@@ -66,4 +64,3 @@ Please change the required directory before running the server.
 ### Node.js
 
     node main.js
-
