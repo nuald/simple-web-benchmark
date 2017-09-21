@@ -4,8 +4,12 @@
 scalaVersion := "2.12.3"
 scalacOptions += "-deprecation"
 libraryDependencies += "org.jfree" % "jfreechart" % "1.0.19"
+libraryDependencies += "net.java.dev.jna" % "jna-platform" % "4.5.0"
 */
 
+import com.sun.jna.platform.win32.Kernel32
+import com.sun.jna.platform.win32.WinNT.HANDLE
+import com.sun.jna.Pointer
 import java.io.File
 import java.util.ArrayList
 import org.jfree.chart._
@@ -17,22 +21,26 @@ import org.jfree.data.statistics._
 import scala.sys.process._
 import scala.collection.JavaConverters._
 
-val LANGS = List(
-  "go",
-  "rust",
-  "scala",
-  "nodejs",
-  "d"
+val IsWindows = sys.props("os.name").startsWith("Windows");
+val ShellPrefix = if (IsWindows) "cmd /C" else ""
+
+val LangCmds = Map(
+  "go" -> "go run main.go",
+  "rust" -> "cargo run --release",
+  "scala" -> s"$ShellPrefix sbt run",
+  "nodejs" -> "node main.js",
+  "d" -> "dub run --compiler=ldc2 --build=release"
 )
 
-val usage = s"""Usage: ./run.scala <list of languages>
+val Usage = s"""Usage: ./run.scala <list of languages>
 
 Run the tests for the specified languages (* means all).
-The following languages are supported: ${ LANGS.mkString(", ") }."""
+The following languages are supported: ${ LangCmds.keys.mkString(", ") }."""
 
-val GOPATH = sys.env("GOPATH")
-val PID_REGEX = raw"""p(\d+)""".r
-val CSV_REGEX = raw"""([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)""".r
+val GoPath = sys.env("GOPATH")
+val LsofPattern = raw"""p(\d+)""".r
+val NetstatPattern = raw"""\s+\w+\s+[\d\.]+:3000\s+[\d\.]+:\d+\s+\w+\s+(\d+)""".r
+val CsvPattern = raw"""([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)""".r
 
 def print(msg: String): Unit = {
   println(msg)
@@ -41,17 +49,18 @@ def print(msg: String): Unit = {
 def runHey(lang: String, isIndex: Boolean): List[Double] = {
   val url = "http://127.0.0.1:3000/" + (if (isIndex) "" else "greeting/hello")
   val suffix = if (isIndex) "index" else "regex"
-  val cmd = s"$GOPATH/bin/hey -n 50000 -c 256 -t 10"
+  val cmd = s"$GoPath/bin/hey -n 50000 -c 256 -t 10"
   val csvCmd = s"$cmd -o csv $url"
   // First run, for JIT
-  csvCmd.!!
+  csvCmd ! ProcessLogger(_ => ())
   // Second run, for UI
   val runCmd = s"$cmd $url"
   print(s"[$lang] $url")
   runCmd.!
   // Third run, for stats
-  val values = csvCmd.lineStream_!.flatMap { (line) => line match {
-      case CSV_REGEX(responseTime, dnsLookup, dns, requestWrite, responseDelay, responseRead) => {
+  val stream = csvCmd lineStream_! ProcessLogger(line => ())
+  val values = stream.flatMap { (line) => line match {
+      case CsvPattern(responseTime, dnsLookup, dns, requestWrite, responseDelay, responseRead) => {
         Some(responseTime.toDouble * 1000)
       }
       case _ => None
@@ -75,28 +84,79 @@ def calculateStats(values: List[Double]): BoxAndWhiskerItem = {
     null, null, null)
 }
 
+def kill(pid: String): Unit = {
+  if (IsWindows) {
+    Seq("taskkill", "/t","/f", "/pid", pid).!
+  } else {
+    Seq("kill", "-9", pid).!
+  }
+}
+
+def killProcesses(): Unit = {
+  if (IsWindows) {
+    val netstat = Seq("netstat", "-ona")
+    netstat.lineStream_!.foreach { (line) => line match {
+        case NetstatPattern(pid) => kill(pid)
+        case _ =>
+      }
+    }
+  } else {
+    val lsof = Seq("lsof", "-Fp", "-i", ":3000")
+    lsof.lineStream_!.foreach { (line) => line match {
+        case LsofPattern(pid) => kill(pid)
+        case _ =>
+      }
+    }
+  }
+}
+
+def getPrivateField(proc: Object, name: String): Long = {
+  val pidField = proc.getClass.getDeclaredField(name)
+  pidField.synchronized {
+    pidField.setAccessible(true)
+    try {
+      pidField.getLong(proc)
+    } finally {
+      pidField.setAccessible(false)
+    }
+  }
+}
+
+def pid(p: Process): Long = {
+  val procField = p.getClass.getDeclaredField("p")
+  procField.synchronized {
+    procField.setAccessible(true)
+    val proc = procField.get(p)
+    try {
+      proc match {
+        case unixProc
+          if unixProc.getClass.getName == "java.lang.UNIXProcess" => {
+            getPrivateField(unixProc, "pid")
+          }
+        case windowsProc
+          if windowsProc.getClass.getName == "java.lang.ProcessImpl" => {
+            val processHandle = getPrivateField(windowsProc, "handle")
+            val kernel = Kernel32.INSTANCE
+            val winHandle = new HANDLE()
+            winHandle.setPointer(Pointer.createConstant(processHandle))
+            kernel.GetProcessId(winHandle)
+          }
+        case _ => throw new RuntimeException(
+          "Cannot get PID of a " + proc.getClass.getName)
+      }
+    } finally {
+      procField.setAccessible(false)
+    }
+  }
+}
+
 def run(langs: Array[String]): BoxAndWhiskerCategoryDataset = {
   val dataset = new DefaultBoxAndWhiskerCategoryDataset()
 
   for (lang <- langs) {
+    killProcesses()
 
-    val lsof = Seq("lsof", "-Fp", "-i", ":3000")
-    lsof.lineStream_!.foreach { (line) => line match {
-        case PID_REGEX(pid) => {
-          Seq("kill", "-9", pid).!
-        }
-        case _ =>
-      }
-    }
-
-    val cmd = lang match {
-      case "go" => "go run main.go"
-      case "rust" => "cargo run --release"
-      case "scala" => "sbt run"
-      case "nodejs" => "node main.js"
-      case "d" => "dub run --compiler=ldc2 --build=release"
-    }
-    val proc = Process(cmd, new File(lang)).run
+    val proc = Process(LangCmds(lang), new File(lang)).run
     Thread.sleep(10000)
 
     val indexValues = runHey(lang, true)
@@ -105,8 +165,7 @@ def run(langs: Array[String]): BoxAndWhiskerCategoryDataset = {
     val patternValues = runHey(lang, false)
     dataset.add(calculateStats(patternValues), "Pattern URL Request", langTitle)
 
-    proc.destroy
-    Thread.sleep(5000)
+    kill(pid(proc).toString)
   }
 
   dataset
@@ -129,14 +188,14 @@ def writeStats(dataset: BoxAndWhiskerCategoryDataset): Unit = {
 def entryPoint(args: Array[String]): Unit = {
   if (args.length > 0) {
     var list = args.map(_ match {
-      case "*" => LANGS
+      case "*" => LangCmds.keys
       case x: String => List(x)
-    }).flatten.filter(LANGS.contains)
+    }).flatten.filter(LangCmds.contains)
     print("Run tests for: " + list.mkString(" "))
     val ds = run(list)
     writeStats(ds)
   } else {
-    print(usage)
+    print(Usage)
   }
 }
 

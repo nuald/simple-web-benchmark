@@ -7,8 +7,8 @@ A simple web benchmark of Go, Rust, D, Scala and Node.js.
 The stats gathered by the [hey](https://github.com/rakyll/hey) tool (please run it twice for
 the JIT optimizations where it's applicable):
 
-    sh -c "$GOPATH/bin/hey -n 50000 -c 256 -t 10 'http://127.0.0.1:3000/'"
-    sh -c "$GOPATH/bin/hey -n 50000 -c 256 -t 10 'http://127.0.0.1:3000/greeting/hello'"
+    hey -n 50000 -c 256 -t 10 "http://127.0.0.1:3000/"
+    hey -n 50000 -c 256 -t 10 "http://127.0.0.1:3000/greeting/hello"
 
 ### MacOS Note
 
@@ -22,10 +22,10 @@ few kernel parameters tweaks may be required:
 ### Automation
 
 Please use the Scala script
-(using (sbt Script runner)[http://www.scala-sbt.org/1.x/docs/Scripts.html#sbt+Script+runner])
+(using [sbt Script runner](http://www.scala-sbt.org/1.x/docs/Scripts.html#sbt+Script+runner))
 to run all the test automatically:
 
-    ./run.scala <list of languages>
+    scalas run.scala <list of languages>
 
 Please specify the required languages separated by space (* wildcard is supported for all).
 
