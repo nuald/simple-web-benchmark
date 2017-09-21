@@ -61,10 +61,6 @@ Please change the required directory before running the server.
 
 ### D
 
-Please use LLVM based [LDC](https://github.com/ldc-developers/ldc#installation)
-compiler as DMD is a reference D compiler that provides only basic optimizations.
-If ldc2 executable is not in path, please use the fully qualified path name.
-
     dub run --compiler=ldc2 --build=release
 
 ### Scala
