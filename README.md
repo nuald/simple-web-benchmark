@@ -2,6 +2,24 @@
 
 A simple web benchmark of Go, Rust, D, Scala and Node.js.
 
+## Preliminary Results
+
+### MacOS
+
+Hardware: MacBook Pro (CPU: 2.3 GHz Intel Core i7, Mem: 16 GB 1600 MHz DDR3)
+
+Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, LDC 1.3.0.
+
+![](results/mac.png?raw=true)
+
+### Windows 10
+
+Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
+
+Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, LDC 1.4.0.
+
+![](results/win.png?raw=true)
+
 ## Testing
 
 The stats gathered by the [hey](https://github.com/rakyll/hey) tool (please run it twice for
@@ -28,14 +46,6 @@ to run all the test automatically:
     scalas run.scala <list of languages>
 
 Please specify the required languages separated by space (* wildcard is supported for all).
-
-### Preliminary Results
-
-Hardware: MacBook Pro (CPU: 2.3 GHz Intel Core i7, Mem: 16 GB 1600 MHz DDR3)
-
-Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, LDC 1.3.0.
-
-![](results/mac.png?raw=true)
 
 ## Usage
 
