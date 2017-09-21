@@ -2,7 +2,6 @@ rust/Cargo.lock
 rust/target
 scala/project/target/
 scala/target/
-stats/
 d/.dub/
 d/bin/
 d/dub.selections.json
