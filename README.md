@@ -41,11 +41,15 @@ few kernel parameters tweaks may be required:
 
 Please use the Scala script
 (using [sbt Script runner](http://www.scala-sbt.org/1.x/docs/Scripts.html#sbt+Script+runner))
-to run all the test automatically:
+to run all the test automatically.
 
-    scalas run.scala <list of languages>
+    Usage: scalas run.scala [options] <lang>...
 
-Please specify the required languages separated by space (* wildcard is supported for all).
+      -o, --out <file>  image file to generate (result.png by default)
+      --verbose         verbose execution output
+      <lang>...         languages to test (* for all)
+
+    The following languages are supported: rust, nodejs, go, scala, d.
 
 ## Usage
 
