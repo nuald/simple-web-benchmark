@@ -47,9 +47,9 @@ to run all the test automatically.
 
       -o, --out <file>  image file to generate (result.png by default)
       --verbose         verbose execution output
-      <lang>...         languages to test (* for all)
+      <lang>...         languages to test ('all' for all)
 
-    The following languages are supported: rust, nodejs, go, scala, d.
+    The following languages are supported: rust, nodejs, go, scala, dmd, ldc2.
 
 ## Usage
 
@@ -61,17 +61,26 @@ Please change the required directory before running the server.
 
 ### Rust
 
+Uses [hyper](https://hyper.rs) HTTP library:
+
     cargo run --release
 
 ### D
 
-Please use LLVM based [LDC](https://github.com/ldc-developers/ldc#installation)
-compiler as DMD is a reference D compiler that provides only basic optimizations.
+Two compilers are tested:
+
+ - DMD (a reference D compiler);
+ - [LDC](https://github.com/ldc-developers/ldc#installation) (LLVM-based D compiler).
 If ldc2 executable is not in path, please use the fully qualified path name.
 
+Uses [vibe.d](http://vibed.org) framework:
+
+    dub run --compiler=dmd --build=release
     dub run --compiler=ldc2 --build=release
 
 ### Scala
+
+Uses (Akka)[http://akka.io] toolkit:
 
     sbt run
 
