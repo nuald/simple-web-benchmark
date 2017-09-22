@@ -5,8 +5,7 @@ auto reg = ctRegex!"^/greeting/([a-z]+)$";
 
 void main()
 {
-    setupWorkerThreads(logicalProcessorCount + 1);
-    runWorkerTaskDist(&runServer);
+    runServer();
     runApplication();
 }
 

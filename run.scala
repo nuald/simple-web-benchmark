@@ -25,12 +25,17 @@ import scala.collection.JavaConverters._
 val IsWindows = sys.props("os.name").startsWith("Windows");
 val ShellPrefix = if (IsWindows) "cmd /C " else ""
 
+case class Cmd(cmd: String, title: String, dir: File)
+
 val LangCmds = Map(
-  "go" -> "go run main.go",
-  "rust" -> "cargo run --release",
-  "scala" -> s"${ShellPrefix}sbt run",
-  "nodejs" -> "node main.js",
-  "d" -> "dub run --compiler=ldc2 --build=release"
+  "go" -> Cmd("go run main.go", "Go", new File("go")),
+  "rust" -> Cmd("cargo run --release", "Rust/hyper", new File("rust")),
+  "scala" -> Cmd(s"${ShellPrefix}sbt run", "Scala/Akka", new File("scala")),
+  "nodejs" -> Cmd("node main.js", "Node.js", new File("nodejs")),
+  "ldc2" -> Cmd(
+    "dub run --compiler=ldc2 --build=release", "D (LDC/vibe.d)", new File("d")),
+  "dmd" -> Cmd(
+    "dub run --compiler=dmd --build=release", "D (DMD/vibe.d)", new File("d"))
 )
 
 val GoPath = sys.env("GOPATH")
@@ -155,14 +160,17 @@ def run(langs: Seq[String], verbose: Boolean): BoxAndWhiskerCategoryDataset = {
   for (lang <- langs) {
     killProcesses()
 
-    val proc = Process(LangCmds(lang), new File(lang)).run
+    val langCmd = LangCmds(lang)
+    val proc = Process(langCmd.cmd, langCmd.dir).run
     Thread.sleep(10000)
 
     val indexValues = runHey(lang, true)
     val langTitle = lang.capitalize
-    dataset.add(calculateStats(indexValues), "Index URL Request", langTitle)
+    dataset.add(
+      calculateStats(indexValues), "Index URL Request", langCmd.title)
     val patternValues = runHey(lang, false)
-    dataset.add(calculateStats(patternValues), "Pattern URL Request", langTitle)
+    dataset.add(
+      calculateStats(patternValues), "Pattern URL Request", langCmd.title)
 
     val processId = pid(proc).toString
     if (verbose) {
@@ -185,7 +193,7 @@ def writeStats(dataset: BoxAndWhiskerCategoryDataset, out: File): Unit = {
   val plot = new CategoryPlot(dataset, xAxis, yAxis, renderer)
 
   val chart = new JFreeChart(plot)
-  ChartUtilities.saveChartAsPNG(out, chart, 400, 300);
+  ChartUtilities.saveChartAsPNG(out, chart, 700, 350);
 }
 
 case class Config(
@@ -202,7 +210,7 @@ val parser = new scopt.OptionParser[Config]("run.scala") {
     c.copy(verbose = true) ).text("verbose execution output")
 
   arg[String]("<lang>...").unbounded().required().action( (x, c) =>
-    c.copy(langs = c.langs :+ x) ).text("languages to test (* for all)")
+    c.copy(langs = c.langs :+ x) ).text("languages to test ('all' for all)")
 
   note(s"""
 The following languages are supported: ${ LangCmds.keys.mkString(", ") }.""")
@@ -212,7 +220,7 @@ def entryPoint(args: Array[String]): Unit = {
   parser.parse(args, Config()) match {
     case Some(config) => {
       var list = config.langs.map(_ match {
-        case "*" => LangCmds.keys
+        case "all" => LangCmds.keys
         case x: String => List(x)
       }).flatten.filter(LangCmds.contains)
       print("Run tests for: " + list.mkString(" "))
