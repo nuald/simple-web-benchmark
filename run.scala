@@ -2,7 +2,7 @@
 
 /***
 scalaVersion := "2.12.3"
-scalacOptions += "-deprecation"
+scalacOptions ++= Seq("-deprecation", "-feature")
 libraryDependencies += "org.jfree" % "jfreechart" % "1.0.19"
 libraryDependencies += "net.java.dev.jna" % "jna-platform" % "4.5.0"
 libraryDependencies += "com.github.scopt" %% "scopt" % "3.7.0"
@@ -25,17 +25,27 @@ import scala.collection.JavaConverters._
 val IsWindows = sys.props("os.name").startsWith("Windows");
 val ShellPrefix = if (IsWindows) "cmd /C " else ""
 
-case class Cmd(cmd: String, title: String, dir: File)
+case class Cmd(cmd: String, title: String, dir: File, preRun: Option[String])
 
 val LangCmds = Map(
-  "go" -> Cmd("go run main.go", "Go", new File("go")),
-  "rust" -> Cmd("cargo run --release", "Rust/hyper", new File("rust")),
-  "scala" -> Cmd(s"${ShellPrefix}sbt run", "Scala/Akka", new File("scala")),
-  "nodejs" -> Cmd("node main.js", "Node.js", new File("nodejs")),
+  "go" -> Cmd("go run main.go", "Go", new File("go"), None),
+  "rust" -> Cmd("cargo run --release", "Rust/hyper", new File("rust"), None),
+  "scala" -> Cmd(
+    s"${ShellPrefix}sbt run",
+    "Scala/Akka",
+    new File("scala"),
+    None),
+  "nodejs" -> Cmd("node main.js", "Node.js", new File("nodejs"), None),
   "ldc2" -> Cmd(
-    "dub run --compiler=ldc2 --build=release --force", "D (LDC/vibe.d)", new File("d")),
+    "dub run --compiler=ldc2 --build=release",
+    "D (LDC/vibe.d)",
+    new File("d"),
+    Some("dub build --compiler=ldc2 --build=release --force")),
   "dmd" -> Cmd(
-    "dub run --compiler=dmd --build=release --force", "D (DMD/vibe.d)", new File("d"))
+    "dub run --compiler=dmd --build=release",
+    "D (DMD/vibe.d)",
+    new File("d"),
+    Some("dub build --compiler=dmd --build=release --force"))
 )
 
 val GoPath = sys.env("GOPATH")
@@ -161,6 +171,10 @@ def run(langs: Seq[String], verbose: Boolean): BoxAndWhiskerCategoryDataset = {
     killProcesses()
 
     val langCmd = LangCmds(lang)
+    langCmd.preRun match {
+      case Some(x) => Process(x, langCmd.dir).!
+      case None =>
+    }
     val proc = Process(langCmd.cmd, langCmd.dir).run
     Thread.sleep(10000)
 
