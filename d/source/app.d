@@ -12,7 +12,6 @@ void main()
 void runServer()
 {
     auto settings = new HTTPServerSettings;
-    settings.options |= HTTPServerOption.reusePort;
     settings.port = 3000;
     settings.serverString = null;
     listenHTTP(settings, &handleRequest);
