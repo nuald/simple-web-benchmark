@@ -33,9 +33,9 @@ val LangCmds = Map(
   "scala" -> Cmd(s"${ShellPrefix}sbt run", "Scala/Akka", new File("scala")),
   "nodejs" -> Cmd("node main.js", "Node.js", new File("nodejs")),
   "ldc2" -> Cmd(
-    "dub run --compiler=ldc2 --build=release", "D (LDC/vibe.d)", new File("d")),
+    "dub run --compiler=ldc2 --build=release --force", "D (LDC/vibe.d)", new File("d")),
   "dmd" -> Cmd(
-    "dub run --compiler=dmd --build=release", "D (DMD/vibe.d)", new File("d"))
+    "dub run --compiler=dmd --build=release --force", "D (DMD/vibe.d)", new File("d"))
 )
 
 val GoPath = sys.env("GOPATH")
