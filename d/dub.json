@@ -8,7 +8,6 @@
         "vibe-d:tls": "*"
     },
     "subConfigurations": {
-        "vibe-d": "libasync",
         "vibe-d:tls": "notls"
     },
     "versions": [
