@@ -42,9 +42,5 @@ impl Service for HelloWorld {
 fn main() {
     let addr = "127.0.0.1:3000".parse().unwrap();
     let server = Http::new().bind(&addr, || Ok(HelloWorld)).unwrap();
-    // let mut server = Server::http("127.0.0.1:3000").unwrap();
-    // server.keep_alive(Some(Duration::from_secs(1)));
-    // server.keep_alive(None);
-    // let _ = server.handle(handler);
     server.run().unwrap();
 }

@@ -2,9 +2,10 @@
 
 /***
 scalaVersion := "2.12.3"
-scalacOptions += "-deprecation"
+scalacOptions ++= Seq("-deprecation", "-feature")
 libraryDependencies += "org.jfree" % "jfreechart" % "1.0.19"
 libraryDependencies += "net.java.dev.jna" % "jna-platform" % "4.5.0"
+libraryDependencies += "com.github.scopt" %% "scopt" % "3.7.0"
 */
 
 import com.sun.jna.platform.win32.Kernel32
@@ -22,25 +23,36 @@ import scala.sys.process._
 import scala.collection.JavaConverters._
 
 val IsWindows = sys.props("os.name").startsWith("Windows");
-val ShellPrefix = if (IsWindows) "cmd /C" else ""
+val ShellPrefix = if (IsWindows) "cmd /C " else ""
+
+case class Cmd(cmd: String, title: String, dir: File, preRun: Option[String])
 
 val LangCmds = Map(
-  "go" -> "go run main.go",
-  "rust" -> "cargo run --release",
-  "scala" -> s"$ShellPrefix sbt run",
-  "nodejs" -> "node main.js",
-  "d" -> "dub run --compiler=ldc2 --build=release"
+  "go" -> Cmd("go run main.go", "Go", new File("go"), None),
+  "rust" -> Cmd("cargo run --release", "Rust/hyper", new File("rust"), None),
+  "scala" -> Cmd(
+    s"${ShellPrefix}sbt run",
+    "Scala/Akka",
+    new File("scala"),
+    None),
+  "nodejs" -> Cmd("node main.js", "Node.js", new File("nodejs"), None),
+  "ldc2" -> Cmd(
+    "dub run --compiler=ldc2 --build=release",
+    "D (LDC/vibe.d)",
+    new File("d"),
+    Some("dub build --compiler=ldc2 --build=release --force")),
+  "dmd" -> Cmd(
+    "dub run --compiler=dmd --build=release",
+    "D (DMD/vibe.d)",
+    new File("d"),
+    Some("dub build --compiler=dmd --build=release --force"))
 )
-
-val Usage = s"""Usage: ./run.scala <list of languages>
-
-Run the tests for the specified languages (* means all).
-The following languages are supported: ${ LangCmds.keys.mkString(", ") }."""
 
 val GoPath = sys.env("GOPATH")
 val LsofPattern = raw"""p(\d+)""".r
 val NetstatPattern = raw"""\s+\w+\s+[\d\.]+:3000\s+[\d\.]+:\d+\s+\w+\s+(\d+)""".r
 val CsvPattern = raw"""([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)""".r
+val DefaultImg = "result.png"
 
 def print(msg: String): Unit = {
   println(msg)
@@ -69,10 +81,10 @@ def runHey(lang: String, isIndex: Boolean): List[Double] = {
   values.toList
 }
 
-def calculateStats(values: List[Double]): BoxAndWhiskerItem = {
+def calculateStats(lazyValues: List[Double]): BoxAndWhiskerItem = {
   // Lazy evaluation is too slow, need to materialize
-  val item = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(
-    new ArrayList(values.asJava))
+  val values = new ArrayList(lazyValues.asJava)
+  val item = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(values)
   val mean = item.getMean()
   val median = item.getMedian()
   val q1 = item.getQ1()
@@ -88,6 +100,8 @@ def kill(pid: String): Unit = {
   if (IsWindows) {
     Seq("taskkill", "/t","/f", "/pid", pid).!
   } else {
+    Seq("pkill", "-KILL", "-P", pid).!
+    // pkill doesn't always work
     Seq("kill", "-9", pid).!
   }
 }
@@ -150,28 +164,39 @@ def pid(p: Process): Long = {
   }
 }
 
-def run(langs: Array[String]): BoxAndWhiskerCategoryDataset = {
+def run(langs: Seq[String], verbose: Boolean): BoxAndWhiskerCategoryDataset = {
   val dataset = new DefaultBoxAndWhiskerCategoryDataset()
 
   for (lang <- langs) {
     killProcesses()
 
-    val proc = Process(LangCmds(lang), new File(lang)).run
+    val langCmd = LangCmds(lang)
+    langCmd.preRun match {
+      case Some(x) => Process(x, langCmd.dir).!
+      case None =>
+    }
+    val proc = Process(langCmd.cmd, langCmd.dir).run
     Thread.sleep(10000)
 
     val indexValues = runHey(lang, true)
     val langTitle = lang.capitalize
-    dataset.add(calculateStats(indexValues), "Index URL Request", langTitle)
+    dataset.add(
+      calculateStats(indexValues), "Index URL Request", langCmd.title)
     val patternValues = runHey(lang, false)
-    dataset.add(calculateStats(patternValues), "Pattern URL Request", langTitle)
+    dataset.add(
+      calculateStats(patternValues), "Pattern URL Request", langCmd.title)
 
-    kill(pid(proc).toString)
+    val processId = pid(proc).toString
+    if (verbose) {
+      print(s"Killing $processId process tree...")
+    }
+    kill(processId)
   }
 
   dataset
 }
 
-def writeStats(dataset: BoxAndWhiskerCategoryDataset): Unit = {
+def writeStats(dataset: BoxAndWhiskerCategoryDataset, out: File): Unit = {
   val xAxis = new CategoryAxis("Language")
   val yAxis = new NumberAxis("Response, ms")
   yAxis.setAutoRangeIncludesZero(false)
@@ -182,20 +207,42 @@ def writeStats(dataset: BoxAndWhiskerCategoryDataset): Unit = {
   val plot = new CategoryPlot(dataset, xAxis, yAxis, renderer)
 
   val chart = new JFreeChart(plot)
-  ChartUtilities.saveChartAsPNG(new File("result.png"), chart, 400, 300);
+  ChartUtilities.saveChartAsPNG(out, chart, 700, 350);
+}
+
+case class Config(
+  out: File = new File(DefaultImg),
+  verbose: Boolean = false,
+  langs: Seq[String] = Seq())
+
+val parser = new scopt.OptionParser[Config]("run.scala") {
+  opt[File]('o', "out").optional().valueName("<file>").
+    action( (x, c) => c.copy(out = x) ).
+    text(s"image file to generate ($DefaultImg by default)")
+
+  opt[Unit]("verbose").action( (_, c) =>
+    c.copy(verbose = true) ).text("verbose execution output")
+
+  arg[String]("<lang>...").unbounded().required().action( (x, c) =>
+    c.copy(langs = c.langs :+ x) ).text("languages to test ('all' for all)")
+
+  note(s"""
+The following languages are supported: ${ LangCmds.keys.mkString(", ") }.""")
 }
 
 def entryPoint(args: Array[String]): Unit = {
-  if (args.length > 0) {
-    var list = args.map(_ match {
-      case "*" => LangCmds.keys
-      case x: String => List(x)
-    }).flatten.filter(LangCmds.contains)
-    print("Run tests for: " + list.mkString(" "))
-    val ds = run(list)
-    writeStats(ds)
-  } else {
-    print(Usage)
+  parser.parse(args, Config()) match {
+    case Some(config) => {
+      var list = config.langs.map(_ match {
+        case "all" => LangCmds.keys
+        case x: String => List(x)
+      }).flatten.filter(LangCmds.contains)
+      print("Run tests for: " + list.mkString(" "))
+      val ds = run(list, config.verbose)
+      writeStats(ds, config.out)
+    }
+    case None =>
+    // arguments are bad, error message will have been displayed
   }
 }
 

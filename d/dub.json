@@ -4,16 +4,20 @@
     "targetType": "executable",
     "targetPath": "bin",
     "dependencies": {
-        "vibe-d": "~>0.8.2-alpha.1"
+        "vibe-d": "~>0.8.2-alpha.1",
+        "vibe-d:tls": "*"
     },
-    "subConfigurations": {"vibe-d": "libevent"},
+    "subConfigurations": {
+        "vibe-d": "libasync",
+        "vibe-d:tls": "notls"
+    },
     "versions": [
         "VibeManualMemoryManagement"
     ],
     "buildTypes": {
-        "release": { 
+        "release": {
              "buildOptions": ["releaseMode", "optimize", "inline"],
-             "dflags-posix-ldc": ["-flto=thin", "-Xcc=-fuse-ld=gold"]
+             "dflags-posix-ldc": ["-flto=thin"]
         }
     }
 }
