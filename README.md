@@ -8,7 +8,7 @@ A simple web benchmark of Go, Rust, D, Scala and Node.js.
 
 Hardware: MacBook Pro (CPU: 2.3 GHz Intel Core i7, Mem: 16 GB 1600 MHz DDR3)
 
-Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, LDC 1.3.0.
+Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, DMD 2.076.0, LDC 1.3.0.
 
 ![](results/mac.png?raw=true)
 
@@ -16,7 +16,7 @@ Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, LDC 1.3.0.
 
 Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
 
-Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, LDC 1.4.0.
+Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, DMD 2.076.0, LDC 1.4.0.
 
 ![](results/win.png?raw=true)
 
@@ -41,11 +41,15 @@ few kernel parameters tweaks may be required:
 
 Please use the Scala script
 (using [sbt Script runner](http://www.scala-sbt.org/1.x/docs/Scripts.html#sbt+Script+runner))
-to run all the test automatically:
+to run all the test automatically.
 
-    scalas run.scala <list of languages>
+    Usage: scalas run.scala [options] <lang>...
 
-Please specify the required languages separated by space (* wildcard is supported for all).
+      -o, --out <file>  image file to generate (result.png by default)
+      --verbose         verbose execution output
+      <lang>...         languages to test ('all' for all)
+
+    The following languages are supported: rust, nodejs, go, scala, dmd, ldc2.
 
 ## Usage
 
@@ -57,13 +61,26 @@ Please change the required directory before running the server.
 
 ### Rust
 
+Uses [hyper](https://hyper.rs) HTTP library:
+
     cargo run --release
 
 ### D
 
-    dub run --compiler=ldc2 --build=release
+Two compilers are tested:
+
+ - DMD (a reference D compiler);
+ - [LDC](https://github.com/ldc-developers/ldc#installation) (LLVM-based D compiler).
+If ldc2 executable is not in path, please use the fully qualified path name.
+
+Uses [vibe.d](http://vibed.org) framework:
+
+    dub run --compiler=dmd --build=release --force
+    dub run --compiler=ldc2 --build=release --force
 
 ### Scala
+
+Uses [Akka](http://akka.io) toolkit:
 
     sbt run
 
