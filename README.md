@@ -1,6 +1,6 @@
 # Simple Web Benchmark
 
-A simple web benchmark of Go, Rust, D, Scala and Node.js.
+A simple web benchmark of Go, Crystal, Rust, D, Scala and Node.js.
 
 ## Preliminary Results
 
@@ -58,6 +58,18 @@ Please change the required directory before running the server.
 ### Go
 
     go run main.go
+
+### Crystal
+
+Install Crystal https://crystal-lang.org/docs/installation/
+
+Compile server.cr:
+  crystal build --release --no-debug server.cr -o crystal_server
+
+"crystal_server" use one cpu_core => run N servers(N = cpu cores):
+  1. Run "start_servers" to start N servers.
+  2. Run N servers manually
+
 
 ### Rust
 
