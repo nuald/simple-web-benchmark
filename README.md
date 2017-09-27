@@ -63,12 +63,11 @@ Please change the required directory before running the server.
 
 Install Crystal https://crystal-lang.org/docs/installation/
 
-Compile server.cr:
-  crystal build --release --no-debug server.cr -o crystal_server
+    crystal build --release --no-debug server.cr -o crystal_server
 
 "crystal_server" use one cpu_core => run N servers(N = cpu cores):
-  1. Run "start_servers" to start N servers.
-  2. Run N servers manually
+  1. Run "./start_servers" to start N servers.
+  2. Run N servers manually: ./crystal_server & ./crystal_server & ./crystal_server & ./crystal_server
 
 
 ### Rust
