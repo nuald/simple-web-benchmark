@@ -8,7 +8,8 @@ A simple web benchmark of Go, Crystal, Rust, D, Scala and Node.js.
 
 Hardware: MacBook Pro (CPU: 2.3 GHz Intel Core i7, Mem: 16 GB 1600 MHz DDR3)
 
-Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, DMD 2.076.0, LDC 1.3.0.
+Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, DMD 2.076.0,
+LDC 1.3.0, Crystal 0.23.1.
 
 ![](results/mac.png?raw=true)
 
@@ -16,7 +17,8 @@ Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, DMD 2.076.0, LDC 1.3
 
 Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
 
-Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, DMD 2.076.0, LDC 1.4.0.
+Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, DMD 2.076.0,
+LDC 1.4.0, Crystal 0.23.1 (under WSL).
 
 ![](results/win.png?raw=true)
 
@@ -61,8 +63,8 @@ Please change the required directory before running the server.
 
 ### Crystal
 
-Using [Crystal](https://crystal-lang.org/docs/installation/) in a way that compatible
-with Linux Subsystem for Windows:
+Using [Crystal](https://crystal-lang.org/docs/installation/) in a way that is compatible
+with WSL:
 
     bash -c "crystal run --release --no-debug server.cr"
 
