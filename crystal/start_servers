@@ -1,9 +1,0 @@
-#!/bin/bash
-
-crystal build --release --no-debug server.cr -o crystal_server
-
-for i in $(seq 1 $(nproc --all)); do
-  ./crystal_server &
-done
-
-wait

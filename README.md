@@ -61,14 +61,10 @@ Please change the required directory before running the server.
 
 ### Crystal
 
-Install Crystal https://crystal-lang.org/docs/installation/
+Using [Crystal](https://crystal-lang.org/docs/installation/) in a way that compatible
+with Linux Subsystem for Windows:
 
-    crystal build --release --no-debug server.cr -o crystal_server
-
-"crystal_server" use one cpu_core => run N servers(N = cpu cores):
-  1. Run "./start_servers" to start N servers.
-  2. Run N servers manually: ./crystal_server & ./crystal_server & ./crystal_server & ./crystal_server
-
+    bash -c "crystal run --release --no-debug server.cr"
 
 ### Rust
 

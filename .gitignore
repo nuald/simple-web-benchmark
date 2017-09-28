@@ -1,3 +1,4 @@
+crystal/server
 rust/Cargo.lock
 rust/target
 scala/project/target/
