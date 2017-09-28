@@ -12,7 +12,8 @@ import com.sun.jna.platform.win32.Kernel32
 import com.sun.jna.platform.win32.WinNT.HANDLE
 import com.sun.jna.Pointer
 import java.io.File
-import java.util.ArrayList
+import java.text.SimpleDateFormat
+import java.util.{ArrayList, Calendar}
 import org.jfree.chart._
 import org.jfree.chart.axis._
 import org.jfree.chart.labels._
@@ -23,29 +24,46 @@ import scala.sys.process._
 import scala.collection.JavaConverters._
 
 val IsWindows = sys.props("os.name").startsWith("Windows");
-val ShellPrefix = if (IsWindows) "cmd /C " else ""
+val ShellPrefix: Array[String] = if (IsWindows) Array("cmd", "/C") else Array()
 
-case class Cmd(cmd: String, title: String, dir: File, preRun: Option[String])
+case class Cmd(cmd: Array[String], title: String, dir: File, preRun: Option[Array[String]])
 
 val LangCmds = Map(
-  "go" -> Cmd("go run main.go", "Go", new File("go"), None),
-  "rust" -> Cmd("cargo run --release", "Rust/hyper", new File("rust"), None),
+  "go" -> Cmd(
+    Array("go", "run", "main.go"),
+    "Go",
+    new File("go"),
+    None),
+  "rust" -> Cmd(
+    Array("cargo", "run", "--release"),
+    "Rust/hyper",
+    new File("rust"),
+    None),
   "scala" -> Cmd(
-    s"${ShellPrefix}sbt run",
+    ShellPrefix ++ Array("sbt", "run"),
     "Scala/Akka",
     new File("scala"),
     None),
-  "nodejs" -> Cmd("node main.js", "Node.js", new File("nodejs"), None),
+  "nodejs" -> Cmd(
+    Array("node", "main.js"),
+    "Node.js",
+    new File("nodejs"),
+    None),
   "ldc2" -> Cmd(
-    "dub run --compiler=ldc2 --build=release",
+    Array("dub", "run", "--compiler=ldc2", "--build=release"),
     "D (LDC/vibe.d)",
     new File("d"),
-    Some("dub build --compiler=ldc2 --build=release --force")),
+    Some(Array("dub", "build", "--compiler=ldc2", "--build=release", "--force"))),
   "dmd" -> Cmd(
-    "dub run --compiler=dmd --build=release",
+    Array("dub", "run", "--compiler=dmd", "--build=release"),
     "D (DMD/vibe.d)",
     new File("d"),
-    Some("dub build --compiler=dmd --build=release --force"))
+    Some(Array("dub", "build", "--compiler=dmd", "--build=release", "--force"))),
+  "crystal" -> Cmd(
+    Array("bash", "-c", "crystal run --release --no-debug server.cr"),
+    "Crystal",
+    new File("crystal"),
+    Some(Array("bash", "-c", "crystal build --release --no-debug server.cr")))
 )
 
 val GoPath = sys.env("GOPATH")
@@ -53,9 +71,12 @@ val LsofPattern = raw"""p(\d+)""".r
 val NetstatPattern = raw"""\s+\w+\s+[\d\.]+:3000\s+[\d\.]+:\d+\s+\w+\s+(\d+)""".r
 val CsvPattern = raw"""([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)""".r
 val DefaultImg = "result.png"
+val Attempts = 3
 
 def print(msg: String): Unit = {
-  println(msg)
+  val now = Calendar.getInstance.getTime
+  val fmt = new SimpleDateFormat("hh:mm:ss")
+  println(s"[${ fmt.format(now) }] $msg")
 }
 
 def runHey(lang: String, isIndex: Boolean): List[Double] = {
@@ -98,12 +119,21 @@ def calculateStats(lazyValues: List[Double]): BoxAndWhiskerItem = {
 
 def kill(pid: String): Unit = {
   if (IsWindows) {
-    Seq("taskkill", "/t","/f", "/pid", pid).!
+    Seq("taskkill", "/t", "/f", "/pid", pid).!
   } else {
     Seq("pkill", "-KILL", "-P", pid).!
     // pkill doesn't always work
     Seq("kill", "-9", pid).!
   }
+}
+
+def isAlive(pid: String): Boolean = {
+  val output = if (IsWindows) {
+    Seq("tasklist", "/FI", s"PID eq $pid") lineStream_! ProcessLogger(line => ())
+  } else {
+    Seq("ps", "-p", pid) lineStream_! ProcessLogger(line => ())
+  }
+  output.exists(_.contains(pid))
 }
 
 def killProcesses(): Unit = {
@@ -136,32 +166,36 @@ def getPrivateField(proc: Object, name: String): Long = {
   }
 }
 
-def pid(p: Process): Long = {
-  val procField = p.getClass.getDeclaredField("p")
-  procField.synchronized {
-    procField.setAccessible(true)
-    val proc = procField.get(p)
-    try {
-      proc match {
-        case unixProc
-          if unixProc.getClass.getName == "java.lang.UNIXProcess" => {
-            getPrivateField(unixProc, "pid")
-          }
-        case windowsProc
-          if windowsProc.getClass.getName == "java.lang.ProcessImpl" => {
-            val processHandle = getPrivateField(windowsProc, "handle")
-            val kernel = Kernel32.INSTANCE
-            val winHandle = new HANDLE()
-            winHandle.setPointer(Pointer.createConstant(processHandle))
-            kernel.GetProcessId(winHandle)
-          }
-        case _ => throw new RuntimeException(
-          "Cannot get PID of a " + proc.getClass.getName)
+def pid(proc: java.lang.Process): Long = {
+  proc match {
+    case unixProc
+      if unixProc.getClass.getName == "java.lang.UNIXProcess" => {
+        getPrivateField(unixProc, "pid")
       }
-    } finally {
-      procField.setAccessible(false)
+    case windowsProc
+      if windowsProc.getClass.getName == "java.lang.ProcessImpl" => {
+        val processHandle = getPrivateField(windowsProc, "handle")
+        val kernel = Kernel32.INSTANCE
+        val winHandle = new HANDLE()
+        winHandle.setPointer(Pointer.createConstant(processHandle))
+        kernel.GetProcessId(winHandle)
+      }
+    case _ => throw new RuntimeException(
+      "Cannot get PID of a " + proc.getClass.getName)
+  }
+}
+
+def getProcessId(procCmd: Array[String], dir: File): Option[String] = {
+  for (i <- 1 to Attempts) {
+    val procId = pid(Runtime.getRuntime.exec(procCmd, null, dir)).toString
+    print(s"with PID: $procId")
+    Thread.sleep(10000)
+    // ldc2 crashes sometimes, the reason is unknown, but restart helps
+    if (isAlive(procId)) {
+      return Some(procId)
     }
   }
+  None
 }
 
 def run(langs: Seq[String], verbose: Boolean): BoxAndWhiskerCategoryDataset = {
@@ -172,25 +206,31 @@ def run(langs: Seq[String], verbose: Boolean): BoxAndWhiskerCategoryDataset = {
 
     val langCmd = LangCmds(lang)
     langCmd.preRun match {
-      case Some(x) => Process(x, langCmd.dir).!
+      case Some(x) => {
+        print(x.mkString(" "))
+        Runtime.getRuntime.exec(x, null, langCmd.dir).waitFor
+      }
       case None =>
     }
-    val proc = Process(langCmd.cmd, langCmd.dir).run
-    Thread.sleep(10000)
+    val procCmd = langCmd.cmd
+    print(procCmd.mkString(" "))
+    getProcessId(procCmd, langCmd.dir) match {
+      case Some(processId) => {
+        val indexValues = runHey(lang, true)
+        val langTitle = lang.capitalize
+        dataset.add(
+          calculateStats(indexValues), "Index URL Request", langCmd.title)
+        val patternValues = runHey(lang, false)
+        dataset.add(
+          calculateStats(patternValues), "Pattern URL Request", langCmd.title)
 
-    val indexValues = runHey(lang, true)
-    val langTitle = lang.capitalize
-    dataset.add(
-      calculateStats(indexValues), "Index URL Request", langCmd.title)
-    val patternValues = runHey(lang, false)
-    dataset.add(
-      calculateStats(patternValues), "Pattern URL Request", langCmd.title)
-
-    val processId = pid(proc).toString
-    if (verbose) {
-      print(s"Killing $processId process tree...")
+        if (verbose) {
+          print(s"Killing $processId process tree...")
+        }
+        kill(processId)
+      }
+      case None => print(s"$lang test failed!")
     }
-    kill(processId)
   }
 
   dataset
@@ -207,7 +247,7 @@ def writeStats(dataset: BoxAndWhiskerCategoryDataset, out: File): Unit = {
   val plot = new CategoryPlot(dataset, xAxis, yAxis, renderer)
 
   val chart = new JFreeChart(plot)
-  ChartUtilities.saveChartAsPNG(out, chart, 700, 350);
+  ChartUtilities.saveChartAsPNG(out, chart, 800, 350);
 }
 
 case class Config(
