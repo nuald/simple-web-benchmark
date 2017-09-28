@@ -6,6 +6,8 @@ A simple web benchmark of Go, Crystal, Rust, D, Scala and Node.js.
 
 ### MacOS
 
+OS: Mac OS X 10.12.6 (16G29)
+
 Hardware: MacBook Pro (CPU: 2.3 GHz Intel Core i7, Mem: 16 GB 1600 MHz DDR3)
 
 Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, DMD 2.076.0,
@@ -15,12 +17,25 @@ LDC 1.3.0, Crystal 0.23.1.
 
 ### Windows 10
 
+OS: Microsoft Windows [Version 10.0.15063]
+
 Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
 
 Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, DMD 2.076.0,
 LDC 1.4.0, Crystal 0.23.1 (under WSL).
 
 ![](results/win.png?raw=true)
+
+### WSL
+
+OS: 4.4.0-43-Microsoft GNU/Linux
+
+Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
+
+Software: Go 1.9, Rust 1.15.1, Scala 2.11.6, Node.js 4.2.6, DMD 2.076.0,
+LDC 1.4.0, Crystal 0.23.1.
+
+![](results/wsl.png?raw=true)
 
 ## Testing
 
@@ -51,7 +66,7 @@ to run all the test automatically.
       --verbose         verbose execution output
       <lang>...         languages to test ('all' for all)
 
-    The following languages are supported: rust, nodejs, go, scala, dmd, ldc2.
+    The following languages are supported: rust, crystal, nodejs, go, scala, dmd, ldc2.
 
 ## Usage
 
