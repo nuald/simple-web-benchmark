@@ -45,5 +45,5 @@ else
     end
   end
 
-  server.listen(reuse_port: true)
+  server.listen
 end
