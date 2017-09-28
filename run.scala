@@ -38,12 +38,12 @@ val LangCmds = Map(
     Array("cargo", "run", "--release"),
     "Rust/hyper",
     new File("rust"),
-    None),
+    Some(Array("cargo", "build", "--release"))),
   "scala" -> Cmd(
     ShellPrefix ++ Array("sbt", "run"),
     "Scala/Akka",
     new File("scala"),
-    None),
+    Some(ShellPrefix ++ Array("sbt", "compile"))),
   "nodejs" -> Cmd(
     Array("node", "main.js"),
     "Node.js",
