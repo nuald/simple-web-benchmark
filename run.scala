@@ -34,10 +34,15 @@ val LangCmds = Map(
     "Go",
     new File("go"),
     None),
-  "rust" -> Cmd(
+  "rust_hyper" -> Cmd(
     Array("cargo", "run", "--release"),
     "Rust/hyper",
-    new File("rust"),
+    new File("rust/hyper"),
+    Some(Array("cargo", "build", "--release"))),
+  "rust_rocket" -> Cmd(
+    Array("ROCKET_ENV=production", "cargo", "run", "--release"),
+    "Rust/rocket",
+    new File("rust/rocket"),
     Some(Array("cargo", "build", "--release"))),
   "scala" -> Cmd(
     ShellPrefix ++ Array("sbt", "run"),
