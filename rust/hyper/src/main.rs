@@ -5,7 +5,6 @@ extern crate regex;
 #[macro_use] extern crate lazy_static;
 
 use futures::future::FutureResult;
-use hyper::Method;
 use hyper::server::{Http, Request, Response, Service};
 use regex::Regex;
 
@@ -16,26 +15,23 @@ impl Service for HelloWorld {
     type Request = Request;
     type Response = Response;
     type Error = hyper::Error;
-    // The future representing the eventual Response your call will
-    // resolve to. This can change to whatever Future you need.
     type Future = FutureResult<Self::Response, Self::Error>;
 
     fn call(&self, req: Request) -> Self::Future {
-        lazy_static! {
-            static ref GREETING_RE: Regex = Regex::new(r"^/greeting/([a-z]+)$").unwrap();
-        }
-        let mut response = Response::new();
-
-        match (req.method(), req.path()) {
-            (&Method::Get, "/") => {
-                response.set_body("Hello World!");
-            },
-            _ => {
-                let cap = GREETING_RE.captures(req.path()).unwrap();
-                response.set_body(format!("Hello, {}", cap.get(1).unwrap().as_str()));
+        futures::future::ok(
+            match req.path() {
+                "/" => {
+                    Response::new().with_body("Hello World!")
+                },
+                path => {
+                    lazy_static! {
+                        static ref GREETING_RE: Regex = Regex::new(r"^/greeting/([a-z]+)$").unwrap();
+                    }
+                    let cap = GREETING_RE.captures(path).unwrap();
+                    Response::new().with_body(format!("Hello, {}", &cap[1]))
+                }
             }
-        };
-        futures::future::ok(response)
+        )
     }
 }
 
