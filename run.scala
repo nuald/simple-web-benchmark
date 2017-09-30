@@ -12,6 +12,7 @@ import com.sun.jna.platform.win32.Kernel32
 import com.sun.jna.platform.win32.WinNT.HANDLE
 import com.sun.jna.Pointer
 import java.io.File
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.{ArrayList, Calendar}
 import org.jfree.chart._
@@ -26,49 +27,62 @@ import scala.collection.JavaConverters._
 val IsWindows = sys.props("os.name").startsWith("Windows");
 val ShellPrefix: Array[String] = if (IsWindows) Array("cmd", "/C") else Array()
 
-case class Cmd(cmd: Array[String], title: String, dir: File, preRun: Option[Array[String]])
+case class Cmd(
+  cmd: Array[String],
+  title: String,
+  dir: File,
+  preRun: Option[Array[String]],
+  hasKillSwitch: Boolean)
 
 val LangCmds = Map(
   "go" -> Cmd(
     Array("go", "run", "main.go"),
     "Go",
     new File("go"),
-    None),
+    None,
+    false),
   "rust_hyper" -> Cmd(
     Array("cargo", "run", "--release"),
     "Rust/hyper",
     new File("rust/hyper"),
-    Some(Array("cargo", "build", "--release"))),
+    Some(Array("cargo", "build", "--release")),
+    false),
   "rust_rocket" -> Cmd(
     Array("ROCKET_ENV=production", "cargo", "run", "--release"),
     "Rust/rocket",
     new File("rust/rocket"),
-    Some(Array("cargo", "build", "--release"))),
+    Some(Array("cargo", "build", "--release")),
+    false),
   "scala" -> Cmd(
     ShellPrefix ++ Array("sbt", "run"),
     "Scala/Akka",
     new File("scala"),
-    Some(ShellPrefix ++ Array("sbt", "compile"))),
+    Some(ShellPrefix ++ Array("sbt", "compile")),
+    false),
   "nodejs" -> Cmd(
     Array("node", "main.js"),
     "Node.js",
     new File("nodejs"),
-    None),
+    None,
+    false),
   "ldc2" -> Cmd(
     Array("dub", "run", "--compiler=ldc2", "--build=release"),
     "D (LDC/vibe.d)",
     new File("d"),
-    Some(Array("dub", "build", "--compiler=ldc2", "--build=release", "--force"))),
+    Some(Array("dub", "build", "--compiler=ldc2", "--build=release", "--force")),
+    false),
   "dmd" -> Cmd(
     Array("dub", "run", "--compiler=dmd", "--build=release"),
     "D (DMD/vibe.d)",
     new File("d"),
-    Some(Array("dub", "build", "--compiler=dmd", "--build=release", "--force"))),
+    Some(Array("dub", "build", "--compiler=dmd", "--build=release", "--force")),
+    false),
   "crystal" -> Cmd(
     Array("bash", "-c", "crystal run --release --no-debug server.cr"),
     "Crystal",
     new File("crystal"),
-    Some(Array("bash", "-c", "crystal build --release --no-debug server.cr")))
+    Some(Array("bash", "-c", "crystal build --release --no-debug server.cr")),
+    true)
 )
 
 val GoPath = sys.env("GOPATH")
@@ -159,7 +173,7 @@ def killProcesses(): Unit = {
   }
 }
 
-def getPrivateField(proc: Object, name: String): Long = {
+def getPrivateField(proc: Any, name: String): Long = {
   val pidField = proc.getClass.getDeclaredField(name)
   pidField.synchronized {
     pidField.setAccessible(true)
@@ -173,11 +187,11 @@ def getPrivateField(proc: Object, name: String): Long = {
 
 def pid(proc: java.lang.Process): Long = {
   proc match {
-    case unixProc
+    case unixProc: Any
       if unixProc.getClass.getName == "java.lang.UNIXProcess" => {
         getPrivateField(unixProc, "pid")
       }
-    case windowsProc
+    case windowsProc: Any
       if windowsProc.getClass.getName == "java.lang.ProcessImpl" => {
         val processHandle = getPrivateField(windowsProc, "handle")
         val kernel = Kernel32.INSTANCE
@@ -229,10 +243,16 @@ def run(langs: Seq[String], verbose: Boolean): BoxAndWhiskerCategoryDataset = {
         dataset.add(
           calculateStats(patternValues), "Pattern URL Request", langCmd.title)
 
-        if (verbose) {
-          print(s"Killing $processId process tree...")
+        if (langCmd.hasKillSwitch) {
+          new URL("http://127.0.0.1:3001/kill").openConnection
+          // Some VM requires few seconds to fully shutdown
+          Thread.sleep(10000)
+        } else {
+          if (verbose) {
+            print(s"Killing $processId process tree...")
+          }
+          kill(processId)
         }
-        kill(processId)
       }
       case None => print(s"$lang test failed!")
     }

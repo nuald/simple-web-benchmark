@@ -30,7 +30,20 @@ if Cluster.isMaster
   numThread.times do |i|
     Cluster.fork({"i" => i.to_s})
   end
-  sleep
+
+  server = HTTP::Server.new(3001) do |context|
+    context.response.headers["Content-Type"] = "text/plain"
+    context.response.status_code = 200
+
+    path = context.request.path
+    if path == "/kill"
+      Process.exit
+    else
+      context.response.respond_with_error(message = "Not Found", code = 404)
+    end
+  end
+
+  server.listen
 else
   server = HTTP::Server.new(3000) do |context|
     context.response.headers["Content-Type"] = "text/plain"
@@ -39,11 +52,17 @@ else
     path = context.request.path
     if path == "/"
       context.response.print "Hello world!"
-    else
-      msg = path.match(reg).not_nil![1]
+    elsif match = path.match(reg)
+      msg = match.not_nil![1]
       context.response.print "Hello, #{msg}"
+    else
+      context.response.respond_with_error(message = "Not Found", code = 404)
     end
   end
 
-  server.listen
+  begin
+    server.listen
+  rescue
+    server.listen(reuse_port = true)
+  end
 end
