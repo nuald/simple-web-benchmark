@@ -10,10 +10,9 @@ uname = Process.run("uname", {"-or"}) do |proc|
 end
 isWSL = uname =~ /.*-Microsoft GNU\/Linux/
 
-puts "Using #{numThread} processes"
-
 numThread.times do |i|
   children << fork do
+    puts "Worker #{Process.pid} started"
 
     server = HTTP::Server.new(3000) do |context|
       context.response.headers["Content-Type"] = "text/plain"
@@ -46,9 +45,9 @@ server = HTTP::Server.new(3001) do |context|
   path = context.request.path
   if path == "/kill"
     children.each do |p|
-      puts p.pid
       if p.exists?
         p.kill
+        puts "Worker #{p.pid} terminated"
       end
     end
     Process.exit

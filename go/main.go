@@ -13,7 +13,12 @@ func main() {
       case "/":
         fmt.Fprint(w, "Hello World!")
       default:
-        fmt.Fprintf(w, "Hello, %s", reg.FindStringSubmatch(r.URL.Path)[1])
+        matches := reg.FindStringSubmatch(r.URL.Path)
+        if matches != nil {
+          fmt.Fprintf(w, "Hello, %s", matches[1])
+        } else {
+          http.NotFound(w, r)
+        }
     }
   }))
 }

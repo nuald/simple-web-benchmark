@@ -10,7 +10,7 @@ OS: Mac OS X 10.12.6 (16G29)
 
 Hardware: MacBook Pro (CPU: 2.3 GHz Intel Core i7, Mem: 16 GB 1600 MHz DDR3)
 
-Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, DMD 2.076.0,
+Software: Go 1.9, Rust 1.22.0-nightly, Scala 2.12.3, Node.js 8.5.0, DMD 2.076.0,
 LDC 1.3.0, Crystal 0.23.1.
 
 ![](results/mac.png?raw=true)
@@ -21,7 +21,7 @@ OS: Microsoft Windows [Version 10.0.15063]
 
 Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
 
-Software: Go 1.9, Rust 1.20.0, Scala 2.12.3, Node.js 8.5.0, DMD 2.076.0,
+Software: Go 1.9, Rust 1.22.0-nightly, Scala 2.12.3, Node.js 8.5.0, DMD 2.076.0,
 LDC 1.4.0, Crystal 0.23.1 (under WSL).
 
 ![](results/win.png?raw=true)
@@ -44,6 +44,11 @@ the JIT optimizations where it's applicable):
 
     hey -n 50000 -c 256 -t 10 "http://127.0.0.1:3000/"
     hey -n 50000 -c 256 -t 10 "http://127.0.0.1:3000/greeting/hello"
+
+### Windows Note
+
+Due to various WSL issues with the networking, it's recommended to disable
+Windows Firewall during testing.
 
 ### MacOS Note
 
@@ -85,7 +90,11 @@ with WSL:
 
 ### Rust
 
-Please install [Nightly Rust](https://doc.rust-lang.org/1.5.0/book/nightly-rust.html). Sample applications use [hyper](https://hyper.rs) HTTP library and [Rocket](https://rocket.rs/) web framework:
+Please install [Nightly Rust](https://doc.rust-lang.org/1.5.0/book/nightly-rust.html).
+Windows also requires [MinGW](https://github.com/rust-lang/rust#mingw)
+compiler toolchain with `mingw-w64-x86_64-gcc` installed.
+
+Sample applications use [hyper](https://hyper.rs) HTTP library and [Rocket](https://rocket.rs/) web framework:
 
     cargo run --release
 
