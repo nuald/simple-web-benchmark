@@ -30,58 +30,49 @@ case class Cmd(
   cmd: Array[String],
   title: String,
   dir: File,
-  preRun: Option[Array[String]],
-  hasKillSwitch: Boolean)
+  preRun: Option[Array[String]])
 
 val LangCmds = Map(
   "go" -> Cmd(
     Array("go", "run", "main.go"),
     "Go",
     new File("go"),
-    None,
-    false),
+    None),
   "rust_hyper" -> Cmd(
     Array("cargo", "run", "--release"),
     "Rust/hyper",
     new File("rust/hyper"),
-    Some(Array("cargo", "build", "--release")),
-    false),
+    Some(Array("cargo", "build", "--release"))),
   "rust_rocket" -> Cmd(
     Array("cargo", "run", "--release"),
     "Rust/rocket",
     new File("rust/rocket"),
-    Some(Array("cargo", "build", "--release")),
-    false),
+    Some(Array("cargo", "build", "--release"))),
   "scala" -> Cmd(
     ShellPrefix ++ Array("sbt", "run"),
     "Scala/Akka",
     new File("scala"),
-    Some(ShellPrefix ++ Array("sbt", "compile")),
-    false),
+    Some(ShellPrefix ++ Array("sbt", "compile"))),
   "nodejs" -> Cmd(
     Array("node", "main.js"),
     "Node.js",
     new File("nodejs"),
-    None,
-    false),
+    None),
   "ldc2" -> Cmd(
     Array("dub", "run", "--compiler=ldc2", "--build=release"),
     "D (LDC/vibe.d)",
     new File("d"),
-    Some(Array("dub", "build", "--compiler=ldc2", "--build=release", "--force")),
-    false),
+    Some(Array("dub", "build", "--compiler=ldc2", "--build=release", "--force"))),
   "dmd" -> Cmd(
     Array("dub", "run", "--compiler=dmd", "--build=release"),
     "D (DMD/vibe.d)",
     new File("d"),
-    Some(Array("dub", "build", "--compiler=dmd", "--build=release", "--force")),
-    false),
+    Some(Array("dub", "build", "--compiler=dmd", "--build=release", "--force"))),
   "crystal" -> Cmd(
     Array("bash", "-c", "crystal run --release --no-debug server.cr"),
     "Crystal",
     new File("crystal"),
-    Some(Array("bash", "-c", "crystal build --release --no-debug server.cr")),
-    false)
+    Some(Array("bash", "-c", "crystal build --release --no-debug server.cr")))
 )
 
 val LsofPattern = raw"""p(\d+)""".r
@@ -239,21 +230,10 @@ def run(langs: Seq[String], verbose: Boolean): BoxAndWhiskerCategoryDataset = {
         dataset.add(
           calculateStats(patternValues), "Pattern URL Request", langCmd.title)
 
-        if (langCmd.hasKillSwitch) {
-          try {
-            scala.io.Source.fromURL("http://127.0.0.1:3001/kill").mkString
-          } catch {
-            // ignore 'Connection refused'
-            case _: Throwable =>
-          }
-          // Some VM requires few seconds to fully shutdown
-          Thread.sleep(10000)
-        } else {
-          if (verbose) {
-            print(s"Killing $processId process tree...")
-          }
-          kill(processId)
+        if (verbose) {
+          print(s"Killing $processId process tree...")
         }
+        kill(processId)
       }
       case None => print(s"$lang test failed!")
     }
