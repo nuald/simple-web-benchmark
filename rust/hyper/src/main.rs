@@ -5,6 +5,7 @@ extern crate regex;
 #[macro_use] extern crate lazy_static;
 
 use futures::future::FutureResult;
+use hyper::StatusCode;
 use hyper::server::{Http, Request, Response, Service};
 use regex::Regex;
 
@@ -27,8 +28,10 @@ impl Service for HelloWorld {
                     lazy_static! {
                         static ref GREETING_RE: Regex = Regex::new(r"^/greeting/([a-z]+)$").unwrap();
                     }
-                    let cap = GREETING_RE.captures(path).unwrap();
-                    Response::new().with_body(format!("Hello, {}", &cap[1]))
+                    match GREETING_RE.captures(path) {
+                        Some(cap) => Response::new().with_body(format!("Hello, {}", &cap[1])),
+                        None => Response::new().with_status(StatusCode::NotFound).with_body("404 Not Found\n")
+                    }
                 }
             }
         )

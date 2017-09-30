@@ -32,9 +32,14 @@ if (cluster.isMaster) {
 
         default: {
             match = greetingRe.exec(req.url);
-            res.statusCode = 200;
-            res.statusMessage = 'OK';
-            res.write("Hello, " + match[1]);
+            if (match) {
+              res.statusCode = 200;
+              res.statusMessage = 'OK';
+              res.write("Hello, " + match[1]);
+            } else {
+              res.statusCode = 404;
+              res.write('Not found');
+            }
         }
     }
 
