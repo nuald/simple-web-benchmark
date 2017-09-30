@@ -48,7 +48,7 @@ val LangCmds = Map(
     Some(Array("cargo", "build", "--release")),
     false),
   "rust_rocket" -> Cmd(
-    Array("ROCKET_ENV=production", "cargo", "run", "--release"),
+    Array("cargo", "run", "--release"),
     "Rust/rocket",
     new File("rust/rocket"),
     Some(Array("cargo", "build", "--release")),
@@ -85,7 +85,6 @@ val LangCmds = Map(
     true)
 )
 
-val GoPath = sys.env("GOPATH")
 val LsofPattern = raw"""p(\d+)""".r
 val NetstatPattern = raw"""\s+\w+\s+[\d\.]+:3000\s+[\d\.]+:\d+\s+\w+\s+(\d+)""".r
 val CsvPattern = raw"""([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)""".r
@@ -101,7 +100,7 @@ def print(msg: String): Unit = {
 def runHey(lang: String, isIndex: Boolean): List[Double] = {
   val url = "http://127.0.0.1:3000/" + (if (isIndex) "" else "greeting/hello")
   val suffix = if (isIndex) "index" else "regex"
-  val cmd = s"$GoPath/bin/hey -n 50000 -c 256 -t 10"
+  val cmd = "hey -n 50000 -c 256 -t 10"
   val csvCmd = s"$cmd -o csv $url"
   // First run, for JIT
   csvCmd ! ProcessLogger(_ => ())
@@ -269,7 +268,7 @@ def run(langs: Seq[String], verbose: Boolean): BoxAndWhiskerCategoryDataset = {
 def writeStats(dataset: BoxAndWhiskerCategoryDataset, out: File): Unit = {
   val langAxis = new CategoryAxis("Language")
   val responseAxis = new NumberAxis("Response, ms")
-  responseAxis.setAutoRangeIncludesZero(false)
+  responseAxis.setAutoRangeIncludesZero(true)
   val renderer = new BoxAndWhiskerRenderer()
   renderer.setFillBox(false)
   renderer.setMeanVisible(false)
@@ -278,7 +277,7 @@ def writeStats(dataset: BoxAndWhiskerCategoryDataset, out: File): Unit = {
   plot.setOrientation(PlotOrientation.HORIZONTAL)
 
   val chart = new JFreeChart(plot)
-  ChartUtilities.saveChartAsPNG(out, chart, 800, 350);
+  ChartUtilities.saveChartAsPNG(out, chart, 480, 640);
 }
 
 case class Config(

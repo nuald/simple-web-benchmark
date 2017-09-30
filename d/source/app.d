@@ -15,7 +15,7 @@ void runServer()
     auto settings = new HTTPServerSettings;
     settings.options |= HTTPServerOption.reusePort;
     settings.port = 3000;
-    settings.serverString = null;
+    settings.bindAddresses = ["127.0.0.1"];
     listenHTTP(settings, &handleRequest);
 }
 

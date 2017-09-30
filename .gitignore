@@ -1,6 +1,8 @@
 crystal/server
-rust/Cargo.lock
-rust/target
+rust/hyper/Cargo.lock
+rust/hyper/target/
+rust/rocket/Cargo.lock
+rust/rocket/target/
 scala/project/target/
 scala/target/
 d/.dub/

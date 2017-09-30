@@ -85,7 +85,7 @@ with WSL:
 
 ### Rust
 
-Uses [hyper](https://hyper.rs) HTTP library:
+Please install [Nightly Rust](https://doc.rust-lang.org/1.5.0/book/nightly-rust.html). Sample applications use [hyper](https://hyper.rs) HTTP library and [Rocket](https://rocket.rs/) web framework:
 
     cargo run --release
 
