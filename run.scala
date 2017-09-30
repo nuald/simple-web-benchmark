@@ -12,7 +12,7 @@ import com.sun.jna.platform.win32.Kernel32
 import com.sun.jna.platform.win32.WinNT.HANDLE
 import com.sun.jna.Pointer
 import java.io.File
-import java.net.URL
+import java.net.ConnectException
 import java.text.SimpleDateFormat
 import java.util.{ArrayList, Calendar}
 import org.jfree.chart._
@@ -244,7 +244,12 @@ def run(langs: Seq[String], verbose: Boolean): BoxAndWhiskerCategoryDataset = {
           calculateStats(patternValues), "Pattern URL Request", langCmd.title)
 
         if (langCmd.hasKillSwitch) {
-          new URL("http://127.0.0.1:3001/kill").openConnection
+          try {
+            scala.io.Source.fromURL("http://127.0.0.1:3001/kill").mkString
+          } catch {
+            // ignore 'Connection refused'
+            case _: ConnectException =>
+          }
           // Some VM requires few seconds to fully shutdown
           Thread.sleep(10000)
         } else {
@@ -262,14 +267,15 @@ def run(langs: Seq[String], verbose: Boolean): BoxAndWhiskerCategoryDataset = {
 }
 
 def writeStats(dataset: BoxAndWhiskerCategoryDataset, out: File): Unit = {
-  val xAxis = new CategoryAxis("Language")
-  val yAxis = new NumberAxis("Response, ms")
-  yAxis.setAutoRangeIncludesZero(false)
+  val langAxis = new CategoryAxis("Language")
+  val responseAxis = new NumberAxis("Response, ms")
+  responseAxis.setAutoRangeIncludesZero(false)
   val renderer = new BoxAndWhiskerRenderer()
   renderer.setFillBox(false)
   renderer.setMeanVisible(false)
   renderer.setWhiskerWidth(0.5)
-  val plot = new CategoryPlot(dataset, xAxis, yAxis, renderer)
+  val plot = new CategoryPlot(dataset, langAxis, responseAxis, renderer)
+  plot.setOrientation(PlotOrientation.HORIZONTAL)
 
   val chart = new JFreeChart(plot)
   ChartUtilities.saveChartAsPNG(out, chart, 800, 350);
