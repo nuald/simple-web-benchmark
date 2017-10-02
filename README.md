@@ -10,8 +10,8 @@ OS: Mac OS X 10.12.6 (16G29)
 
 Hardware: MacBook Pro (CPU: 2.3 GHz Intel Core i7, Mem: 16 GB 1600 MHz DDR3)
 
-Software: Go 1.9, Rust 1.22.0-nightly, Scala 2.12.3, Node.js 8.5.0, DMD 2.076.0,
-LDC 1.3.0, Crystal 0.23.1.
+Software: Go 1.9, Rust 1.22.0-nightly, Scala 2.12.3, Node.js 8.6.0, DMD 2.076.0,
+LDC 1.4.0, Crystal 0.23.1.
 
 ![](results/mac.png?raw=true)
 

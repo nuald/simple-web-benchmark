@@ -210,6 +210,7 @@ def run(langs: Seq[String], verbose: Boolean): BoxAndWhiskerCategoryDataset = {
   val dataset = new DefaultBoxAndWhiskerCategoryDataset()
 
   for (lang <- langs) {
+    killProcesses()
     val langCmd = LangCmds(lang)
     langCmd.preRun match {
       case Some(x) => {
@@ -260,7 +261,6 @@ def writeStats(dataset: BoxAndWhiskerCategoryDataset, out: File): Unit = {
 case class Config(
   out: File = new File(DefaultImg),
   verbose: Boolean = false,
-  zkill: Boolean = false,
   langs: Seq[String] = Seq())
 
 val parser = new scopt.OptionParser[Config]("run.scala") {
@@ -270,9 +270,6 @@ val parser = new scopt.OptionParser[Config]("run.scala") {
 
   opt[Unit]("verbose").action( (_, c) =>
     c.copy(verbose = true) ).text("verbose execution output")
-
-  opt[Unit]("zkill").action( (_, c) =>
-    c.copy(zkill = true) ).text("kill zombie processes before tests")
 
   arg[String]("<lang>...").unbounded().required().action( (x, c) =>
     c.copy(langs = c.langs :+ x) ).text("languages to test ('all' for all)")
@@ -289,9 +286,6 @@ def entryPoint(args: Array[String]): Unit = {
         case x: String => List(x)
       }).flatten.filter(LangCmds.contains)
       print("Run tests for: " + list.mkString(" "))
-      if (config.zkill) {
-        killProcesses()
-      }
       val ds = run(list, config.verbose)
       writeStats(ds, config.out)
     }
