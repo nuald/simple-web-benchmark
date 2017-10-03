@@ -45,11 +45,6 @@ the JIT optimizations where it's applicable):
     hey -n 50000 -c 256 -t 10 "http://127.0.0.1:3000/"
     hey -n 50000 -c 256 -t 10 "http://127.0.0.1:3000/greeting/hello"
 
-### Windows Note
-
-Due to various WSL issues with the networking, it's recommended to disable
-Windows Firewall during testing.
-
 ### MacOS Note
 
 By default, MacOS has low limits on the number of concurrent connections, so

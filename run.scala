@@ -37,7 +37,7 @@ val LangCmds = Map(
     Array("go", "run", "main.go"),
     "Go",
     new File("go"),
-    None),
+    Some(Array("go", "build", "main.go"))),
   "rust_hyper" -> Cmd(
     Array("cargo", "run", "--release"),
     "Rust/hyper",
@@ -148,7 +148,7 @@ def killProcesses(): Unit = {
   if (IsWindows) {
     val netstat = Seq("netstat", "-ona")
     netstat.lineStream_!.foreach { (line) => line match {
-        case NetstatPattern(pid) => kill(pid)
+        case NetstatPattern(pid) if pid != "0" => kill(pid)
         case _ =>
       }
     }
