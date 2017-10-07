@@ -18,5 +18,15 @@
              "buildOptions": ["releaseMode", "inline"],
              "dflags-posix-ldc": ["-flto=thin"]
         }
-    }
+    },
+    "configurations": [
+        {
+            "name": "dmd",
+            "targetPath": "build/dmd"
+        },
+        {
+            "name": "ldc",
+            "targetPath": "build/ldc"
+        }
+    ]
 }

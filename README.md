@@ -111,8 +111,8 @@ If ldc2 executable is not in path, please use the fully qualified path name.
 
 Uses [vibe.d](http://vibed.org) framework:
 
-    dub run --compiler=dmd --build=release --force
-    dub run --compiler=ldc2 --build=release --force
+    dub run --compiler=dmd --build=release --config=dmd
+    dub run --compiler=ldc2 --build=release --config=ldc
 
 ### Scala
 

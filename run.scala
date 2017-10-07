@@ -59,15 +59,15 @@ val LangCmds = Map(
     new File("nodejs"),
     None),
   "ldc2" -> Cmd(
-    Array("dub", "run", "--compiler=ldc2", "--build=release"),
+    Array("dub", "run", "--compiler=ldc2", "--build=release", "--config=ldc"),
     "D (LDC/vibe.d)",
     new File("d"),
-    Some(Array("dub", "build", "--compiler=ldc2", "--build=release", "--force"))),
+    Some(Array("dub", "build", "--compiler=ldc2", "--build=release", "--config=ldc"))),
   "dmd" -> Cmd(
-    Array("dub", "run", "--compiler=dmd", "--build=release"),
+    Array("dub", "run", "--compiler=dmd", "--build=release", "--config=dmd"),
     "D (DMD/vibe.d)",
     new File("d"),
-    Some(Array("dub", "build", "--compiler=dmd", "--build=release", "--force"))),
+    Some(Array("dub", "build", "--compiler=dmd", "--build=release", "--config=dmd"))),
   "crystal" -> Cmd(
     Array("bash", "-c", "crystal run --release --no-debug server.cr"),
     "Crystal",

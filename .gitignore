@@ -6,5 +6,4 @@ rust/rocket/target/
 scala/project/target/
 scala/target/
 d/.dub/
-d/bin/
-d/dub.selections.json
+d/build/
