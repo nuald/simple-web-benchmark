@@ -34,45 +34,45 @@ case class Cmd(
 
 val LangCmds = Map(
   "go" -> Cmd(
-    Array("go", "run", "main.go"),
+    Array("build/main"),
     "Go",
-    new File("go"),
-    Some(Array("go", "build", "main.go"))),
+    new File("../go"),
+    Some(Array("go", "build", "-o", "build/main", "main.go"))),
   "rust_hyper" -> Cmd(
-    Array("cargo", "run", "--release"),
+    Array("target/release/simple-web-server"),
     "Rust/hyper",
-    new File("rust/hyper"),
+    new File("../rust/hyper"),
     Some(Array("cargo", "build", "--release"))),
   "rust_rocket" -> Cmd(
-    Array("cargo", "run", "--release"),
+    Array("target/release/rust-rocket"),
     "Rust/rocket",
-    new File("rust/rocket"),
+    new File("../rust/rocket"),
     Some(Array("cargo", "build", "--release"))),
   "scala" -> Cmd(
     ShellPrefix ++ Array("sbt", "run"),
     "Scala/Akka",
-    new File("scala"),
+    new File("../scala"),
     Some(ShellPrefix ++ Array("sbt", "compile"))),
   "nodejs" -> Cmd(
     Array("node", "main.js"),
     "Node.js",
-    new File("nodejs"),
+    new File("../nodejs"),
     None),
   "ldc2" -> Cmd(
-    Array("dub", "run", "--compiler=ldc2", "--build=release", "--config=ldc"),
+    Array("build/ldc/vibedtest"),
     "D (LDC/vibe.d)",
-    new File("d"),
+    new File("../d"),
     Some(Array("dub", "build", "--compiler=ldc2", "--build=release", "--config=ldc"))),
   "dmd" -> Cmd(
-    Array("dub", "run", "--compiler=dmd", "--build=release", "--config=dmd"),
+    Array("build/dmd/vibedtest"),
     "D (DMD/vibe.d)",
-    new File("d"),
+    new File("../d"),
     Some(Array("dub", "build", "--compiler=dmd", "--build=release", "--config=dmd"))),
   "crystal" -> Cmd(
-    Array("bash", "-c", "crystal run --release --no-debug server.cr"),
+    Array("bash", "-c", "./server"),
     "Crystal",
-    new File("crystal"),
-    Some(Array("bash", "-c", "crystal build --release --no-debug server.cr")))
+    new File("../crystal"),
+    Some(Array("bash", "-c", "crystal build --release --no-debug -o server server.cr")))
 )
 
 val LsofPattern = raw"""p(\d+)""".r

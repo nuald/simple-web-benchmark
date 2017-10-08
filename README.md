@@ -13,7 +13,7 @@ Hardware: MacBook Pro (CPU: 2.3 GHz Intel Core i7, Mem: 16 GB 1600 MHz DDR3)
 Software: Go 1.9, Rust 1.22.0-nightly, Scala 2.12.3, Node.js 8.6.0, DMD 2.076.0,
 LDC 1.4.0, Crystal 0.23.1.
 
-![](results/mac.png?raw=true)
+![](suite/results/mac.png?raw=true)
 
 ### Windows 10
 
@@ -24,7 +24,7 @@ Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
 Software: Go 1.9, Rust 1.22.0-nightly, Scala 2.12.3, Node.js 8.6.0, DMD 2.076.0,
 LDC 1.4.0, Crystal 0.23.1 (under WSL).
 
-![](results/win.png?raw=true)
+![](suite/results/win.png?raw=true)
 
 ### WSL
 
@@ -35,7 +35,7 @@ Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
 Software: Go 1.9, Rust 1.22.0-nightly, Scala 2.12.3, Node.js 8.6.0, DMD 2.076.0,
 LDC 1.4.0, Crystal 0.23.1.
 
-![](results/wsl.png?raw=true)
+![](suite/results/wsl.png?raw=true)
 
 ## Testing
 
@@ -66,7 +66,7 @@ few kernel parameters tweaks may be required:
 
 Please use the Scala script
 (using [sbt Script runner](http://www.scala-sbt.org/1.x/docs/Scripts.html#sbt+Script+runner))
-to run all the test automatically.
+from the `suite` directory to run all the tests automatically.
 
     Usage: scalas run.scala [options] <lang>...
 
@@ -91,7 +91,7 @@ with WSL:
 
     bash -c "crystal run --release --no-debug server.cr"
 
-Alpine Linux note: please use [crystal-alpine](https://github.com/ysbaddaden/crystal-alpine) packages.
+*Alpine Linux note: please use [crystal-alpine](https://github.com/ysbaddaden/crystal-alpine) packages.*
 
 ### Rust
 
