@@ -91,6 +91,8 @@ with WSL:
 
     bash -c "crystal run --release --no-debug server.cr"
 
+Alpine Linux note: please use [crystal-alpine](https://github.com/ysbaddaden/crystal-alpine) packages.
+
 ### Rust
 
 Please install [Nightly Rust](https://doc.rust-lang.org/1.5.0/book/nightly-rust.html).
