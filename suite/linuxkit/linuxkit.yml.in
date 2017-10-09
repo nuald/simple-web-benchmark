@@ -1,0 +1,61 @@
+kernel:
+  image: nuald/kernel:4.12.14-extra
+  cmdline: "console=tty0 console=ttyS0 console=ttyAMA0 vga=791 %%ROOT%%"
+init:
+  - linuxkit/init:7804129bd06218b72c298139a25698a748d253c6
+  - linuxkit/runc:a1b564248a0d0b118c11e61db9f84ecf41dd2d2a
+  - linuxkit/containerd:417f83f7b8dc1fa36acf90effe44f99c7397480a
+  - nuald/linux-firmware:latest
+onboot:
+  - name: modprobe
+    image: linuxkit/modprobe:69494c187eddc12b3f24e4e0cbd5d3360bda3504
+    command: ["modprobe", "-a", "brcmfmac"]
+%%DHCPCD-LOCAL%%
+services:
+  - name: wpa_supplicant
+    image: nuald/wpa_supplicant:a5cef22bd214b2845f65636bc9cf60d805712fe5-amd64
+    binds:
+     - /etc/wpa_supplicant:/etc/wpa_supplicant
+    command: ["/sbin/wpa_supplicant", "-i", "wlan0", "-c", "/etc/wpa_supplicant/wpa_supplicant.conf"]
+%%DHCPCD-WLAN0%%
+  - name: getty
+    image: linuxkit/getty:bf6872ce0a9f3ab519b3e502cc41ba3958bda2a6
+    env:
+      - INSECURE=true
+    binds:
+      - /etc/resolv.conf:/etc/resolv.conf
+      - /run:/run
+      - /tmp:/tmp
+      - /etc:/hostroot/etc
+      - /usr/bin/ctr:/usr/bin/ctr
+      - /usr/bin/runc:/usr/bin/runc
+      - /containers:/containers
+      - /var/log:/var/log
+      - /dev:/dev
+      - /sys:/sys
+      - /etc/profile.d/run.sh:/etc/profile.d/run.sh
+      - /var:/hostroot/var:rshared,rbind
+    rootfsPropagation: shared
+  - name: swb
+    image: swb
+    command: ["sh", "-c", "/usr/bin/scalas run.scala `cat /hostroot/var/cmd`"]
+    binds:
+      - /var:/hostroot/var
+      - /etc/resolv.conf:/etc/resolv.conf
+files:
+  - path: etc/profile.d/run.sh
+    contents: |
+      run() {
+        ctr t delete $1
+        echo $2 > /hostroot/var/cmd
+        ctr t start $1
+      }
+  - path: etc/wpa_supplicant/wpa_supplicant.conf
+    contents: |
+      network={
+        ssid="%%SSID%%"
+        psk="%%PASSWORD%%"
+      }
+trust:
+  org:
+    - linuxkit

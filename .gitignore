@@ -1,3 +1,4 @@
+.DS_Store
 crystal/server
 d/.dub/
 d/build/
@@ -8,3 +9,4 @@ rust/rocket/Cargo.lock
 rust/rocket/target/
 scala/project/target/
 scala/target/
+suite/linuxkit/build/

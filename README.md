@@ -45,14 +45,6 @@ the JIT optimizations where it's applicable):
     hey -n 50000 -c 256 -t 10 "http://127.0.0.1:3000/"
     hey -n 50000 -c 256 -t 10 "http://127.0.0.1:3000/greeting/hello"
 
-### Linux Note
-
-Some Linux distributions (in particular, Alpine Linux) may have issues with the
-Go compilation due to PIC/PIE enabled by default, in that case, please
-use `-fno-PIC` flag:
-
-    go get -u -ldflags '-extldflags=-fno-PIC' github.com/rakyll/hey
-
 ### MacOS Note
 
 By default, MacOS has low limits on the number of concurrent connections, so
