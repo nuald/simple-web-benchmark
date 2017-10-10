@@ -1,6 +1,6 @@
 kernel:
   image: nuald/kernel:4.12.14-extra
-  cmdline: "console=tty0 console=ttyS0 console=ttyAMA0 vga=791 %%ROOT%%"
+  cmdline: "console=tty0 console=ttyS0 console=ttyAMA0 vga=791 <if (config.usb) >root=/dev/sda1<endif>"
 init:
   - linuxkit/init:7804129bd06218b72c298139a25698a748d253c6
   - linuxkit/runc:a1b564248a0d0b118c11e61db9f84ecf41dd2d2a
@@ -10,14 +10,22 @@ onboot:
   - name: modprobe
     image: linuxkit/modprobe:69494c187eddc12b3f24e4e0cbd5d3360bda3504
     command: ["modprobe", "-a", "brcmfmac"]
-%%DHCPCD-LOCAL%%
+<if (!config.usb) >
+  - name: dhcpcd
+    image: linuxkit/dhcpcd:d4408777ed6b6e6e562a5d4938fd09804324b33e
+    command: ["/sbin/dhcpcd", "--nobackground", "-f", "/dhcpcd.conf", "-1"]
+<endif>
 services:
   - name: wpa_supplicant
     image: nuald/wpa_supplicant:a5cef22bd214b2845f65636bc9cf60d805712fe5-amd64
     binds:
      - /etc/wpa_supplicant:/etc/wpa_supplicant
     command: ["/sbin/wpa_supplicant", "-i", "wlan0", "-c", "/etc/wpa_supplicant/wpa_supplicant.conf"]
-%%DHCPCD-WLAN0%%
+<if (config.usb) >
+  - name: dhcpcd
+    image: linuxkit/dhcpcd:d4408777ed6b6e6e562a5d4938fd09804324b33e
+    command: ["/sbin/dhcpcd", "wlan0"]
+<endif>
   - name: getty
     image: linuxkit/getty:bf6872ce0a9f3ab519b3e502cc41ba3958bda2a6
     env:
@@ -53,8 +61,8 @@ files:
   - path: etc/wpa_supplicant/wpa_supplicant.conf
     contents: |
       network={
-        ssid="%%SSID%%"
-        psk="%%PASSWORD%%"
+        ssid="<config.ssid>"
+        psk="<config.password>"
       }
 trust:
   org:
