@@ -1,0 +1,13 @@
+apply plugin: 'scala'
+apply plugin: 'application'
+
+mainClassName = "lite.WebServer"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.scala-lang:scala-library:2.12.3'
+    compile 'com.typesafe.akka:akka-http_2.12:10.0.10'
+}

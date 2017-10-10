@@ -7,6 +7,6 @@ rust/hyper/Cargo.lock
 rust/hyper/target/
 rust/rocket/Cargo.lock
 rust/rocket/target/
-scala/project/target/
-scala/target/
+scala/.gradle/
+scala/build/
 suite/linuxkit/build/

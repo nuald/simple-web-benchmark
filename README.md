@@ -58,30 +58,27 @@ few kernel parameters tweaks may be required:
 
 Please use the Scala script
 (using [sbt Script runner](http://www.scala-sbt.org/1.x/docs/Scripts.html#sbt+Script+runner))
-from the `suite` directory to run all the tests automatically.
+to run all the tests automatically.
 
-    Usage: scalas run.scala [options] <lang>...
+    Usage: scalas suite/run.scala [options] <lang>...
 
       -o, --out <file>  image file to generate (result.png by default)
       --verbose         verbose execution output
       <lang>...         languages to test ('all' for all)
 
-    The following languages are supported: rust, crystal, nodejs, go, scala, dmd, ldc2.
+    The following languages are supported: rust_hyper, rust_rocket, crystal, nodejs, go, scala, dmd, ldc2.
 
 ## Usage
 
-Please change the required directory before running the server.
-
 ### Go
 
-    go run main.go
+    go run go/main.go
 
 ### Crystal
 
-Using [Crystal](https://crystal-lang.org/docs/installation/) in a way that is compatible
-with WSL:
+Using [Crystal](https://crystal-lang.org/docs/installation/):
 
-    bash -c "crystal run --release --no-debug server.cr"
+    crystal run --release --no-debug crystal/server.cr
 
 *Alpine Linux note: please use [crystal-alpine](https://github.com/ysbaddaden/crystal-alpine) packages.*
 
@@ -93,7 +90,8 @@ compiler toolchain with `mingw-w64-x86_64-gcc` installed.
 
 Sample applications use [hyper](https://hyper.rs) HTTP library and [Rocket](https://rocket.rs/) web framework:
 
-    cargo run --release
+    cargo run --manifest-path rust/hyper/Cargo.toml --release
+    cargo run --manifest-path rust/rocket/Cargo.toml --release
 
 ### D
 
@@ -105,15 +103,15 @@ If ldc2 executable is not in path, please use the fully qualified path name.
 
 Uses [vibe.d](http://vibed.org) framework:
 
-    dub run --compiler=dmd --build=release --config=dmd
-    dub run --compiler=ldc2 --build=release --config=ldc
+    dub run --root=d --compiler=dmd --build=release --config=dmd
+    dub run --root=d --compiler=ldc2 --build=release --config=ldc
 
 ### Scala
 
 Uses [Akka](http://akka.io) toolkit:
 
-    sbt run
+    gradle -p scala run
 
 ### Node.js
 
-    node main.js
+    node nodejs/main.js

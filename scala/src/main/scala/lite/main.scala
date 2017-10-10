@@ -28,4 +28,3 @@ object WebServer {
     Http().bindAndHandle(route, "localhost", 3000)
   }
 }
-

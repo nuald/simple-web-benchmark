@@ -24,55 +24,45 @@ import scala.sys.process._
 import scala.collection.JavaConverters._
 
 val IsWindows = sys.props("os.name").startsWith("Windows");
-val ShellPrefix: Array[String] = if (IsWindows) Array("cmd", "/C") else Array()
 
 case class Cmd(
   cmd: Array[String],
   title: String,
-  dir: File,
   preRun: Option[Array[String]])
 
 val LangCmds = Map(
   "go" -> Cmd(
-    Array("build/main"),
+    Array("go/build/main"),
     "Go",
-    new File("../go"),
-    Some(Array("go", "build", "-o", "build/main", "main.go"))),
+    Some(Array("go", "build", "-o", "go/build/main", "go/main.go"))),
   "rust_hyper" -> Cmd(
-    Array("target/release/simple-web-server"),
+    Array("rust/hyper/target/release/simple-web-server"),
     "Rust/hyper",
-    new File("../rust/hyper"),
-    Some(Array("cargo", "build", "--release"))),
+    Some(Array("cargo", "build", "--manifest-path rust/hyper/Cargo.toml", "--release"))),
   "rust_rocket" -> Cmd(
-    Array("target/release/rust-rocket"),
+    Array("rust/rocket/target/release/rust-rocket"),
     "Rust/rocket",
-    new File("../rust/rocket"),
-    Some(Array("cargo", "build", "--release"))),
+    Some(Array("cargo", "build", "--manifest-path rust/rocket/Cargo.toml", "--release"))),
   "scala" -> Cmd(
-    ShellPrefix ++ Array("sbt", "run"),
+    Array("gradle", "-p", "scala", "run"),
     "Scala/Akka",
-    new File("../scala"),
-    Some(ShellPrefix ++ Array("sbt", "compile"))),
+    Some(Array("gradle", "-p", "scala", "build"))),
   "nodejs" -> Cmd(
-    Array("node", "main.js"),
+    Array("node", "nodejs/main.js"),
     "Node.js",
-    new File("../nodejs"),
     None),
   "ldc2" -> Cmd(
-    Array("build/ldc/vibedtest"),
+    Array("d/build/ldc/vibedtest"),
     "D (LDC/vibe.d)",
-    new File("../d"),
-    Some(Array("dub", "build", "--compiler=ldc2", "--build=release", "--config=ldc"))),
+    Some(Array("dub", "build", "--root=d", "--compiler=ldc2", "--build=release", "--config=ldc"))),
   "dmd" -> Cmd(
-    Array("build/dmd/vibedtest"),
+    Array("d/build/dmd/vibedtest"),
     "D (DMD/vibe.d)",
-    new File("../d"),
-    Some(Array("dub", "build", "--compiler=dmd", "--build=release", "--config=dmd"))),
+    Some(Array("dub", "build", "--root=d", "--compiler=dmd", "--build=release", "--config=dmd"))),
   "crystal" -> Cmd(
-    Array("bash", "-c", "./server"),
+    Array("bash", "-c", "./crystal/server"),
     "Crystal",
-    new File("../crystal"),
-    Some(Array("bash", "-c", "crystal build --release --no-debug -o server server.cr")))
+    Some(Array("bash", "-c", "crystal build --release --no-debug -o crystal/server crystal/server.cr")))
 )
 
 val LsofPattern = raw"""p(\d+)""".r
@@ -193,9 +183,9 @@ def pid(proc: java.lang.Process): Long = {
   }
 }
 
-def getProcessId(procCmd: Array[String], dir: File): Option[String] = {
+def getProcessId(procCmd: Array[String]): Option[String] = {
   for (i <- 1 to Attempts) {
-    val procId = pid(Runtime.getRuntime.exec(procCmd, null, dir)).toString
+    val procId = pid(Runtime.getRuntime.exec(procCmd)).toString
     print(s"with PID: $procId")
     Thread.sleep(10000)
     // ldc2 crashes sometimes, the reason is unknown, but restart helps
@@ -215,13 +205,13 @@ def run(langs: Seq[String], verbose: Boolean): BoxAndWhiskerCategoryDataset = {
     langCmd.preRun match {
       case Some(x) => {
         print(x.mkString(" "))
-        Runtime.getRuntime.exec(x, null, langCmd.dir).waitFor
+        Runtime.getRuntime.exec(x).waitFor
       }
       case None =>
     }
     val procCmd = langCmd.cmd
     print(procCmd.mkString(" "))
-    getProcessId(procCmd, langCmd.dir) match {
+    getProcessId(procCmd) match {
       case Some(processId) => {
         val indexValues = runHey(lang, true)
         val langTitle = lang.capitalize
@@ -263,7 +253,7 @@ case class Config(
   verbose: Boolean = false,
   langs: Seq[String] = Seq())
 
-val parser = new scopt.OptionParser[Config]("run.scala") {
+val parser = new scopt.OptionParser[Config]("scalas suite/run.scala") {
   opt[File]('o', "out").optional().valueName("<file>").
     action( (x, c) => c.copy(out = x) ).
     text(s"image file to generate ($DefaultImg by default)")
