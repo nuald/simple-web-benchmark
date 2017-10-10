@@ -24,6 +24,8 @@ import scala.sys.process._
 import scala.collection.JavaConverters._
 
 val IsWindows = sys.props("os.name").startsWith("Windows");
+val Ext = if (IsWindows) ".exe" else ""
+val ShellPrefix: Array[String] = if (IsWindows) Array("cmd", "/C") else Array()
 
 case class Cmd(
   cmd: Array[String],
@@ -32,37 +34,37 @@ case class Cmd(
 
 val LangCmds = Map(
   "go" -> Cmd(
-    Array("go/build/main"),
+    Array(s"go/build/main${Ext}"),
     "Go",
-    Some(Array("go", "build", "-o", "go/build/main", "go/main.go"))),
+    Some(Array("go", "build", "-o", s"go/build/main${Ext}", "go/main.go"))),
   "rust_hyper" -> Cmd(
-    Array("rust/hyper/target/release/simple-web-server"),
+    Array(s"rust/hyper/target/release/simple-web-server${Ext}"),
     "Rust/hyper",
     Some(Array("cargo", "build", "--manifest-path rust/hyper/Cargo.toml", "--release"))),
   "rust_rocket" -> Cmd(
-    Array("rust/rocket/target/release/rust-rocket"),
+    Array(s"rust/rocket/target/release/rust-rocket${Ext}"),
     "Rust/rocket",
     Some(Array("cargo", "build", "--manifest-path rust/rocket/Cargo.toml", "--release"))),
   "scala" -> Cmd(
-    Array("gradle", "-p", "scala", "run"),
+    ShellPrefix ++ Array("gradle", "-p", "scala", "run"),
     "Scala/Akka",
-    Some(Array("gradle", "-p", "scala", "build"))),
+    Some(ShellPrefix ++ Array("gradle", "-p", "scala", "build"))),
   "nodejs" -> Cmd(
     Array("node", "nodejs/main.js"),
     "Node.js",
     None),
   "ldc2" -> Cmd(
-    Array("d/build/ldc/vibedtest"),
+    Array(s"d/build/ldc/vibedtest${Ext}"),
     "D (LDC/vibe.d)",
     Some(Array("dub", "build", "--root=d", "--compiler=ldc2", "--build=release", "--config=ldc"))),
   "dmd" -> Cmd(
-    Array("d/build/dmd/vibedtest"),
+    Array(s"d/build/dmd/vibedtest${Ext}"),
     "D (DMD/vibe.d)",
     Some(Array("dub", "build", "--root=d", "--compiler=dmd", "--build=release", "--config=dmd"))),
   "crystal" -> Cmd(
-    Array("bash", "-c", "./crystal/server"),
+    Array("bash", "-c", s"./crystal/server${Ext}"),
     "Crystal",
-    Some(Array("bash", "-c", "crystal build --release --no-debug -o crystal/server crystal/server.cr")))
+    Some(Array("bash", "-c", s"crystal build --release --no-debug -o crystal/server${Ext} crystal/server.cr")))
 )
 
 val LsofPattern = raw"""p(\d+)""".r
