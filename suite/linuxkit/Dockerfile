@@ -24,13 +24,18 @@ RUN wget https://raw.githubusercontent.com/foundweekends/conscript/master/setup.
 RUN sh setup.sh
 RUN ln -sf /root/.conscript/bin/cs /usr/bin/cs
 
-# Install sbt
+# Install scalas
 RUN cs sbt/sbt
-RUN ln -sf /root/.conscript/bin/xsbt /usr/bin/sbt
 RUN ln -sf /root/.conscript/bin/scalas /usr/bin/scalas
+
+# Install gradle
+RUN wget https://services.gradle.org/distributions/gradle-4.2.1-bin.zip -O /root/gradle-4.2.1-bin.zip
+RUN unzip /root/gradle-4.2.1-bin.zip
+RUN rm /root/gradle-4.2.1-bin.zip
+RUN ln -sf /root/gradle-4.2.1/bin/gradle /usr/bin/gradle
 
 RUN rm -rf /var/cache/apk/*
 
-WORKDIR "/var/swb/suite"
-ENTRYPOINT ["/usr/bin/scalas", "run.scala"]
+WORKDIR "/var/swb"
+ENTRYPOINT []
 LABEL org.mobyproject.config='{"binds": ["/etc/resolv.conf:/etc/resolv.conf"]}'

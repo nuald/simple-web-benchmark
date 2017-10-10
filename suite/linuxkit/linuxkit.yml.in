@@ -38,7 +38,7 @@ services:
     rootfsPropagation: shared
   - name: swb
     image: swb
-    command: ["sh", "-c", "/usr/bin/scalas run.scala `cat /hostroot/var/cmd`"]
+    command: ["sh", "-c", "`cat /hostroot/var/cmd`"]
     binds:
       - /var:/hostroot/var
       - /etc/resolv.conf:/etc/resolv.conf
@@ -47,7 +47,7 @@ files:
     contents: |
       run() {
         ctr t delete $1
-        echo $2 > /hostroot/var/cmd
+        echo $@ | tr ' ' '\n' | tail -n +2 | tr '\n' ' ' > /hostroot/var/cmd
         ctr t start $1
       }
   - path: etc/wpa_supplicant/wpa_supplicant.conf
