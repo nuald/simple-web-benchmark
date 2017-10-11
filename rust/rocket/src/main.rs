@@ -1,6 +1,7 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
 
+extern crate libc;
 extern crate rocket;
 
 use rocket::config::{Config, Environment};
@@ -17,7 +18,7 @@ fn greeting(name: &RawStr) -> String {
 }
 
 fn main() {
-
+    println!("Master {} is running", unsafe { libc::getpid() });
     let config = Config::build(Environment::Staging)
         .address("127.0.0.1")
         .port(3000)

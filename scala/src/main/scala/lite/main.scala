@@ -5,9 +5,12 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
+import jnr.posix.POSIXFactory
 
 object WebServer {
   def main(args: Array[String]) {
+    val posix = POSIXFactory.getPOSIX()
+    println(s"Master ${ posix.getpid() } is running")
 
     implicit val system = ActorSystem("my-system")
     implicit val materializer = ActorMaterializer()

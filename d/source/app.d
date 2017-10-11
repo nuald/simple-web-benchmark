@@ -1,10 +1,13 @@
+import core.thread;
 import vibe.d;
 import std.regex;
+import std.stdio;
 
 auto reg = ctRegex!"^/greeting/([a-z]+)$";
 
 void main()
 {
+    writefln("Master %d is running", getpid());
     setupWorkerThreads(logicalProcessorCount + 1);
     runWorkerTaskDist(&runServer);
     runApplication();

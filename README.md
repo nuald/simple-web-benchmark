@@ -110,7 +110,7 @@ Uses [vibe.d](http://vibed.org) framework:
 
 Uses [Akka](http://akka.io) toolkit:
 
-    gradle -p scala run
+    gradle -p scala run --info
 
 ### Node.js
 

@@ -6,3 +6,4 @@ authors = ["Roman Proskuryakov <humbug@deeptown.org>"]
 [dependencies]
 rocket = "0.3.2"
 rocket_codegen = "0.3.2"
+libc = "0.2"

@@ -1,5 +1,6 @@
 extern crate futures;
 extern crate hyper;
+extern crate libc;
 extern crate regex;
 
 #[macro_use] extern crate lazy_static;
@@ -39,6 +40,7 @@ impl Service for HelloWorld {
 }
 
 fn main() {
+    println!("Master {} is running", unsafe { libc::getpid() });
     let addr = "127.0.0.1:3000".parse().unwrap();
     let server = Http::new().bind(&addr, || Ok(HelloWorld)).unwrap();
     server.run().unwrap();

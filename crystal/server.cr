@@ -9,6 +9,8 @@ uname = Process.run("uname", {"-or"}) do |proc|
 end
 isWSL = uname =~ /.*-Microsoft GNU\/Linux/
 
+puts "Master #{Process.pid} is running"
+
 numThread.times do |i|
   fork do
     puts "Worker #{Process.pid} started"

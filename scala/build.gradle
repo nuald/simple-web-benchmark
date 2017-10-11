@@ -10,4 +10,5 @@ repositories {
 dependencies {
     compile 'org.scala-lang:scala-library:2.12.3'
     compile 'com.typesafe.akka:akka-http_2.12:10.0.10'
+    compile 'com.github.jnr:jnr-posix:3.0.41'
 }
