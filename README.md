@@ -84,7 +84,7 @@ Using [Crystal](https://crystal-lang.org/docs/installation/):
 
 ### Rust
 
-Please install [Nightly Rust](https://doc.rust-lang.org/1.5.0/book/nightly-rust.html).
+Please install [Nightly Rust](https://github.com/rust-lang-nursery/rustup.rs#working-with-nightly-rust).
 Windows also requires [MinGW](https://github.com/rust-lang/rust#mingw)
 compiler toolchain with `mingw-w64-x86_64-gcc` installed.
 
