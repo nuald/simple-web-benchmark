@@ -5,6 +5,7 @@ scalaVersion := "2.12.3"
 scalacOptions ++= Seq("-deprecation", "-feature")
 libraryDependencies += "org.jfree" % "jfreechart" % "1.0.19"
 libraryDependencies += "net.java.dev.jna" % "jna-platform" % "4.5.0"
+libraryDependencies += "com.github.jnr" % "jnr-posix" % "3.0.41"
 libraryDependencies += "com.github.scopt" %% "scopt" % "3.7.0"
 */
 
@@ -14,6 +15,7 @@ import com.sun.jna.Pointer
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.{ArrayList, Calendar}
+import jnr.posix.POSIXFactory
 import org.jfree.chart._
 import org.jfree.chart.axis._
 import org.jfree.chart.labels._
@@ -26,6 +28,7 @@ import scala.collection.JavaConverters._
 val IsWindows = sys.props("os.name").startsWith("Windows");
 val Ext = if (IsWindows) ".exe" else ""
 val ShellPrefix: Array[String] = if (IsWindows) Array("cmd", "/C") else Array()
+val Posix = POSIXFactory.getPOSIX()
 
 case class Cmd(
   cmd: Array[String],
@@ -117,37 +120,37 @@ def calculateStats(lazyValues: List[Double]): BoxAndWhiskerItem = {
     null, null, null)
 }
 
-def kill(pid: String): Unit = {
+def kill(pid: Long): Unit = {
   if (IsWindows) {
-    Seq("taskkill", "/t", "/f", "/pid", pid).!
+    Seq("taskkill", "/t", "/f", "/pid", pid.toString).!
   } else {
-    Seq("pkill", "-KILL", "-P", pid).!
-    // pkill doesn't always work
-    Seq("kill", "-9", pid).!
+    Posix.kill(-pid, 9)
+    // process group kill doesn't always work
+    Posix.kill(pid, 9)
   }
 }
 
-def isAlive(pid: String): Boolean = {
-  val output = if (IsWindows) {
-    Seq("tasklist", "/FI", s"PID eq $pid") lineStream_! ProcessLogger(line => ())
+def isAlive(pid: Long): Boolean = {
+  if (IsWindows) {
+    val output = Seq("tasklist", "/FI", s"PID eq $pid") lineStream_! ProcessLogger(line => ())
+    output.exists(_.contains(pid))
   } else {
-    Seq("ps", "-p", pid) lineStream_! ProcessLogger(line => ())
+    Posix.kill(pid, 0) == 0
   }
-  output.exists(_.contains(pid))
 }
 
 def killProcesses(): Unit = {
   if (IsWindows) {
     val netstat = Seq("netstat", "-ona")
     netstat.lineStream_!.foreach { (line) => line match {
-        case NetstatPattern(pid) if pid != "0" => kill(pid)
+        case NetstatPattern(pid) if pid != "0" => kill(pid.toLong)
         case _ =>
       }
     }
   } else {
     val lsof = Seq("lsof", "-Fp", "-i", ":3000")
     lsof.lineStream_!.foreach { (line) => line match {
-        case LsofPattern(pid) => kill(pid)
+        case LsofPattern(pid) => kill(pid.toLong)
         case _ =>
       }
     }
@@ -185,9 +188,9 @@ def pid(proc: java.lang.Process): Long = {
   }
 }
 
-def getProcessId(procCmd: Array[String]): Option[String] = {
+def getProcessId(procCmd: Array[String]): Option[Long] = {
   for (i <- 1 to Attempts) {
-    val procId = pid(Runtime.getRuntime.exec(procCmd)).toString
+    val procId = pid(Runtime.getRuntime.exec(procCmd))
     print(s"with PID: $procId")
     Thread.sleep(10000)
     // ldc2 crashes sometimes, the reason is unknown, but restart helps
