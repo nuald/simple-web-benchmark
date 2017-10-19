@@ -6,68 +6,68 @@ scalacOptions ++= Seq("-deprecation", "-feature")
 libraryDependencies += "org.jfree" % "jfreechart" % "1.0.19"
 libraryDependencies += "net.java.dev.jna" % "jna-platform" % "4.5.0"
 libraryDependencies += "com.github.jnr" % "jnr-posix" % "3.0.41"
-libraryDependencies += "com.github.jnr" % "jnr-process" % "0.2"
 libraryDependencies += "com.github.scopt" %% "scopt" % "3.7.0"
 */
 
+import com.sun.jna.platform.win32.Kernel32
+import com.sun.jna.platform.win32.WinNT.HANDLE
+import com.sun.jna.Pointer
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.{ArrayList, Calendar}
 import jnr.posix.POSIXFactory
-import jnr.process.ProcessBuilder
 import org.jfree.chart._
 import org.jfree.chart.axis._
 import org.jfree.chart.labels._
 import org.jfree.chart.plot._
 import org.jfree.chart.renderer.category._
 import org.jfree.data.statistics._
-import scala.io.Source
 import scala.sys.process._
 import scala.collection.JavaConverters._
 
 val IsWindows = sys.props("os.name").startsWith("Windows");
 val Ext = if (IsWindows) ".exe" else ""
-val ShellPrefix: List[String] = if (IsWindows) List("cmd", "/C") else List()
+val ShellPrefix: Array[String] = if (IsWindows) Array("cmd", "/C") else Array()
 val Posix = POSIXFactory.getPOSIX()
 
 case class Cmd(
-  cmd: List[String],
+  cmd: Array[String],
   title: String,
-  preRun: Option[List[String]])
+  preRun: Option[Array[String]])
 
 val LangCmds = Map(
   "go" -> Cmd(
-    List(s"go/build/main${Ext}"),
+    Array(s"go/build/main${Ext}"),
     "Go",
-    Some(List("go", "build", "-o", s"go/build/main${Ext}", "go/main.go"))),
+    Some(Array("go", "build", "-o", s"go/build/main${Ext}", "go/main.go"))),
   "rust_hyper" -> Cmd(
-    List(s"rust/hyper/target/release/simple-web-server${Ext}"),
+    Array(s"rust/hyper/target/release/simple-web-server${Ext}"),
     "Rust/hyper",
-    Some(List("cargo", "build", "--manifest-path", "rust/hyper/Cargo.toml", "--release"))),
+    Some(Array("cargo", "build", "--manifest-path rust/hyper/Cargo.toml", "--release"))),
   "rust_rocket" -> Cmd(
-    List(s"rust/rocket/target/release/rust-rocket${Ext}"),
+    Array(s"rust/rocket/target/release/rust-rocket${Ext}"),
     "Rust/rocket",
-    Some(List("cargo", "build", "--manifest-path", "rust/rocket/Cargo.toml", "--release"))),
+    Some(Array("cargo", "build", "--manifest-path rust/rocket/Cargo.toml", "--release"))),
   "scala" -> Cmd(
-    ShellPrefix ++ List("gradle", "-p", "scala", "run"),
+    ShellPrefix ++ Array("gradle", "-p", "scala", "run"),
     "Scala/Akka",
-    Some(ShellPrefix ++ List("gradle", "-p", "scala", "build"))),
+    Some(ShellPrefix ++ Array("gradle", "-p", "scala", "build"))),
   "nodejs" -> Cmd(
-    List("node", "nodejs/main.js"),
+    Array("node", "nodejs/main.js"),
     "Node.js",
     None),
   "ldc2" -> Cmd(
-    List(s"d/build/ldc/vibedtest${Ext}"),
+    Array(s"d/build/ldc/vibedtest${Ext}"),
     "D (LDC/vibe.d)",
-    Some(List("dub", "build", "--root=d", "--compiler=ldc2", "--build=release", "--config=ldc"))),
+    Some(Array("dub", "build", "--root=d", "--compiler=ldc2", "--build=release", "--config=ldc"))),
   "dmd" -> Cmd(
-    List(s"d/build/dmd/vibedtest${Ext}"),
+    Array(s"d/build/dmd/vibedtest${Ext}"),
     "D (DMD/vibe.d)",
-    Some(List("dub", "build", "--root=d", "--compiler=dmd", "--build=release", "--config=dmd"))),
+    Some(Array("dub", "build", "--root=d", "--compiler=dmd", "--build=release", "--config=dmd"))),
   "crystal" -> Cmd(
-    List("bash", "-c", s"./crystal/server${Ext}"),
+    Array("bash", "-c", s"./crystal/server${Ext}"),
     "Crystal",
-    Some(List("bash", "-c", s"crystal build --release --no-debug -o crystal/server${Ext} crystal/server.cr")))
+    Some(Array("bash", "-c", s"crystal build --release --no-debug -o crystal/server${Ext} crystal/server.cr")))
 )
 
 val LsofPattern = raw"""p(\d+)""".r
@@ -157,16 +157,45 @@ def killProcesses(): Unit = {
   }
 }
 
-def getProcessId(procCmd: List[String]): Option[Long] = {
-  for (i <- 1 to Attempts) {
-    val procId = new ProcessBuilder(procCmd.asJava).start().getPid()
-    print(s"with PID: $procId")
-    if (procId > 0) {
-      Thread.sleep(10000)
-      // ldc2 crashes sometimes, the reason is unknown, but restart helps
-      if (isAlive(procId)) {
-        return Some(procId)
+def getPrivateField(proc: Any, name: String): Long = {
+  val pidField = proc.getClass.getDeclaredField(name)
+  pidField.synchronized {
+    pidField.setAccessible(true)
+    try {
+      pidField.getLong(proc)
+    } finally {
+      pidField.setAccessible(false)
+    }
+  }
+}
+
+def pid(proc: java.lang.Process): Long = {
+  proc match {
+    case unixProc: Any
+      if unixProc.getClass.getName == "java.lang.UNIXProcess" => {
+        getPrivateField(unixProc, "pid")
       }
+    case windowsProc: Any
+      if windowsProc.getClass.getName == "java.lang.ProcessImpl" => {
+        val processHandle = getPrivateField(windowsProc, "handle")
+        val kernel = Kernel32.INSTANCE
+        val winHandle = new HANDLE()
+        winHandle.setPointer(Pointer.createConstant(processHandle))
+        kernel.GetProcessId(winHandle)
+      }
+    case _ => throw new RuntimeException(
+      "Cannot get PID of a " + proc.getClass.getName)
+  }
+}
+
+def getProcessId(procCmd: Array[String]): Option[Long] = {
+  for (i <- 1 to Attempts) {
+    val procId = pid(Runtime.getRuntime.exec(procCmd))
+    print(s"with PID: $procId")
+    Thread.sleep(10000)
+    // ldc2 crashes sometimes, the reason is unknown, but restart helps
+    if (isAlive(procId)) {
+      return Some(procId)
     }
   }
   None
@@ -181,11 +210,7 @@ def run(langs: Seq[String], verbose: Boolean): BoxAndWhiskerCategoryDataset = {
     langCmd.preRun match {
       case Some(x) => {
         print(x.mkString(" "))
-        val process = new ProcessBuilder(x.asJava).start()
-        process.waitFor()
-        if (verbose) {
-          print(Source.fromInputStream(process.getErrorStream()).mkString)
-        }
+        Runtime.getRuntime.exec(x).waitFor
       }
       case None =>
     }
