@@ -82,6 +82,8 @@ Using [Crystal](https://crystal-lang.org/docs/installation/):
 
 *Alpine Linux note: please use [crystal-alpine](https://github.com/ysbaddaden/crystal-alpine) packages.*
 
+*macOS note: linking with OpenSSL may require [PKG_CONFIG_PATH changes](https://github.com/crystal-lang/crystal/issues/4745).*
+
 ### Rust
 
 Please install [Nightly Rust](https://github.com/rust-lang-nursery/rustup.rs#working-with-nightly-rust).

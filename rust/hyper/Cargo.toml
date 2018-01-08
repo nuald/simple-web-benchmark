@@ -4,8 +4,8 @@ version = "0.0.1"
 authors = ["Alexander Slesarev <alex.slesarev@gmail.com>"]
 
 [dependencies]
-regex = "0.2.2"
-lazy_static = "0.2.8"
-futures = "0.1.16"
-hyper = "0.11.2"
-libc = "0.2"
+regex = "0.2.5"
+lazy_static = "1.0.0"
+futures = "0.1.17"
+hyper = "0.11.11"
+libc = "0.2.35"
