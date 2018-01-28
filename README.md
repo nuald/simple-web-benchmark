@@ -120,6 +120,6 @@ Uses [Akka](http://akka.io) toolkit:
 
 ### PHP
 
-Uses [Swoole](https://github.com/swoole/swoole-src) extension:
+Uses [Swoole](https://www.swoole.co.uk/) extension:
 
     php -c php/php.ini php/main.php
