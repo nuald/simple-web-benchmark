@@ -6,12 +6,12 @@ A simple web benchmark of Go, Crystal, Rust, D, Scala, Node.js and Crystal.
 
 ### MacOS
 
-OS: Mac OS X 10.12.6 (16G29)
+OS: Mac OS X 10.13.3
 
 Hardware: MacBook Pro (CPU: 2.3 GHz Intel Core i7, Mem: 16 GB 1600 MHz DDR3)
 
-Software: Go 1.9, Rust 1.22.0-nightly, Scala 2.12.3, Node.js 8.6.0, DMD 2.076.0,
-LDC 1.4.0, Crystal 0.23.1.
+Software: Go 1.9.3, Rust 1.25.0-nightly, Scala 2.12.4, Node.js 9.4.0, DMD 2.078.1,
+LDC 1.7.0, Crystal 0.24.1, PHP 7.1.13.
 
 ![](suite/results/mac.png?raw=true)
 
@@ -117,3 +117,9 @@ Uses [Akka](http://akka.io) toolkit:
 ### Node.js
 
     node nodejs/main.js
+
+### PHP
+
+Uses [Swoole](https://github.com/swoole/swoole-src) extension:
+
+    php -c php/php.ini php/main.php

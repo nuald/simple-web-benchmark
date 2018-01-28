@@ -67,7 +67,11 @@ val LangCmds = Map(
   "crystal" -> Cmd(
     Array("bash", "-c", s"./crystal/server${Ext}"),
     "Crystal",
-    Some(Array("bash", "-c", s"crystal build --release --no-debug -o crystal/server${Ext} crystal/server.cr")))
+    Some(Array("bash", "-c", s"crystal build --release --no-debug -o crystal/server${Ext} crystal/server.cr"))),
+  "php" -> Cmd(
+    Array("php", "-c", "php/php.ini", "php/main.php"),
+    "PHP/Swoole",
+    None)
 )
 
 val LsofPattern = raw"""p(\d+)""".r
