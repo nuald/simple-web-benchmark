@@ -1,11 +1,11 @@
 #!/usr/bin/env scalas
 
 /***
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.4"
 scalacOptions ++= Seq("-deprecation", "-feature")
-libraryDependencies += "org.jfree" % "jfreechart" % "1.0.19"
-libraryDependencies += "net.java.dev.jna" % "jna-platform" % "4.5.0"
-libraryDependencies += "com.github.jnr" % "jnr-posix" % "3.0.41"
+libraryDependencies += "org.jfree" % "jfreechart" % "1.5.0"
+libraryDependencies += "net.java.dev.jna" % "jna-platform" % "4.5.1"
+libraryDependencies += "com.github.jnr" % "jnr-posix" % "3.0.43"
 libraryDependencies += "com.github.scopt" %% "scopt" % "3.7.0"
 */
 
@@ -67,7 +67,11 @@ val LangCmds = Map(
   "crystal" -> Cmd(
     Array("bash", "-c", s"./crystal/server${Ext}"),
     "Crystal",
-    Some(Array("bash", "-c", s"crystal build --release --no-debug -o crystal/server${Ext} crystal/server.cr")))
+    Some(Array("bash", "-c", s"crystal build --release --no-debug -o crystal/server${Ext} crystal/server.cr"))),
+  "php" -> Cmd(
+    Array("php", "-c", "php/php.ini", "php/main.php"),
+    "PHP/Swoole",
+    None)
 )
 
 val LsofPattern = raw"""p(\d+)""".r
@@ -250,7 +254,7 @@ def writeStats(dataset: BoxAndWhiskerCategoryDataset, out: File): Unit = {
   plot.setOrientation(PlotOrientation.HORIZONTAL)
 
   val chart = new JFreeChart(plot)
-  ChartUtilities.saveChartAsPNG(out, chart, 480, 640);
+  ChartUtils.saveChartAsPNG(out, chart, 480, 640);
 }
 
 case class Config(

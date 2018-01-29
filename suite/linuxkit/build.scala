@@ -1,7 +1,7 @@
 #!/usr/bin/env scalas
 
 /***
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.4"
 scalacOptions ++= Seq("-deprecation", "-feature")
 libraryDependencies += "com.github.scopt" %% "scopt" % "3.7.0"
 libraryDependencies += "org.clapper" %% "scalasti" % "3.0.1"
