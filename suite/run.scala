@@ -25,7 +25,7 @@ import org.jfree.data.statistics._
 import scala.sys.process._
 import scala.collection.JavaConverters._
 
-val IsWindows = sys.props("os.name").startsWith("Windows");
+val IsWindows = sys.props("os.name").startsWith("Windows")
 val Ext = if (IsWindows) ".exe" else ""
 val ShellPrefix: Array[String] = if (IsWindows) Array("cmd", "/C") else Array()
 val Posix = POSIXFactory.getPOSIX()
