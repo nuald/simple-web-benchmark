@@ -1,9 +1,9 @@
 <?php
 
 $http = new swoole_http_server('127.0.0.1', 3000);
+$pattern = "/\/greeting\/([a-z]+)/";
 
 $http->on('request', function ($request, $response) {
-    $pattern = "/\/greeting\/([a-z]+)/";
     $response->header('Content-Type', 'text/plain; charset=utf-8');
     $uri = $request->server['request_uri'];
     if ($uri == '/') {
