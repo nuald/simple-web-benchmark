@@ -128,3 +128,10 @@ Uses standalone web server and [Swoole](https://www.swoole.co.uk/) extension:
 ### Python
 
     python3 python/main.py
+
+### Java
+
+Uses [Sprint Boot](https://projects.spring.io/spring-boot/) project:
+
+    gradle -p java build
+    java -jar -Dserver.port=3000 java/build/libs/java-0.0.1-SNAPSHOT.jar
