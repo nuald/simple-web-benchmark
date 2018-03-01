@@ -124,3 +124,7 @@ Uses standalone web server and [Swoole](https://www.swoole.co.uk/) extension:
 
     php -S 127.0.0.1:3000 php/bare/main.php
     php -c php/swoole/php.ini php/swoole/main.php
+
+### Python
+
+    python3 python/main.py
