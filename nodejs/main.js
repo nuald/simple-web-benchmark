@@ -4,9 +4,18 @@ const http = require('http');
 const numCPUs = require('os').cpus().length;
 
 var greetingRe = new RegExp("^\/greeting\/([a-z]+)$", "i");
+var portRe = new RegExp("^--port=(\\d+)$", "i");
+
+var port = 3000;
+process.argv.forEach((val, index) => {
+  var match = portRe.exec(val);
+  if (match) {
+    port = parseInt(match[1]);
+  }
+});
 
 if (cluster.isMaster) {
-  console.log(`Master ${process.pid} is running`);
+  console.log(`Master ${process.pid} is running on port ${port}`);
 
   // Fork workers.
   for (let i = 0; i < numCPUs; i++) {
@@ -44,7 +53,7 @@ if (cluster.isMaster) {
     }
 
     res.end();
-  }).listen(3000);
+  }).listen(port);
 
   console.log(`Worker ${process.pid} started`);
 }
