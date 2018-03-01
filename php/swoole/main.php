@@ -1,9 +1,12 @@
 <?php
 
-$http = new swoole_http_server('127.0.0.1', 3000);
-$pattern = "/\/greeting\/([a-z]+)/";
+$options = getopt("", ["port::"]);
+$port = array_key_exists("port", $options) ? intval($options["port"]) : 3000;
 
-$http->on('request', function ($request, $response) {
+$http = new swoole_http_server('127.0.0.1', $port);
+$pattern = '/\/greeting\/([a-z]+)/';
+
+$http->on('request', function ($request, $response) use ($pattern) {
     $response->header('Content-Type', 'text/plain; charset=utf-8');
     $uri = $request->server['request_uri'];
     if ($uri == '/') {
@@ -17,6 +20,6 @@ $http->on('request', function ($request, $response) {
 });
 
 $pid = getmypid();
-echo "Master $pid is running", PHP_EOL;
+echo "Master $pid is running on port $port", PHP_EOL;
 
 $http->start();

@@ -120,6 +120,7 @@ Uses [Akka](http://akka.io) toolkit:
 
 ### PHP
 
-Uses [Swoole](https://www.swoole.co.uk/) extension:
+Uses standalone web server and [Swoole](https://www.swoole.co.uk/) extension:
 
-    php -c php/php.ini php/main.php
+    php -S 127.0.0.1:3000 php/bare/main.php
+    php -c php/swoole/php.ini php/swoole/main.php
