@@ -1,8 +1,7 @@
-#![feature(plugin)]
-#![plugin(rocket_codegen)]
+#![feature(proc_macro_hygiene, decl_macro)]
 
 extern crate libc;
-extern crate rocket;
+#[macro_use] extern crate rocket;
 extern crate getopts;
 
 use getopts::Options;
@@ -41,7 +40,7 @@ fn main() {
 
     let config = config_builder.unwrap();
 
-    let app = rocket::custom(config, false);
+    let app = rocket::custom(config);
     app
         .mount("/",
             routes![

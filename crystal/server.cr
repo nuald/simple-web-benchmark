@@ -15,7 +15,7 @@ numThread.times do |i|
   fork do
     puts "Worker #{Process.pid} started"
 
-    server = HTTP::Server.new(3000) do |context|
+    server = HTTP::Server.new do |context|
       context.response.headers["Content-Type"] = "text/plain"
       context.response.status_code = 200
 
@@ -31,9 +31,9 @@ numThread.times do |i|
     end
 
     if isWSL
-      server.listen
+      server.listen(port = 3000)
     else
-      server.listen(reuse_port = true)
+      server.listen(port = 3000, reuse_port = true)
     end
 
   end

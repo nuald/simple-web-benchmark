@@ -1,12 +1,12 @@
 #!/usr/bin/env scalas
 
 /***
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.8"
 scalacOptions ++= Seq("-deprecation", "-feature")
 libraryDependencies += "org.jfree" % "jfreechart" % "1.5.0"
-libraryDependencies += "net.java.dev.jna" % "jna-platform" % "4.5.1"
-libraryDependencies += "com.github.jnr" % "jnr-posix" % "3.0.44"
-libraryDependencies += "com.github.scopt" %% "scopt" % "3.7.0"
+libraryDependencies += "net.java.dev.jna" % "jna-platform" % "5.3.1"
+libraryDependencies += "com.github.jnr" % "jnr-posix" % "3.0.50"
+libraryDependencies += "com.github.scopt" %% "scopt" % "3.7.1"
 */
 
 import com.sun.jna.platform.win32.Kernel32

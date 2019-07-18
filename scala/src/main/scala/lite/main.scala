@@ -8,7 +8,7 @@ import akka.stream.ActorMaterializer
 import jnr.posix.POSIXFactory
 
 object WebServer {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     val posix = POSIXFactory.getPOSIX()
     println(s"Master ${ posix.getpid() } is running")
 

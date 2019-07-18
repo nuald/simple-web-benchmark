@@ -1,47 +1,45 @@
-extern crate futures;
 extern crate hyper;
 extern crate libc;
 extern crate regex;
 
 #[macro_use] extern crate lazy_static;
 
-use futures::future::FutureResult;
 use hyper::StatusCode;
-use hyper::server::{Http, Request, Response, Service};
+use hyper::{Body, Request, Response, Server};
+use hyper::rt::Future;
+use hyper::service::service_fn_ok;
 use regex::Regex;
 
-struct HelloWorld;
-
-impl Service for HelloWorld {
-    // boilerplate hooking up hyper's server types
-    type Request = Request;
-    type Response = Response;
-    type Error = hyper::Error;
-    type Future = FutureResult<Self::Response, Self::Error>;
-
-    fn call(&self, req: Request) -> Self::Future {
-        futures::future::ok(
-            match req.path() {
-                "/" => {
-                    Response::new().with_body("Hello World!")
-                },
-                path => {
-                    lazy_static! {
-                        static ref GREETING_RE: Regex = Regex::new(r"^/greeting/([a-z]+)$").unwrap();
-                    }
-                    match GREETING_RE.captures(path) {
-                        Some(cap) => Response::new().with_body(format!("Hello, {}", &cap[1])),
-                        None => Response::new().with_status(StatusCode::NotFound).with_body("404 Not Found\n")
-                    }
-                }
+fn hello_world(req: Request<Body>) -> Response<Body> {
+    match req.uri().path() {
+        "/" => {
+            Response::new(Body::from("Hello World!"))
+        },
+        path => {
+            lazy_static! {
+                static ref GREETING_RE: Regex = Regex::new(r"^/greeting/([a-z]+)$").unwrap();
             }
-        )
+            match GREETING_RE.captures(path) {
+                Some(cap) => Response::new(Body::from(format!("Hello, {}", &cap[1]))),
+                None => Response::builder()
+                     .status(StatusCode::NOT_FOUND)
+                     .body(Body::from("404 Not Found\n"))
+                     .unwrap()
+            }
+        }
     }
 }
 
 fn main() {
     println!("Master {} is running", unsafe { libc::getpid() });
-    let addr = "127.0.0.1:3000".parse().unwrap();
-    let server = Http::new().bind(&addr, || Ok(HelloWorld)).unwrap();
-    server.run().unwrap();
+    let addr = ([127, 0, 0, 1], 3000).into();
+    let new_svc = || {
+        // service_fn_ok converts our function into a `Service`
+        service_fn_ok(hello_world)
+    };
+    let server = Server::bind(&addr)
+        .serve(new_svc)
+        .map_err(|e| eprintln!("server error: {}", e));
+
+    hyper::rt::run(server);
 }
