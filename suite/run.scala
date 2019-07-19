@@ -78,7 +78,7 @@ val LangCmds = Map(
 
 val LsofPattern = raw"""p(\d+)""".r
 val NetstatPattern = raw"""\s+\w+\s+[\d\.]+:3000\s+[\d\.]+:\d+\s+\w+\s+(\d+)""".r
-val CsvPattern = raw"""([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)""".r
+val CsvPattern = raw"""([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+),(\d+),([\d\.]+)""".r
 val DefaultImg = "result.png"
 val Attempts = 30
 
@@ -102,7 +102,7 @@ def runHey(lang: String, isIndex: Boolean): List[Double] = {
   // Third run, for stats
   val stream = csvCmd lineStream_! ProcessLogger(line => ())
   val values = stream.flatMap { (line) => line match {
-      case CsvPattern(responseTime, dnsLookup, dns, requestWrite, responseDelay, responseRead) => {
+      case CsvPattern(responseTime, dnsLookup, dns, requestWrite, responseDelay, responseRead, statusCode, offset) => {
         Some(responseTime.toDouble * 1000)
       }
       case _ => None
