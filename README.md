@@ -1,6 +1,6 @@
 # Simple Web Benchmark
 
-A simple web benchmark of Go, Crystal, Rust, D, Scala, Java, Node.js, PHP and Crystal.
+A simple web benchmark of Crystal, D, Go, Java, Node.js, PHP, Python, Rust and  Scala.
 
 ## Results
 
@@ -10,7 +10,7 @@ OS: Ubuntu 18.04.2 LTS
 
 Hardware: CPU: 2.6 GHz Intel Core i7, Mem: 8 GB 1333 MHz DDR3
 
-Software: Go 1.10.4, Rust 1.38.0-nightly, Scala 2.12.8, Node.js 12.6.0, DMD 2.087.0, LDC 1.8.0, Crystal 0.29.0, PHP 7.2.19, Java (OpenJDK) 11.0.3.
+Software: Crystal 0.29.0, DMD 2.087.0, LDC 1.8.0, Go 1.10.4, Java (OpenJDK) 11.0.3, Node.js 12.6.0, PHP 7.2.19, Rust 1.38.0-nightly, Scala 2.12.8.
 
 ![](suite/results/lin.png?raw=true)
 
