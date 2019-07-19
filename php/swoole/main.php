@@ -21,5 +21,6 @@ $http->on('request', function ($request, $response) use ($pattern) {
 
 $pid = getmypid();
 echo "Master $pid is running on port $port", PHP_EOL;
+file_put_contents(".pid", $pid);
 
 $http->start();

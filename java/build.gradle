@@ -1,13 +1,13 @@
 buildscript {
-	ext {
-		springBootVersion = '2.1.6.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+    ext {
+        springBootVersion = '2.1.6.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
 
 apply plugin: 'java'
@@ -20,11 +20,12 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter')
-	compile("org.springframework.boot:spring-boot-starter-web:2.1.6.RELEASE")
+    compile('org.springframework.boot:spring-boot-starter')
+    compile("org.springframework.boot:spring-boot-starter-web:2.1.6.RELEASE")
+    compile 'com.github.jnr:jnr-posix:3.0.50'
 }

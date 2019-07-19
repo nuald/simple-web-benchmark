@@ -17,23 +17,23 @@ LDC 1.7.0, Crystal 0.24.1, PHP 7.1.13.
 
 ### Windows 10
 
-OS: Microsoft Windows [Version 10.0.15063]
+OS: Microsoft Windows [Version 10.0.17763]
 
 Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
 
-Software: Go 1.9.3, Rust 1.25.0-nightly, Scala 2.12.4, Node.js 9.4.0, DMD 2.078.1,
-LDC 1.7.0, Crystal 0.24.1 (under WSL).
+Software: Go 1.12.7, Rust 1.38.0-nightly, Scala 2.12.8, Node.js 12.6.0, DMD 2.087.0,
+LDC 1.16.0, Java (OpenJDK) 12.0.2.
 
 ![](suite/results/win.png?raw=true)
 
 ### WSL
 
-OS: 4.4.0-43-Microsoft GNU/Linux
+OS: Ubuntu 16.04.6 LTS
 
 Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
 
-Software: Go 1.9.2, Rust 1.25.0-nightly, Scala 2.12.4, Node.js 9.4.0, DMD 2.078.1,
-LDC 1.7.0, Crystal 0.24.1, PHP 7.0.22.
+Software: Go 1.9.4, Rust 1.38.0-nightly, Scala 2.12.8, Node.js 9.11.2, DMD 2.087.0,
+LDC 1.7.0, Crystal 0.29.0, PHP 7.0.33, Java (OpenJDK) 1.8.0.
 
 ![](suite/results/wsl.png?raw=true)
 

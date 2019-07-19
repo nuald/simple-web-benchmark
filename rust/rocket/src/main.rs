@@ -8,6 +8,7 @@ use getopts::Options;
 use rocket::config::{Config, Environment};
 use rocket::http::RawStr;
 use std::env;
+use std::fs;
 
 #[get("/")]
 fn index() -> &'static str {
@@ -20,7 +21,9 @@ fn greeting(name: &RawStr) -> String {
 }
 
 fn main() {
-    println!("Master {} is running", unsafe { libc::getpid() });
+    let pid = unsafe { libc::getpid() }.to_string();
+    fs::write(".pid", &pid).expect("Unable to read file");
+    println!("Master {} is running", pid);
 
     let args: Vec<String> = env::args().collect();
     let mut opts = Options::new();

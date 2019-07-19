@@ -36,7 +36,10 @@ class MyServer(BaseHTTPRequestHandler):
 
 
 myServer = HTTPServer((hostName, hostPort), MyServer)
-print("Master %d is running on port %d" % (os.getpid(), hostPort))
+pid = str(os.getpid())
+with open(".pid", "w") as pidFile:
+    pidFile.write(pid)
+print("Master %s is running on port %d" % (pid, hostPort))
 
 try:
     myServer.serve_forever()

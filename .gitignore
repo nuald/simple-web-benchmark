@@ -1,4 +1,5 @@
 .DS_Store
+.pid
 crystal/server
 d/.dub/
 d/build/

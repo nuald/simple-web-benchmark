@@ -8,9 +8,9 @@ repositories {
 }
 
 dependencies {
-    compile 'org.scala-lang:scala-library:2.13.0'
-    compile 'com.typesafe.akka:akka-http_2.13:10.1.9'
-    compile 'com.typesafe.akka:akka-actor_2.13:2.5.23'
-    compile 'com.typesafe.akka:akka-stream_2.13:2.5.23'
+    compile 'org.scala-lang:scala-library:2.12.8'
+    compile 'com.typesafe.akka:akka-http_2.12:10.1.9'
+    compile 'com.typesafe.akka:akka-actor_2.12:2.5.23'
+    compile 'com.typesafe.akka:akka-stream_2.12:2.5.23'
     compile 'com.github.jnr:jnr-posix:3.0.50'
 }

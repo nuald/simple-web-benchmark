@@ -9,6 +9,7 @@ use hyper::{Body, Request, Response, Server};
 use hyper::rt::Future;
 use hyper::service::service_fn_ok;
 use regex::Regex;
+use std::fs;
 
 fn hello_world(req: Request<Body>) -> Response<Body> {
     match req.uri().path() {
@@ -31,7 +32,9 @@ fn hello_world(req: Request<Body>) -> Response<Body> {
 }
 
 fn main() {
-    println!("Master {} is running", unsafe { libc::getpid() });
+    let pid = unsafe { libc::getpid() }.to_string();
+    fs::write(".pid", &pid).expect("Unable to read file");
+    println!("Master {} is running", pid);
     let addr = ([127, 0, 0, 1], 3000).into();
     let new_svc = || {
         // service_fn_ok converts our function into a `Service`

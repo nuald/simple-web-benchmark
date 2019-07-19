@@ -16,7 +16,6 @@
     "buildTypes": {
         "release": {
              "buildOptions": ["releaseMode", "inline"],
-             "dflags-posix-ldc": ["-flto=thin"]
         }
     },
     "configurations": [

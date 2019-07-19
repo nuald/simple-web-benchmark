@@ -2,12 +2,17 @@ import core.thread;
 import vibe.d;
 import std.regex;
 import std.stdio;
+import std.conv;
 
 auto reg = ctRegex!"^/greeting/([a-z]+)$";
 
 void main()
 {
-    writefln("Master %d is running", getpid());
+    auto pid = to!string(getpid());
+    auto file = File(".pid", "w");
+    file.write(pid);
+    file.close();
+    writefln("Master %s is running", pid);
     setupWorkerThreads(logicalProcessorCount + 1);
     runWorkerTaskDist(&runServer);
     runApplication();

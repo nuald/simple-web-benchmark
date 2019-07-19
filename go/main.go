@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -12,7 +13,9 @@ import (
 func main() {
 	port := flag.Int("port", 3000, "server port")
 	flag.Parse()
-	fmt.Printf("Master %d is running on port %d\n", os.Getpid(), *port)
+	pid := fmt.Sprintf("%d", os.Getpid())
+	ioutil.WriteFile(".pid", []byte(pid), 0644)
+	fmt.Printf("Master %s is running on port %d\n", pid, *port)
 	reg := regexp.MustCompile("^/greeting/([a-z]+)$")
 	host := fmt.Sprintf("127.0.0.1:%d", *port)
 	err := http.ListenAndServe(host, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

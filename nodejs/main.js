@@ -1,6 +1,7 @@
 "use strict";
 const cluster = require('cluster');
 const http = require('http');
+const fs = require('fs');
 const numCPUs = require('os').cpus().length;
 
 var greetingRe = new RegExp("^\/greeting\/([a-z]+)$", "i");
@@ -15,7 +16,9 @@ process.argv.forEach((val, index) => {
 });
 
 if (cluster.isMaster) {
-  console.log(`Master ${process.pid} is running on port ${port}`);
+  const pid = process.pid;
+  fs.writeFileSync(".pid", pid);
+  console.log(`Master ${pid} is running on port ${port}`);
 
   // Fork workers.
   for (let i = 0; i < numCPUs; i++) {

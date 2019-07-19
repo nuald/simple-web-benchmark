@@ -10,7 +10,9 @@ import jnr.posix.POSIXFactory
 object WebServer {
   def main(args: Array[String]): Unit = {
     val posix = POSIXFactory.getPOSIX()
-    println(s"Master ${ posix.getpid() } is running")
+    val pid = posix.getpid().toString
+    new java.io.PrintWriter("../.pid") { write(pid); close() }
+    println(s"Master ${ pid } is running")
 
     implicit val system = ActorSystem("my-system")
     implicit val materializer = ActorMaterializer()
