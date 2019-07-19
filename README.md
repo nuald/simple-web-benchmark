@@ -20,7 +20,7 @@ OS: Mac OS X 10.14.5
 
 Hardware: MacBook Pro (CPU: 2.9 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR3)
 
-Software: Go 1.12.7, Rust 1.38.0-nightly, Scala 2.12.8, Node.js 12.6.0, DMD 2.087.0, LDC 1.16.0, Crystal 0.29.0, PHP 7.3.7, Java (SE) 1.8.0.
+Software: Go 1.12.7, Rust 1.38.0-nightly, Scala 2.12.8, Node.js 12.6.0, DMD 2.087.0, LDC 1.16.0, Crystal 0.29.0, PHP 7.3.7, Java (SE) 1.8.0, Python 3.6.1 (PyPy 7.1.1-beta0).
 
 ![](suite/results/mac.png?raw=true)
 
@@ -136,7 +136,14 @@ Uses standalone web server and [Swoole](https://www.swoole.co.uk/) extension:
 
 ### Python
 
+Uses standalone web server and [Twisted](https://twistedmatrix.com/) engine:
+
     python3 python/main.py
+    pypy3 python/twist.py
+
+Please note that CPython has the performance problems running as a standalone server, so we've used PyPy3. To install Twisted please use the pip module:
+
+    pypy3 -m pip install twisted
 
 ### Java
 

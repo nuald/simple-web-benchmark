@@ -57,6 +57,10 @@ val LangCmds = Map(
     Array("node", "nodejs/main.js"),
     "Node.js",
     None),
+  "python" -> Cmd(
+    Array("pypy3", "python/twist.py"),
+    "PyPy3/Twisted",
+    None),
   "ldc2" -> Cmd(
     Array(s"d/build/ldc/vibedtest${Ext}"),
     "D (LDC/vibe.d)",
