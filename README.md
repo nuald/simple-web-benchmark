@@ -1,6 +1,6 @@
 # Simple Web Benchmark
 
-A simple web benchmark of Go, Crystal, Rust, D, Scala, Node.js and Crystal.
+A simple web benchmark of Go, Crystal, Rust, D, Scala, Java, Node.js, PHP and Crystal.
 
 ## Results
 
@@ -16,12 +16,11 @@ Software: Go 1.10.4, Rust 1.38.0-nightly, Scala 2.12.8, Node.js 12.6.0, DMD 2.08
 
 ### MacOS
 
-OS: Mac OS X 10.13.3
+OS: Mac OS X 10.14.5
 
-Hardware: MacBook Pro (CPU: 2.3 GHz Intel Core i7, Mem: 16 GB 1600 MHz DDR3)
+Hardware: MacBook Pro (CPU: 2.9 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR3)
 
-Software: Go 1.9.3, Rust 1.25.0-nightly, Scala 2.12.4, Node.js 9.4.0, DMD 2.078.1,
-LDC 1.7.0, Crystal 0.24.1, PHP 7.1.13.
+Software: Go 1.12.7, Rust 1.38.0-nightly, Scala 2.12.8, Node.js 12.6.0, DMD 2.087.0, LDC 1.16.0, Crystal 0.29.0, PHP 7.3.7, Java (SE) 1.8.0.
 
 ![](suite/results/mac.png?raw=true)
 
