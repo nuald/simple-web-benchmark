@@ -2,7 +2,17 @@
 
 A simple web benchmark of Go, Crystal, Rust, D, Scala, Node.js and Crystal.
 
-## Preliminary Results
+## Results
+
+### Linux
+
+OS: Ubuntu 18.04.2 LTS
+
+Hardware: CPU: 2.6 GHz Intel Core i7, Mem: 8 GB 1333 MHz DDR3
+
+Software: Go 1.10.4, Rust 1.38.0-nightly, Scala 2.12.8, Node.js 12.6.0, DMD 2.087.0, LDC 1.8.0, Crystal 0.29.0, PHP 7.2.19, Java (OpenJDK) 11.0.3.
+
+![](suite/results/lin.png?raw=true)
 
 ### MacOS
 
