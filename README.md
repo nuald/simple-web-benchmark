@@ -10,7 +10,7 @@ OS: Ubuntu 18.04.2 LTS
 
 Hardware: CPU: 2.6 GHz Intel Core i7, Mem: 8 GB 1333 MHz DDR3
 
-Software: Crystal 0.29.0, DMD 2.087.0, LDC 1.8.0, Go 1.10.4, Java (OpenJDK) 11.0.3, Node.js 12.6.0, PHP 7.2.19, Rust 1.38.0-nightly, Scala 2.12.8.
+Software: Crystal 0.29.0, DMD 2.087.0, LDC 1.8.0, Go 1.10.4, Java (OpenJDK) 11.0.3, Node.js 12.6.0, PHP 7.2.19, Python 3.5.3 (PyPy 7.0.0), Rust 1.38.0-nightly, Scala 2.12.8.
 
 ![](suite/results/lin.png?raw=true)
 
@@ -20,7 +20,7 @@ OS: Mac OS X 10.14.5
 
 Hardware: MacBook Pro (CPU: 2.9 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR3)
 
-Software: Go 1.12.7, Rust 1.38.0-nightly, Scala 2.12.8, Node.js 12.6.0, DMD 2.087.0, LDC 1.16.0, Crystal 0.29.0, PHP 7.3.7, Java (SE) 1.8.0, Python 3.6.1 (PyPy 7.1.1-beta0).
+Software: Crystal 0.29.0, DMD 2.087.0, LDC 1.16.0, Go 1.12.7, Java (SE) 1.8.0, Node.js 12.6.0, PHP 7.3.7, Python 3.6.1 (PyPy 7.1.1-beta0), Rust 1.38.0-nightly, Scala 2.12.8.
 
 ![](suite/results/mac.png?raw=true)
 
@@ -30,8 +30,7 @@ OS: Microsoft Windows [Version 10.0.17763]
 
 Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
 
-Software: Go 1.12.7, Rust 1.38.0-nightly, Scala 2.12.8, Node.js 12.6.0, DMD 2.087.0,
-LDC 1.16.0, Java (OpenJDK) 12.0.2.
+Software: DMD 2.087.0, LDC 1.16.0, Java (OpenJDK) 12.0.2, Node.js 12.6.0, Go 1.12.7, Rust 1.38.0-nightly, Scala 2.12.8.
 
 ![](suite/results/win.png?raw=true)
 
@@ -41,8 +40,7 @@ OS: Ubuntu 16.04.6 LTS
 
 Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
 
-Software: Go 1.9.4, Rust 1.38.0-nightly, Scala 2.12.8, Node.js 9.11.2, DMD 2.087.0,
-LDC 1.7.0, Crystal 0.29.0, PHP 7.0.33, Java (OpenJDK) 1.8.0.
+Software: Crystal 0.29.0, DMD 2.087.0, LDC 1.7.0, Go 1.9.4, Java (OpenJDK) 1.8.0, Node.js 9.11.2, PHP 7.0.33, Rust 1.38.0-nightly, Scala 2.12.8.
 
 ![](suite/results/wsl.png?raw=true)
 
