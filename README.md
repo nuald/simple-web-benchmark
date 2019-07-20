@@ -30,7 +30,7 @@ OS: Microsoft Windows [Version 10.0.17763]
 
 Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
 
-Software: DMD 2.087.0, LDC 1.16.0, Java (OpenJDK) 12.0.2, Node.js 12.6.0, Go 1.12.7, Rust 1.38.0-nightly, Scala 2.12.8.
+Software: DMD 2.087.0, LDC 1.16.0, Go 1.12.7, Java (OpenJDK) 12.0.2, Node.js 12.6.0, Rust 1.38.0-nightly, Scala 2.12.8.
 
 ![](suite/results/win.png?raw=true)
 
@@ -40,7 +40,7 @@ OS: Ubuntu 16.04.6 LTS
 
 Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
 
-Software: Crystal 0.29.0, DMD 2.087.0, LDC 1.7.0, Go 1.9.4, Java (OpenJDK) 1.8.0, Node.js 9.11.2, PHP 7.0.33, Rust 1.38.0-nightly, Scala 2.12.8.
+Software: Crystal 0.29.0, DMD 2.087.0, LDC 1.7.0, Go 1.9.4, Java (OpenJDK) 1.8.0, Node.js 9.11.2, PHP 7.0.33, Python 3.5.3 (PyPy 7.0.0), Rust 1.38.0-nightly, Scala 2.12.8.
 
 ![](suite/results/wsl.png?raw=true)
 
@@ -141,6 +141,7 @@ Uses standalone web server and [Twisted](https://twistedmatrix.com/) engine:
 
 Please note that CPython has the performance problems running as a standalone server, so we've used PyPy3. To install Twisted please use the pip module:
 
+    pypy3 -m ensurepip
     pypy3 -m pip install twisted
 
 ### Java

@@ -40,10 +40,6 @@ val LangCmds = Map(
     Array(s"rust/hyper/target/release/simple-web-server${Ext}"),
     "Rust/hyper",
     Some(Array("cargo", "build", "--manifest-path rust/hyper/Cargo.toml", "--release"))),
-  "rust_rocket" -> Cmd(
-    Array(s"rust/rocket/target/release/rust-rocket${Ext}"),
-    "Rust/rocket",
-    Some(Array("cargo", "build", "--manifest-path rust/rocket/Cargo.toml", "--release"))),
   "scala" -> Cmd(
     ShellPrefix ++ Array("gradle", "-p", "scala", "run"),
     "Scala/Akka",
@@ -56,10 +52,6 @@ val LangCmds = Map(
   "nodejs" -> Cmd(
     Array("node", "nodejs/main.js"),
     "Node.js",
-    None),
-  "python" -> Cmd(
-    Array("pypy3", "python/twist.py"),
-    "PyPy3/Twisted",
     None),
   "ldc2" -> Cmd(
     Array(s"d/build/ldc/vibedtest${Ext}"),
@@ -74,6 +66,14 @@ val LangCmds = Map(
     Array(s"./crystal/server${Ext}"),
     "Crystal",
     Some(Array("crystal", "build", "--release", "--no-debug", "-o", s"crystal/server${Ext}", "crystal/server.cr"))),
+  "rust_rocket" -> Cmd(
+    Array(s"rust/rocket/target/release/rust-rocket${Ext}"),
+    "Rust/rocket",
+    Some(Array("cargo", "build", "--manifest-path rust/rocket/Cargo.toml", "--release"))),
+  "python" -> Cmd(
+    Array("pypy3", "python/twist.py"),
+    "PyPy3/Twisted",
+    None),
   "php" -> Cmd(
     Array("php", "-c", "php/swoole/php.ini", "php/swoole/main.php"),
     "PHP/Swoole",
