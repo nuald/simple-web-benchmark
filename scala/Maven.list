@@ -1,0 +1,7 @@
+# Maven coordinates of dependencies are listed here.
+#
+# lines starting with # are ignored
+#
+com.typesafe.akka:akka-http_2.13:10.1.10
+com.typesafe.akka:akka-actor_2.13:2.5.26
+com.typesafe.akka:akka-stream_2.13:2.5.26

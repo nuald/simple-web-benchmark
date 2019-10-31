@@ -4,45 +4,11 @@ A simple web benchmark of Crystal, D, Go, Java, Node.js, PHP, Python, Rust and  
 
 ## Results
 
-### Linux
-
-OS: Ubuntu 18.04.2 LTS
+OS: Ubuntu 18.04.3 LTS
 
 Hardware: CPU: 2.6 GHz Intel Core i7, Mem: 8 GB 1333 MHz DDR3
 
-Software: Crystal 0.29.0, DMD 2.087.0, LDC 1.8.0, Go 1.10.4, Java (OpenJDK) 11.0.3, Node.js 12.6.0, PHP 7.2.19, Python 3.5.3 (PyPy 7.0.0), Rust 1.38.0-nightly, Scala 2.12.8.
-
 ![](suite/results/lin.png?raw=true)
-
-### MacOS
-
-OS: Mac OS X 10.14.5
-
-Hardware: MacBook Pro (CPU: 2.9 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR3)
-
-Software: Crystal 0.29.0, DMD 2.087.0, LDC 1.16.0, Go 1.12.7, Java (SE) 1.8.0, Node.js 12.6.0, PHP 7.3.7, Python 3.6.1 (PyPy 7.1.1-beta0), Rust 1.38.0-nightly, Scala 2.12.8.
-
-![](suite/results/mac.png?raw=true)
-
-### Windows 10
-
-OS: Microsoft Windows [Version 10.0.17763]
-
-Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
-
-Software: DMD 2.087.0, LDC 1.16.0, Go 1.12.7, Java (OpenJDK) 12.0.2, Node.js 12.6.0, Rust 1.38.0-nightly, Scala 2.12.8.
-
-![](suite/results/win.png?raw=true)
-
-### WSL
-
-OS: Ubuntu 16.04.6 LTS
-
-Hardware: Dell XPS (CPU: 2.6 GHz Intel Core i7, Mem: 16 GB 2133 MHz DDR4)
-
-Software: Crystal 0.29.0, DMD 2.087.0, LDC 1.7.0, Go 1.9.4, Java (OpenJDK) 1.8.0, Node.js 9.11.2, PHP 7.0.33, Python 3.5.3 (PyPy 7.0.0), Rust 1.38.0-nightly, Scala 2.12.8.
-
-![](suite/results/wsl.png?raw=true)
 
 ## Testing
 
@@ -52,22 +18,22 @@ the JIT optimizations where it's applicable):
     hey -n 50000 -c 256 -t 10 "http://127.0.0.1:3000/"
     hey -n 50000 -c 256 -t 10 "http://127.0.0.1:3000/greeting/hello"
 
-### MacOS Note
 
-By default, MacOS has low limits on the number of concurrent connections, so
-few kernel parameters tweaks may be required:
+### Using Docker
 
-    sudo sysctl -w kern.ipc.somaxconn=12000
-    sudo sysctl -w kern.maxfilesperproc=1048576
-    sudo sysctl -w kern.maxfiles=1148576
+Build the image:
+
+    $ docker build suite/ -t simple-web-benchmark
+
+Enter the shell in the image:
+
+    $ docker run -it --rm --name test -v $(pwd):/src --network="host" simple-web-benchmark
 
 ### Automation
 
-Please use the Scala script
-(using [sbt Script runner](http://www.scala-sbt.org/1.x/docs/Scripts.html#sbt+Script+runner))
-to run all the tests automatically.
+Please use the Scala script to run all the tests automatically (requires [Ammonite](https://ammonite.io/)).
 
-    Usage: scalas suite/run.scala [options] <lang>...
+    Usage: amm suite/run.scala [options] <lang>...
 
       -o, --out <file>  image file to generate (result.png by default)
       --verbose         verbose execution output
@@ -83,19 +49,13 @@ to run all the tests automatically.
 
 ### Crystal
 
-Using [Crystal](https://crystal-lang.org/docs/installation/):
+Using [Crystal](https://crystal-lang.org/reference/installation/):
 
     crystal run --release --no-debug crystal/server.cr
 
-*Alpine Linux note: please use [crystal-alpine](https://github.com/ysbaddaden/crystal-alpine) packages.*
-
-*macOS note: linking with OpenSSL may require [PKG_CONFIG_PATH changes](https://github.com/crystal-lang/crystal/issues/4745).*
-
 ### Rust
 
-Please install [Nightly Rust](https://github.com/rust-lang-nursery/rustup.rs#working-with-nightly-rust).
-Windows also requires [MinGW](https://github.com/rust-lang/rust#mingw)
-compiler toolchain with `mingw-w64-x86_64-gcc` installed.
+Please install [Nightly Rust](https://github.com/rust-lang/rustup.rs#working-with-nightly-rust).
 
 Sample applications use [hyper](https://hyper.rs) HTTP library and [Rocket](https://rocket.rs/) web framework:
 
@@ -110,16 +70,16 @@ Two compilers are tested:
  - [LDC](https://github.com/ldc-developers/ldc#installation) (LLVM-based D compiler).
 If ldc2 executable is not in path, please use the fully qualified path name.
 
-Uses [vibe.d](http://vibed.org) framework:
+Uses [vibe.d](https://vibed.org/) framework:
 
     dub run --root=d --compiler=dmd --build=release --config=dmd
     dub run --root=d --compiler=ldc2 --build=release --config=ldc
 
 ### Scala
 
-Uses [Akka](http://akka.io) toolkit:
+Uses [Akka](https://akka.io/) toolkit:
 
-    gradle -p scala run --info
+    make -C scala clean run
 
 ### Node.js
 
@@ -134,7 +94,7 @@ Uses standalone web server and [Swoole](https://www.swoole.co.uk/) extension:
 
 ### Python
 
-Uses standalone web server and [Twisted](https://twistedmatrix.com/) engine:
+Uses standalone web server and [Twisted](https://twistedmatrix.com/trac/) engine:
 
     python3 python/main.py
     pypy3 python/twist.py
@@ -146,7 +106,10 @@ Please note that CPython has the performance problems running as a standalone se
 
 ### Java
 
-Uses [Sprint Boot](https://projects.spring.io/spring-boot/) project:
+Uses [Sprint Boot](https://spring.io/projects/spring-boot) project:
 
-    gradle -p java build
-    java -jar -Dserver.port=3000 java/build/libs/java-0.0.1-SNAPSHOT.jar
+    make -C java clean run
+
+# Software
+
+Software: Crystal 0.31.1, DMD 2.088.1, LDC 1.18.0, Go 1.13.4, Java (OpenJDK) 11.0.4, Node.js 12.13.0, PHP 7.2.24, Python 3.6.8 (PyPy 7.1.1), Rust 1.40.0-nightly, Scala 2.13.1.

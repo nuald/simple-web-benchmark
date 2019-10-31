@@ -5,5 +5,5 @@ authors = ["Roman Proskuryakov <humbug@deeptown.org>"]
 
 [dependencies]
 rocket = "0.4.2"
-libc = "0.2.60"
-getopts = "0.2.19"
+libc = "0.2.65"
+getopts = "0.2.21"

@@ -31,7 +31,7 @@ numThread.times do |i|
         msg = match.not_nil![1]
         context.response.print "Hello, #{msg}"
       else
-        context.response.respond_with_error(message = "Not Found", code = 404)
+        context.response.respond_with_status(HTTP::Status::NOT_FOUND, "Not Found")
       end
     end
 

@@ -4,7 +4,6 @@ import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
-import jnr.posix.*;
 import java.io.*;
 
 @Controller
@@ -24,8 +23,7 @@ public class SampleController {
     }
 
     public static void main(String[] args) throws Exception {
-        final POSIX posix = POSIXFactory.getPOSIX();
-        final String pid = String.valueOf(posix.getpid());
+        final String pid = String.valueOf(ProcessHandle.current().pid());
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(".pid"))) {
             writer.write(pid);
         }

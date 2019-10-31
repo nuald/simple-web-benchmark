@@ -5,13 +5,11 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
-import jnr.posix.POSIXFactory
 
 object WebServer {
   def main(args: Array[String]): Unit = {
-    val posix = POSIXFactory.getPOSIX()
-    val pid = posix.getpid().toString
-    new java.io.PrintWriter("../.pid") { write(pid); close() }
+    val pid = ProcessHandle.current().pid().toString
+    new java.io.PrintWriter(".pid") { write(pid); close() }
     println(s"Master ${ pid } is running")
 
     implicit val system = ActorSystem("my-system")

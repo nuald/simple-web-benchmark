@@ -1,5 +1,6 @@
 .DS_Store
 .pid
+*~
 crystal/server
 d/.dub/
 d/build/
@@ -8,6 +9,5 @@ rust/hyper/Cargo.lock
 rust/hyper/target/
 rust/rocket/Cargo.lock
 rust/rocket/target/
-scala/.gradle/
-scala/build/
-suite/linuxkit/build/
+scala/target/
+java/target/

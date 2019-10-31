@@ -1,35 +1,34 @@
-#!/usr/bin/env scalas
+#!/usr/bin/env amm
 
-/***
-scalaVersion := "2.12.8"
-scalacOptions ++= Seq("-deprecation", "-feature")
-libraryDependencies += "org.jfree" % "jfreechart" % "1.5.0"
-libraryDependencies += "com.github.jnr" % "jnr-posix" % "3.0.50"
-libraryDependencies += "com.github.scopt" %% "scopt" % "3.7.1"
-*/
+import $ivy.`org.jfree:jfreechart:1.5.0`,
+  org.jfree.chart._,
+  org.jfree.chart.axis._,
+  org.jfree.chart.labels._,
+  org.jfree.chart.plot._,
+  org.jfree.chart.renderer.category._,
+  org.jfree.data.statistics._
+
+import $ivy.`com.github.scopt::scopt:3.7.1`, scopt.OptionParser
 
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.{ArrayList, Calendar}
-import jnr.posix.POSIXFactory
-import org.jfree.chart._
-import org.jfree.chart.axis._
-import org.jfree.chart.labels._
-import org.jfree.chart.plot._
-import org.jfree.chart.renderer.category._
-import org.jfree.data.statistics._
 import scala.sys.process._
 import scala.collection.JavaConverters._
 
 val IsWindows = sys.props("os.name").startsWith("Windows")
 val Ext = if (IsWindows) ".exe" else ""
 val ShellPrefix: Array[String] = if (IsWindows) Array("cmd", "/C") else Array()
-val Posix = POSIXFactory.getPOSIX()
 
 case class Cmd(
   cmd: Array[String],
   title: String,
   preRun: Option[Array[String]])
+
+def readFile(file: java.io.File): String = {
+  val source = scala.io.Source.fromFile(file)
+  try source.mkString finally source.close()
+}
 
 val LangCmds = Map(
   "go" -> Cmd(
@@ -41,14 +40,19 @@ val LangCmds = Map(
     "Rust/hyper",
     Some(Array("cargo", "build", "--manifest-path rust/hyper/Cargo.toml", "--release"))),
   "scala" -> Cmd(
-    ShellPrefix ++ Array("gradle", "-p", "scala", "run"),
+    ShellPrefix ++ Array("scala", "-cp",
+      "scala/target/library.jar:" + readFile(new java.io.File("scala/target/classpath.line")),
+      "lite.WebServer"
+    ),
     "Scala/Akka",
-    Some(ShellPrefix ++ Array("gradle", "-p", "scala", "build"))),
+    Some(ShellPrefix ++ Array("make", "-C", "scala", "clean", "target/library.jar"))),
   "java" -> Cmd(
-    ShellPrefix ++ Array("java", "-jar", "-Dserver.port=3000",
-      "java/build/libs/java-0.0.1-SNAPSHOT.jar"),
+    ShellPrefix ++ Array("java", "-cp",
+      "java/target/library.jar:" + readFile(new java.io.File("java/target/classpath.line")),
+      "-Dserver.port=3000", "hello.SampleController"
+    ),
     "Java/Spring Boot",
-    Some(ShellPrefix ++ Array("gradle", "-p", "java", "build"))),
+    Some(ShellPrefix ++ Array("make", "-C", "java", "clean", "target/library.jar"))),
   "nodejs" -> Cmd(
     Array("node", "nodejs/main.js"),
     "Node.js",
@@ -134,9 +138,9 @@ def kill(pid: Long): Unit = {
   if (IsWindows) {
     Seq("taskkill", "/t", "/f", "/pid", pid.toString).!
   } else {
-    Posix.kill(-pid, 9)
+    Seq("kill", "-9", s"-$pid").!
     // process group kill doesn't always work
-    Posix.kill(pid, 9)
+    Seq("kill", "-9", s"$pid").!
   }
 }
 
@@ -171,8 +175,7 @@ def getProcessId(procCmd: Array[String]): Option[Long] = {
   print("Waiting")
   for (i <- 1 to Attempts) {
     if (pidFile.exists) {
-      val source = scala.io.Source.fromFile(pidFile)
-      val content = try source.mkString finally source.close()
+      val content = readFile(pidFile)
       return Some(content.toInt)
     }
     Thread.sleep(1000)
@@ -240,7 +243,7 @@ case class Config(
   verbose: Boolean = false,
   langs: Seq[String] = Seq())
 
-val parser = new scopt.OptionParser[Config]("scalas suite/run.scala") {
+val parser = new OptionParser[Config]("amm suite/run.scala") {
   opt[File]('o', "out").optional().valueName("<file>").
     action( (x, c) => c.copy(out = x) ).
     text(s"image file to generate ($DefaultImg by default)")
@@ -255,7 +258,8 @@ val parser = new scopt.OptionParser[Config]("scalas suite/run.scala") {
 The following languages are supported: ${ LangCmds.keys.mkString(", ") }.""")
 }
 
-def entryPoint(args: Array[String]): Unit = {
+@main
+def entrypoint(args: String*): Unit = {
   parser.parse(args, Config()) match {
     case Some(config) => {
       var list = config.langs.map(_ match {
@@ -270,5 +274,3 @@ def entryPoint(args: Array[String]): Unit = {
     // arguments are bad, error message will have been displayed
   }
 }
-
-entryPoint(args)
