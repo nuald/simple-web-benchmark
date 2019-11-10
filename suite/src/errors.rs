@@ -30,3 +30,14 @@ impl fmt::Display for PidError {
 }
 
 impl Error for PidError {}
+
+#[derive(Debug)]
+pub struct UnknownFileTypeError {}
+
+impl fmt::Display for UnknownFileTypeError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Unknown file type")
+    }
+}
+
+impl Error for UnknownFileTypeError {}

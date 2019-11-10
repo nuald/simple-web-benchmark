@@ -13,12 +13,16 @@ use regex::Regex;
 use std::collections::HashMap;
 use std::error::Error;
 use std::fs;
+use std::path::Path;
 use std::process::{Command, Stdio};
 
 mod errors;
 
 type UnitResult = Result<(), Box<dyn Error>>;
 type UnsignedResult = Result<u32, Box<dyn Error>>;
+
+const INDEX: &str = "Index URL Request";
+const PATTERN: &str = "Pattern URL Request";
 
 struct Cmd<'a> {
     title: &'a str,
@@ -174,6 +178,72 @@ fn run(lang_cmd: &Cmd, verbose: bool) -> Result<(Vec<f64>, Vec<f64>), Box<dyn Er
     }
     kill(pid);
     Ok((index_values, pattern_values))
+}
+
+fn draw<DB: DrawingBackend>(dataset: Vec<(String, &str, Quartiles)>, backend: DB) -> UnitResult
+where
+    DB::ErrorType: 'static,
+{
+    let category = Category::new(
+        "Language",
+        dataset
+            .iter()
+            .unique_by(|x| x.0.clone())
+            .sorted_by(|a, b| b.2.median().partial_cmp(&a.2.median()).unwrap())
+            .map(|x| x.0.clone())
+            .collect(),
+    );
+
+    let mut colors = [RED, BLUE].iter();
+    let mut offsets = (-10..).step_by(20);
+    let mut series = HashMap::new();
+    for x in dataset.iter() {
+        let entry = series
+            .entry(x.1)
+            .or_insert_with(|| (Vec::new(), colors.next().unwrap(), offsets.next().unwrap()));
+        entry.0.push((x.0.clone(), &x.2));
+    }
+
+    let values: Vec<f32> = dataset
+        .iter()
+        .map(|x| x.2.values().to_vec())
+        .flatten()
+        .collect();
+    let values_range = fitting_range(values.iter());
+
+    let root = backend.into_drawing_area();
+    root.fill(&WHITE)?;
+
+    let mut chart = ChartBuilder::on(&root)
+        .x_label_area_size(40)
+        .y_label_area_size(100)
+        .build_ranged(0.0..values_range.end + 1.0, category.range())?;
+
+    chart
+        .configure_mesh()
+        .x_desc("Response, ms")
+        .y_desc(category.name())
+        .line_style_2(&WHITE)
+        .draw()?;
+
+    for (label, (values, style, offset)) in &series {
+        let style_copy = *style;
+        chart
+            .draw_series(values.iter().map(|x| {
+                Boxplot::new_horizontal(category.get(&x.0).unwrap(), &x.1)
+                    .width(10)
+                    .whisker_width(0.5)
+                    .style(*style)
+                    .offset(*offset)
+            }))?
+            .label(*label)
+            .legend(move |(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], style_copy));
+    }
+    chart
+        .configure_series_labels()
+        .border_style(&BLACK)
+        .draw()?;
+    Ok(())
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -339,7 +409,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         },
     );
 
-    let default_img = "result.svg";
+    let default_file = "result.svg";
     let matches = App::new("Simple Web Benchmark runner")
         .version(crate_version!())
         .usage("cargo run --manifest-path suite/Cargo.toml -- [FLAGS] [OPTIONS] <lang>...")
@@ -349,8 +419,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .long("out")
                 .value_name("file")
                 .help(&format!(
-                    "Sets an image file to generate ({} by default)",
-                    default_img
+                    "Sets an image file to generate ({} by default, PNG/SVG/TSV are supported)",
+                    default_file
                 ))
                 .takes_value(true),
         )
@@ -378,9 +448,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if langs.iter().any(|&x| x == "all") {
         langs = lang_cmds.iter().map(|(key, _)| *key).collect();
     }
-    let img = matches.value_of("out").unwrap_or(default_img);
+    let file = matches.value_of("out").unwrap_or(default_file);
+    let ext = Path::new(file)
+        .extension()
+        .ok_or_else(|| Box::new(errors::UnknownFileTypeError {}))?;
+    let save_for_print = ext.to_str().unwrap() == "tsv";
 
     let mut dataset = Vec::new();
+    let mut dataset_for_print = Vec::new();
     for (lang, lang_cmd) in &lang_cmds {
         if langs.iter().position(|x| x == lang).is_none() {
             continue;
@@ -390,76 +465,41 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             // kill until all died
         }
         let (index_values, pattern_values) = run(lang_cmd, verbose).unwrap();
-        dataset.push((
-            String::from(lang_cmd.title),
-            "Index URL Request",
-            Quartiles::new(&index_values),
-        ));
-        dataset.push((
-            String::from(lang_cmd.title),
-            "Pattern URL Request",
-            Quartiles::new(&pattern_values),
-        ));
+        if save_for_print {
+            for x in index_values {
+                dataset_for_print.push(format!(
+                    "{}\t{}\t{}",
+                    String::from(lang_cmd.title),
+                    INDEX,
+                    x
+                ));
+            }
+            for x in pattern_values {
+                dataset_for_print.push(format!(
+                    "{}\t{}\t{}",
+                    String::from(lang_cmd.title),
+                    PATTERN,
+                    x
+                ));
+            }
+        } else {
+            dataset.push((
+                String::from(lang_cmd.title),
+                "Index URL Request",
+                Quartiles::new(&index_values),
+            ));
+            dataset.push((
+                String::from(lang_cmd.title),
+                "Pattern URL Request",
+                Quartiles::new(&pattern_values),
+            ));
+        }
     }
 
-    let category = Category::new(
-        "Language",
-        dataset
-            .iter()
-            .unique_by(|x| x.0.clone())
-            .sorted_by(|a, b| a.2.median().partial_cmp(&b.2.median()).unwrap())
-            .map(|x| x.0.clone())
-            .collect(),
-    );
-
-    let mut colors = [RED, BLUE].iter();
-    let mut offsets = (-15..).step_by(30);
-    let mut series = HashMap::new();
-    for x in dataset.iter() {
-        let entry = series
-            .entry(x.1)
-            .or_insert_with(|| (Vec::new(), colors.next().unwrap(), offsets.next().unwrap()));
-        entry.0.push((x.0.clone(), &x.2));
+    match ext.to_str().unwrap() {
+        "tsv" => fs::write(file, dataset_for_print.join("\n"))?,
+        "svg" => draw(dataset, SVGBackend::new(file, (480, 640)))?,
+        _ => draw(dataset, BitMapBackend::new(file, (480, 640)))?,
     }
-
-    let values: Vec<f32> = dataset
-        .iter()
-        .map(|x| x.2.values().to_vec())
-        .flatten()
-        .collect();
-    let values_range = fitting_range(values.iter());
-
-    let root = SVGBackend::new(img, (480, 640)).into_drawing_area();
-    root.fill(&WHITE)?;
-
-    let mut chart = ChartBuilder::on(&root)
-        .x_label_area_size(40)
-        .y_label_area_size(40)
-        .build_ranged(0.0..values_range.end + 1.0, category.range())?;
-
-    chart
-        .configure_mesh()
-        .x_desc("Response, ms")
-        .y_desc(category.name())
-        .line_style_2(&WHITE)
-        .draw()?;
-
-    for (label, (values, style, offset)) in &series {
-        let style_copy = *style;
-        chart
-            .draw_series(values.iter().map(|x| {
-                Boxplot::new_horizontal(category.get(&x.0).unwrap(), &x.1)
-                    .width(20)
-                    .whisker_width(0.5)
-                    .style(*style)
-                    .offset(*offset)
-            }))?
-            .label(*label)
-            .legend(move |(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], style_copy));
-    }
-    chart
-        .configure_series_labels()
-        .border_style(&BLACK)
-        .draw()?;
     Ok(())
 }

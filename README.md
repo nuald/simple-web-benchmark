@@ -42,12 +42,12 @@ Please use the Rust program to run all tests automatically:
             --verbose    Enables the verbose output
 
     OPTIONS:
-        -o, --out <file>    Sets an image file to generate (result.svg by default)
+        -o, --out <file>    Sets an image file to generate (result.svg by default, PNG/SVG/TSV are supported)
 
     ARGS:
         <lang>...    Sets the languages to test ('all' for all)
 
-    The following languages are supported: rust_hyper, rust_rocket, crystal, nodejs, go, scala, dmd, ldc2.
+    The following languages are supported: go, rust_hyper, rust_rocket, python, scala, dmd, java, nodejs, ldc2, crystal, php.
 
 ## Usage
 
