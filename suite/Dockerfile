@@ -2,8 +2,8 @@ FROM debian:testing
 
 # TODO uncomment
 RUN apt update \
-    && apt install -y wget xz-utils build-essential pkg-config \
-       libpcre3-dev libevent-dev libssl-dev zlib1g-dev \
+    && apt install -y wget xz-utils build-essential pkg-config cmake lsof \
+       libpcre3-dev libevent-dev libssl-dev zlib1g-dev libfreetype-dev libexpat1-dev \
        python3 pypy3 python3-twisted php php-dev \
     && pecl install swoole
 #    && rm -rf /var/lib/apt/lists/* /tmp/*
@@ -89,8 +89,7 @@ RUN crystal --version && echo "---" \
     echo " END"
 
 # TODO move up
-RUN apt install -y lsof
-RUN apt install -y libfreetype6
+RUN apt install -y fontconfig
 
 WORKDIR /src
 ENTRYPOINT bash

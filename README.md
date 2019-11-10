@@ -27,17 +27,25 @@ Build the image:
 
 Enter the shell in the image:
 
-    $ docker run -it --rm --name test -v $(pwd):/src --network="host" simple-web-benchmark
+    $ docker run -it --rm -v $(pwd):/src --network="host" simple-web-benchmark
 
 ### Automation
 
-Please use the Scala script to run all the tests automatically (requires [Ammonite](https://ammonite.io/)).
+Please use the Rust program to run all tests automatically:
 
-    Usage: amm suite/run.scala [options] <lang>...
+    USAGE:
+        cargo run --manifest-path suite/Cargo.toml -- [FLAGS] [OPTIONS] <lang>...
 
-      -o, --out <file>  image file to generate (result.png by default)
-      --verbose         verbose execution output
-      <lang>...         languages to test ('all' for all)
+    FLAGS:
+        -h, --help       Prints help information
+        -V, --version    Prints version information
+            --verbose    Enables the verbose output
+
+    OPTIONS:
+        -o, --out <file>    Sets an image file to generate (result.svg by default)
+
+    ARGS:
+        <lang>...    Sets the languages to test ('all' for all)
 
     The following languages are supported: rust_hyper, rust_rocket, crystal, nodejs, go, scala, dmd, ldc2.
 
