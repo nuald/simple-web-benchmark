@@ -1,7 +1,8 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
 extern crate libc;
-#[macro_use] extern crate rocket;
+#[macro_use]
+extern crate rocket;
 extern crate getopts;
 
 use getopts::Options;
@@ -29,8 +30,8 @@ fn main() {
     let mut opts = Options::new();
     opts.optflag("p", "prod", "use the vanilla production config");
     let matches = match opts.parse(&args[1..]) {
-        Ok(m) => { m }
-        Err(f) => { panic!(f.to_string()) }
+        Ok(m) => m,
+        Err(f) => panic!(f.to_string()),
     };
 
     let mut config_builder = Config::build(Environment::Production)
@@ -44,12 +45,5 @@ fn main() {
     let config = config_builder.unwrap();
 
     let app = rocket::custom(config);
-    app
-        .mount("/",
-            routes![
-                index,
-                greeting
-            ]
-        )
-        .launch();
+    app.mount("/", routes![index, greeting]).launch();
 }

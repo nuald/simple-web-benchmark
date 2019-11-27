@@ -1,12 +1,11 @@
 FROM debian:testing
 
-# TODO uncomment
 RUN apt update \
-    && apt install -y wget xz-utils build-essential pkg-config cmake lsof \
+    && apt install -y wget xz-utils build-essential pkg-config cmake lsof fontconfig \
        libpcre3-dev libevent-dev libssl-dev zlib1g-dev libfreetype-dev libexpat1-dev \
        python3 pypy3 python3-twisted php php-dev \
-    && pecl install swoole
-#    && rm -rf /var/lib/apt/lists/* /tmp/*
+    && pecl install swoole \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 
 WORKDIR /opt
 
@@ -33,13 +32,13 @@ ENV PATH="/opt/$LDC/bin/:${PATH}"
 
 # https://golang.org/dl/
 RUN wget --progress=dot:giga -O - \
-    https://dl.google.com/go/go1.13.3.linux-amd64.tar.gz \
+    https://dl.google.com/go/go1.13.4.linux-amd64.tar.gz \
     | tar -xz
 ENV PATH="/opt/go/bin/:${PATH}"
 
 # https://dlang.org/download.html
 RUN wget --progress=dot:giga -O - \
-    http://downloads.dlang.org/releases/2.x/2.088.1/dmd.2.088.1.linux.tar.xz \
+    http://downloads.dlang.org/releases/2.x/2.089.0/dmd.2.089.0.linux.tar.xz \
     | tar -xJ
 ENV PATH="/opt/dmd2/linux/bin64/:${PATH}"
 
@@ -51,7 +50,7 @@ RUN wget --progress=dot:giga -O - \
 ENV PATH="/opt/scala-$SCALA/bin/:${PATH}"
 
 # https://nodejs.org/en/download/current/
-ARG NODE=v13.0.1
+ARG NODE=v13.2.0
 RUN wget --progress=dot:giga -O - \
     https://nodejs.org/dist/$NODE/node-$NODE-linux-x64.tar.xz \
     | tar -xJ
@@ -64,11 +63,6 @@ RUN wget --progress=dot:giga --secure-protocol=TLSv1_2 -O - https://sh.rustup.rs
 
 RUN wget -O /usr/local/bin/coursier https://git.io/coursier-cli \
     && chmod +x /usr/local/bin/coursier
-
-# https://github.com/lihaoyi/Ammonite/releases
-ARG AMM=1.8.1
-RUN (echo "#!/usr/bin/env sh" && wget -O - https://github.com/lihaoyi/Ammonite/releases/download/$AMM/2.13-$AMM) > /usr/local/bin/amm \
-    && chmod +x /usr/local/bin/amm
 
 # https://github.com/rakyll/hey
 RUN wget --progress=dot:giga \
@@ -87,9 +81,6 @@ RUN crystal --version && echo "---" \
     && java --version && echo "---" \
     && php --version && echo "---" \
     echo " END"
-
-# TODO move up
-RUN apt install -y fontconfig
 
 WORKDIR /src
 ENTRYPOINT bash

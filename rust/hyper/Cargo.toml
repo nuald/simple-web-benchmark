@@ -2,6 +2,7 @@
 name = "simple-web-server"
 version = "0.0.2"
 authors = ["Alexander Slesarev <alex.slesarev@gmail.com>"]
+edition = "2018"
 
 [dependencies]
 regex = "1.3.1"

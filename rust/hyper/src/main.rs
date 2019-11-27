@@ -2,20 +2,19 @@ extern crate hyper;
 extern crate libc;
 extern crate regex;
 
-#[macro_use] extern crate lazy_static;
+#[macro_use]
+extern crate lazy_static;
 
-use hyper::StatusCode;
-use hyper::{Body, Request, Response, Server};
 use hyper::rt::Future;
 use hyper::service::service_fn_ok;
+use hyper::StatusCode;
+use hyper::{Body, Request, Response, Server};
 use regex::Regex;
 use std::fs;
 
 fn hello_world(req: Request<Body>) -> Response<Body> {
     match req.uri().path() {
-        "/" => {
-            Response::new(Body::from("Hello World!"))
-        },
+        "/" => Response::new(Body::from("Hello World!")),
         path => {
             lazy_static! {
                 static ref GREETING_RE: Regex = Regex::new(r"^/greeting/([a-z]+)$").unwrap();
@@ -23,9 +22,9 @@ fn hello_world(req: Request<Body>) -> Response<Body> {
             match GREETING_RE.captures(path) {
                 Some(cap) => Response::new(Body::from(format!("Hello, {}", &cap[1]))),
                 None => Response::builder()
-                     .status(StatusCode::NOT_FOUND)
-                     .body(Body::from("404 Not Found\n"))
-                     .unwrap()
+                    .status(StatusCode::NOT_FOUND)
+                    .body(Body::from("404 Not Found\n"))
+                    .unwrap(),
             }
         }
     }

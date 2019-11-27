@@ -2,6 +2,7 @@
 name = "rust-rocket"
 version = "0.1.1"
 authors = ["Roman Proskuryakov <humbug@deeptown.org>"]
+edition = "2018"
 
 [dependencies]
 rocket = "0.4.2"

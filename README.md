@@ -1,14 +1,11 @@
 # Simple Web Benchmark
 
-A simple web benchmark of Crystal, D, Go, Java, Node.js, PHP, Python, Rust and  Scala.
+A simple web benchmark of Crystal, D, Go, Java, Node.js, PHP, Python, Rust and Scala.
 
 ## Results
 
-OS: Ubuntu 18.04.3 LTS
-
-Hardware: CPU: 2.6 GHz Intel Core i7, Mem: 8 GB 1333 MHz DDR3
-
-![](suite/results/lin.png?raw=true)
+![SVG Plot](./suite/results/result.svg)
+<img src="./suite/results/result.svg">
 
 ## Testing
 
@@ -48,6 +45,10 @@ Please use the Rust program to run all tests automatically:
         <lang>...    Sets the languages to test ('all' for all)
 
     The following languages are supported: go, rust_hyper, rust_rocket, python, scala, dmd, java, nodejs, ldc2, crystal, php.
+
+And another program to get the versions of the languages:
+
+    $ cargo run --manifest-path suite/Cargo.toml --bin versions
 
 ## Usage
 
@@ -118,6 +119,21 @@ Uses [Sprint Boot](https://spring.io/projects/spring-boot) project:
 
     make -C java clean run
 
-# Software
+# Environment
 
-Software: Crystal 0.31.1, DMD 2.088.1, LDC 1.18.0, Go 1.13.4, Java (OpenJDK) 11.0.4, Node.js 12.13.0, PHP 7.2.24, Python 3.6.8 (PyPy 7.1.1), Rust 1.40.0-nightly, Scala 2.13.1.
+CPU: 2.6 GHz Intel Core i7, Mem: 8 GB 1333 MHz DDR3
+
+Base Docker image: Debian GNU/Linux bullseye/sid
+
+| Language     | Version                         |
+| ------------ | ------------------------------- |
+| Crystal      | 0.31.1                          |
+| DMD          | v2.089.0                        |
+| Go           | go1.13.4                        |
+| Java         | 13.0.1                          |
+| LDC          | 1.18.0                          |
+| Node.js      | v13.2.0                         |
+| PHP          | 7.3.10-1+b1                     |
+| PyPy         | 7.2.0-final0 for Python 3.6.9   |
+| Rust         | 1.41.0-nightly                  |
+| Scala        | 2.13.1                          |

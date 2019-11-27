@@ -41,3 +41,14 @@ impl fmt::Display for UnknownFileTypeError {
 }
 
 impl Error for UnknownFileTypeError {}
+
+#[derive(Debug)]
+pub struct ValueIsEmptyError {}
+
+impl fmt::Display for ValueIsEmptyError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Expected some value, but got None")
+    }
+}
+
+impl Error for ValueIsEmptyError {}

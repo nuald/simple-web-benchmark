@@ -10,7 +10,7 @@ use plotters::data::fitting_range;
 use plotters::prelude::*;
 
 use regex::Regex;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::error::Error;
 use std::fs;
 use std::path::Path;
@@ -194,9 +194,9 @@ where
             .collect(),
     );
 
-    let mut colors = [RED, BLUE].iter();
+    let mut colors = (0..).map(Palette99::pick);
     let mut offsets = (-10..).step_by(20);
-    let mut series = HashMap::new();
+    let mut series = BTreeMap::new();
     for x in dataset.iter() {
         let entry = series
             .entry(x.1)
@@ -223,31 +223,34 @@ where
         .configure_mesh()
         .x_desc("Response, ms")
         .y_desc(category.name())
+        .y_labels(category.len())
         .line_style_2(&WHITE)
         .draw()?;
 
     for (label, (values, style, offset)) in &series {
-        let style_copy = *style;
         chart
             .draw_series(values.iter().map(|x| {
                 Boxplot::new_horizontal(category.get(&x.0).unwrap(), &x.1)
                     .width(10)
                     .whisker_width(0.5)
-                    .style(*style)
+                    .style(style)
                     .offset(*offset)
             }))?
             .label(*label)
-            .legend(move |(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], style_copy));
+            .legend(move |(x, y)| Rectangle::new([(x, y - 7), (x + 12, y + 5)], style.filled()));
     }
     chart
         .configure_series_labels()
-        .border_style(&BLACK)
+        .position(SeriesLabelPosition::UpperRight)
+        .background_style(WHITE.filled())
+        .border_style(&BLACK.mix(0.5))
+        .legend_area_size(22)
         .draw()?;
     Ok(())
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut lang_cmds = HashMap::new();
+fn main() -> Result<(), Box<dyn Error>> {
+    let mut lang_cmds = BTreeMap::new();
     lang_cmds.insert(
         "go",
         Cmd {
@@ -287,7 +290,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             run: Box::new(|| {
                 let cp = format!(
                     "scala/target/library.jar:{}",
-                    fs::read_to_string("scala/target/classpath.line").unwrap()
+                    fs::read_to_string("scala/target/classpath.line")
+                        .unwrap()
+                        .trim()
                 );
                 pspawn(&mut Command::new("scala").args(&["-cp", &cp, "lite.WebServer"]))
             }),
@@ -452,7 +457,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let ext = Path::new(file)
         .extension()
         .ok_or_else(|| Box::new(errors::UnknownFileTypeError {}))?;
-    let save_for_print = ext.to_str().unwrap() == "tsv";
+    let save_for_print = ext.to_str().map_or(false, |x| x == "tsv");
 
     let mut dataset = Vec::new();
     let mut dataset_for_print = Vec::new();

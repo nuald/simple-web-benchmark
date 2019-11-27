@@ -13,7 +13,6 @@ object WebServer {
     println(s"Master ${ pid } is running")
 
     implicit val system = ActorSystem("my-system")
-    implicit val materializer = ActorMaterializer()
     implicit val executionContext = system.dispatcher
 
     val route =
