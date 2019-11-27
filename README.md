@@ -5,7 +5,6 @@ A simple web benchmark of Crystal, D, Go, Java, Node.js, PHP, Python, Rust and S
 ## Results
 
 ![SVG Plot](./suite/results/result.svg)
-<img src="./suite/results/result.svg">
 
 ## Testing
 
