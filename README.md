@@ -65,10 +65,11 @@ Using [Crystal](https://crystal-lang.org/reference/installation/):
 
 Please install [Nightly Rust](https://github.com/rust-lang/rustup.rs#working-with-nightly-rust).
 
-Sample applications use [hyper](https://hyper.rs) HTTP library and [Rocket](https://rocket.rs/) web framework:
+Sample applications use [hyper](https://hyper.rs) HTTP library, [Rocket](https://rocket.rs/) and [Tide](https://crates.io/crates/tide) web frameworks:
 
     cargo run --manifest-path rust/hyper/Cargo.toml --release
     cargo run --manifest-path rust/rocket/Cargo.toml --release
+    cargo run --manifest-path rust/tide/Cargo.toml --release
 
 ### D
 

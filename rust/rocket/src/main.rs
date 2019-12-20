@@ -23,7 +23,7 @@ fn greeting(name: &RawStr) -> String {
 
 fn main() {
     let pid = unsafe { libc::getpid() }.to_string();
-    fs::write(".pid", &pid).expect("Unable to read file");
+    fs::write(".pid", &pid).expect("Unable to write file");
     println!("Master {} is running", pid);
 
     let args: Vec<String> = env::args().collect();

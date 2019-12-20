@@ -5,9 +5,8 @@ crystal/server
 d/.dub/
 d/build/
 go/build/
-rust/hyper/Cargo.lock
 rust/hyper/target/
-rust/rocket/Cargo.lock
 rust/rocket/target/
+rust/tide/target/
 scala/target/
 java/target/

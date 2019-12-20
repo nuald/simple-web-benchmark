@@ -32,7 +32,7 @@ async fn hello_world(req: Request<Body>) -> Result<Response<Body>, hyper::http::
 #[tokio::main]
 async fn main() {
     let pid = unsafe { libc::getpid() }.to_string();
-    fs::write(".pid", &pid).expect("Unable to read file");
+    fs::write(".pid", &pid).expect("Unable to write file");
     println!("Master {} is running", pid);
     let addr = ([127, 0, 0, 1], 3000).into();
     let new_svc = make_service_fn(|_conn| async {

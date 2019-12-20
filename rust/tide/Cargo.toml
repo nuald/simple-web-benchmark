@@ -1,0 +1,10 @@
+[package]
+name = "tide"
+version = "0.1.0"
+authors = ["Alexander Slesarev <alex.slesarev@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+tide = "0.5.0"
+async-std = "1.4.0"
+libc = "0.2.66"
