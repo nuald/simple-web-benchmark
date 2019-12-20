@@ -43,7 +43,7 @@ Please use the Rust program to run all tests automatically:
     ARGS:
         <lang>...    Sets the languages to test ('all' for all)
 
-    The following languages are supported: go, rust_hyper, rust_rocket, python, scala, dmd, java, nodejs, ldc2, crystal, php.
+    The following languages are supported: go, rust_actix, rust_hyper, rust_rocket, python, scala, dmd, java, nodejs, ldc2, crystal, php.
 
 And another program to get the versions of the languages:
 
@@ -65,11 +65,12 @@ Using [Crystal](https://crystal-lang.org/reference/installation/):
 
 Please install [Nightly Rust](https://github.com/rust-lang/rustup.rs#working-with-nightly-rust).
 
-Sample applications use [hyper](https://hyper.rs) HTTP library, [Rocket](https://rocket.rs/) and [Tide](https://crates.io/crates/tide) web frameworks:
+Sample applications use [hyper](https://hyper.rs) HTTP library, [Rocket](https://rocket.rs/), [Tide](https://crates.io/crates/tide) and [Actix](https://actix.rs/) web frameworks:
 
     cargo run --manifest-path rust/hyper/Cargo.toml --release
     cargo run --manifest-path rust/rocket/Cargo.toml --release
     cargo run --manifest-path rust/tide/Cargo.toml --release
+    cargo run --manifest-path rust/actix-web/Cargo.toml --release
 
 ### D
 
