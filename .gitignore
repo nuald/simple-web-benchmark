@@ -9,5 +9,6 @@ rust/hyper/target/
 rust/rocket/target/
 rust/tide/target/
 rust/warp/target/
+rust/actix-web/target/
 scala/target/
 java/target/
