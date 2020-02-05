@@ -1,6 +1,5 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
-extern crate libc;
 #[macro_use]
 extern crate rocket;
 extern crate getopts;
@@ -22,7 +21,7 @@ fn greeting(name: &RawStr) -> String {
 }
 
 fn main() {
-    let pid = unsafe { libc::getpid() }.to_string();
+    let pid = std::process::id().to_string();
     fs::write(".pid", &pid).expect("Unable to write file");
     println!("Master {} is running", pid);
 

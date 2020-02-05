@@ -10,9 +10,9 @@ RUN apt update \
 WORKDIR /opt
 
 # https://jdk.java.net/
-ARG JDK=13.0.1
+ARG JDK=13.0.2
 RUN wget --progress=dot:giga -O - \
-    https://download.java.net/java/GA/jdk$JDK/cec27d702aa74d5a8630c65ae61e4305/9/GPL/openjdk-${JDK}_linux-x64_bin.tar.gz \
+    https://download.java.net/java/GA/jdk$JDK/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-${JDK}_linux-x64_bin.tar.gz \
     | tar -xz
 ENV PATH="/opt/jdk-$JDK/bin:${PATH}"
 
@@ -24,21 +24,21 @@ RUN wget --progress=dot:giga -O - \
 ENV PATH="/opt/$CRYSTAL/bin:${PATH}"
 
 # https://github.com/ldc-developers/ldc/releases
-ARG LDC=ldc2-1.18.0-linux-x86_64
+ARG LDC=ldc2-1.19.0-linux-x86_64
 RUN wget --progress=dot:giga -O - \
-    https://github.com/ldc-developers/ldc/releases/download/v1.18.0/$LDC.tar.xz \
+    https://github.com/ldc-developers/ldc/releases/download/v1.19.0/$LDC.tar.xz \
     | tar -xJ
 ENV PATH="/opt/$LDC/bin/:${PATH}"
 
 # https://golang.org/dl/
 RUN wget --progress=dot:giga -O - \
-    https://dl.google.com/go/go1.13.5.linux-amd64.tar.gz \
+    https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz \
     | tar -xz
 ENV PATH="/opt/go/bin/:${PATH}"
 
 # https://dlang.org/download.html
 RUN wget --progress=dot:giga -O - \
-    http://downloads.dlang.org/releases/2.x/2.089.1/dmd.2.089.1.linux.tar.xz \
+    http://downloads.dlang.org/releases/2.x/2.090.0/dmd.2.090.0.linux.tar.xz \
     | tar -xJ
 ENV PATH="/opt/dmd2/linux/bin64/:${PATH}"
 
@@ -50,7 +50,7 @@ RUN wget --progress=dot:giga -O - \
 ENV PATH="/opt/scala-$SCALA/bin/:${PATH}"
 
 # https://nodejs.org/en/download/current/
-ARG NODE=v13.5.0
+ARG NODE=v13.7.0
 RUN wget --progress=dot:giga -O - \
     https://nodejs.org/dist/$NODE/node-$NODE-linux-x64.tar.xz \
     | tar -xJ

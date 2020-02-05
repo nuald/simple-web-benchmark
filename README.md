@@ -43,7 +43,7 @@ Please use the Rust program to run all tests automatically:
     ARGS:
         <lang>...    Sets the languages to test ('all' for all)
 
-    The following languages are supported: go, rust_actix, rust_hyper, rust_rocket, python, scala, dmd, java, nodejs, ldc2, crystal, php.
+    The following languages are supported: go, rust_hyper, rust_rocket, rust_tide, python, scala, dmd, java, nodejs, ldc2, crystal, php.
 
 And another program to get the versions of the languages:
 
@@ -65,12 +65,11 @@ Using [Crystal](https://crystal-lang.org/reference/installation/):
 
 Please install [Nightly Rust](https://github.com/rust-lang/rustup.rs#working-with-nightly-rust).
 
-Sample applications use [hyper](https://hyper.rs) HTTP library, [Rocket](https://rocket.rs/), [Tide](https://crates.io/crates/tide) and [Actix](https://actix.rs/) web frameworks:
+Sample applications use [hyper](https://hyper.rs) HTTP library, [Rocket](https://rocket.rs/) and [Tide](https://crates.io/crates/tide) web frameworks:
 
     cargo run --manifest-path rust/hyper/Cargo.toml --release
     cargo run --manifest-path rust/rocket/Cargo.toml --release
     cargo run --manifest-path rust/tide/Cargo.toml --release
-    cargo run --manifest-path rust/actix-web/Cargo.toml --release
 
 ### D
 
@@ -129,12 +128,12 @@ Base Docker image: Debian GNU/Linux bullseye/sid
 | Language     | Version                         |
 | ------------ | ------------------------------- |
 | Crystal      | 0.32.1                          |
-| DMD          | v2.089.1                        |
-| Go           | go1.13.5                        |
-| Java         | 13.0.1                          |
-| LDC          | 1.18.0                          |
-| Node.js      | v13.5.0                         |
+| DMD          | v2.090.0                        |
+| Go           | go1.13.7                        |
+| Java         | 13.0.2                          |
+| LDC          | 1.19.0                          |
+| Node.js      | v13.7.0                         |
 | PHP          | 7.3.12-1                        |
-| PyPy         | 7.2.0-final0 for Python 3.6.9   |
+| PyPy         | 7.3.0-final0 for Python 3.6.9   |
 | Rust         | 1.42.0-nightly                  |
 | Scala        | 2.13.1                          |

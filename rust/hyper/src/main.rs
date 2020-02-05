@@ -1,7 +1,3 @@
-extern crate hyper;
-extern crate libc;
-extern crate regex;
-
 #[macro_use]
 extern crate lazy_static;
 
@@ -31,7 +27,7 @@ async fn hello_world(req: Request<Body>) -> Result<Response<Body>, hyper::http::
 
 #[tokio::main]
 async fn main() {
-    let pid = unsafe { libc::getpid() }.to_string();
+    let pid = std::process::id().to_string();
     fs::write(".pid", &pid).expect("Unable to write file");
     println!("Master {} is running", pid);
     let addr = ([127, 0, 0, 1], 3000).into();

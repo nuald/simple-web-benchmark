@@ -262,22 +262,18 @@ fn main() -> Result<(), Box<dyn Error>> {
         },
     );
     lang_cmds.insert(
-        "rust_actix",
+        "rust_tide",
         Cmd {
-            title: "Rust/Actix",
+            title: "Rust/Tide",
             build: Box::new(|| {
                 pexec(Command::new("cargo").args(&[
                     "build",
                     "--manifest-path",
-                    "rust/actix-web/Cargo.toml",
+                    "rust/tide/Cargo.toml",
                     "--release",
                 ]))
             }),
-            run: Box::new(|| {
-                pspawn(&mut Command::new(
-                    "rust/actix-web/target/release/actix-web",
-                ))
-            }),
+            run: Box::new(|| pspawn(&mut Command::new("rust/tide/target/release/tide"))),
         },
     );
     lang_cmds.insert(

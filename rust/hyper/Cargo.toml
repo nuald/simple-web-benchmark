@@ -5,8 +5,7 @@ authors = ["Alexander Slesarev <alex.slesarev@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-regex = "1.3.1"
+regex = "1.3.4"
 lazy_static = "1.4.0"
-hyper = "0.13.1"
-libc = "0.2.66"
-tokio = { version = "0.2.6", features = ["full"] }
+hyper = "0.13.2"
+tokio = { version = "0.2.11", features = ["full"] }
