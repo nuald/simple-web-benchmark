@@ -10,35 +10,35 @@ RUN apt update \
 WORKDIR /opt
 
 # https://jdk.java.net/
-ARG JDK=13.0.2
+ARG JDK=14
 RUN wget --progress=dot:giga -O - \
-    https://download.java.net/java/GA/jdk$JDK/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-${JDK}_linux-x64_bin.tar.gz \
+    https://download.java.net/java/GA/jdk14/076bab302c7b4508975440c56f6cc26a/36/GPL/openjdk-${JDK}_linux-x64_bin.tar.gz \
     | tar -xz
 ENV PATH="/opt/jdk-$JDK/bin:${PATH}"
 
 # https://github.com/crystal-lang/crystal/releases
-ARG CRYSTAL=crystal-0.32.1-1
+ARG CRYSTAL=crystal-0.33.0-1
 RUN wget --progress=dot:giga -O - \
-    https://github.com/crystal-lang/crystal/releases/download/0.32.1/$CRYSTAL-linux-x86_64.tar.gz \
+    https://github.com/crystal-lang/crystal/releases/download/0.33.0/$CRYSTAL-linux-x86_64.tar.gz \
     | tar -xz
 ENV PATH="/opt/$CRYSTAL/bin:${PATH}"
 
 # https://github.com/ldc-developers/ldc/releases
-ARG LDC=ldc2-1.19.0-linux-x86_64
+ARG LDC=ldc2-1.20.1-linux-x86_64
 RUN wget --progress=dot:giga -O - \
-    https://github.com/ldc-developers/ldc/releases/download/v1.19.0/$LDC.tar.xz \
+    https://github.com/ldc-developers/ldc/releases/download/v1.20.1/$LDC.tar.xz \
     | tar -xJ
 ENV PATH="/opt/$LDC/bin/:${PATH}"
 
 # https://golang.org/dl/
 RUN wget --progress=dot:giga -O - \
-    https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz \
+    https://dl.google.com/go/go1.14.1.linux-amd64.tar.gz \
     | tar -xz
 ENV PATH="/opt/go/bin/:${PATH}"
 
 # https://dlang.org/download.html
 RUN wget --progress=dot:giga -O - \
-    http://downloads.dlang.org/releases/2.x/2.090.0/dmd.2.090.0.linux.tar.xz \
+    http://downloads.dlang.org/releases/2.x/2.091.0/dmd.2.091.0.linux.tar.xz \
     | tar -xJ
 ENV PATH="/opt/dmd2/linux/bin64/:${PATH}"
 
@@ -50,7 +50,7 @@ RUN wget --progress=dot:giga -O - \
 ENV PATH="/opt/scala-$SCALA/bin/:${PATH}"
 
 # https://nodejs.org/en/download/current/
-ARG NODE=v13.7.0
+ARG NODE=v13.12.0
 RUN wget --progress=dot:giga -O - \
     https://nodejs.org/dist/$NODE/node-$NODE-linux-x64.tar.xz \
     | tar -xJ
