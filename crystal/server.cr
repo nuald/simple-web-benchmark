@@ -7,7 +7,6 @@ numThread = System.cpu_count
 uname = Process.run("uname", {"-or"}) do |proc|
   proc.output.gets_to_end
 end
-isWSL = uname =~ /.*-Microsoft GNU\/Linux/
 
 pid = Process.pid
 File.open(".pid", "w") do |io|
@@ -17,7 +16,7 @@ end
 puts "Master #{pid} is running"
 
 numThread.times do |i|
-  fork do
+  Process.fork do
     puts "Worker #{Process.pid} started"
 
     server = HTTP::Server.new do |context|
@@ -35,12 +34,7 @@ numThread.times do |i|
       end
     end
 
-    if isWSL
-      server.listen(port = 3000)
-    else
-      server.listen(port = 3000, reuse_port = true)
-    end
-
+    server.listen(port = 3000, reuse_port = true)
   end
 end
 

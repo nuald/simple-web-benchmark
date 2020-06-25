@@ -5,5 +5,5 @@ authors = ["Alexander Slesarev <alex.slesarev@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-tokio = { version = "0.2.14", features = ["macros"] }
-warp = "0.2.2"
+tokio = { version = "0.2.21", features = ["macros"] }
+warp = "0.2.3"

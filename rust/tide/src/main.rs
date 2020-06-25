@@ -7,10 +7,10 @@ fn main() -> Result<(), std::io::Error> {
 
     task::block_on(async {
         let mut app = tide::new();
-        app.at("/").get(|_| async move { "Hello, world!" });
+        app.at("/").get(|_| async { Ok("Hello, world!") });
         app.at("/greeting/:name")
             .get(|req: tide::Request<()>| async move {
-                format!("Hello, {}", req.param::<String>("name").unwrap())
+                Ok(format!("Hello, {}", req.param::<String>("name").unwrap()))
             });
         app.listen("127.0.0.1:3000").await?;
         Ok(())

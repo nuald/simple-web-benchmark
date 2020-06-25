@@ -8,6 +8,6 @@ go/build/
 rust/hyper/target/
 rust/rocket/target/
 rust/tide/target/
-rust/actix-web/target/
+rust/warp/target/
 scala/target/
 java/target/

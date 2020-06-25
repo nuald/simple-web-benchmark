@@ -14,7 +14,6 @@ the JIT optimizations where it's applicable):
     hey -n 50000 -c 256 -t 10 "http://127.0.0.1:3000/"
     hey -n 50000 -c 256 -t 10 "http://127.0.0.1:3000/greeting/hello"
 
-
 ### Using Docker
 
 Build the image:
@@ -25,9 +24,18 @@ Enter the shell in the image:
 
     $ docker run -it --rm -v $(pwd):/src --network="host" simple-web-benchmark
 
+There is a `Makefile` that could be used to simlify Docker usage:
+
+ - `make build` (build the image);
+ - `make shell` (enter the shell in the image).
+
+Please note that the `make shell` rule requires `cpupower` utility installed
+that is invoked with `sudo` to set cpufreq's performance governon
+(it runs the CPU at the maximum frequence to eliminate throttling issues).
+
 ### Automation
 
-Please use the Rust program to run all tests automatically:
+Please use the Rust program to run the tests automatically:
 
     USAGE:
         cargo run --manifest-path suite/Cargo.toml -- [FLAGS] [OPTIONS] <lang>...
@@ -48,6 +56,11 @@ Please use the Rust program to run all tests automatically:
 And another program to get the versions of the languages:
 
     $ cargo run --manifest-path suite/Cargo.toml --bin versions
+
+The same `Makefile` is used to run those programs (but the commands should be run from within the Docker image shell):
+
+ - `make run` (run all tests);
+ - `make versions` (get the versions of the languages).
 
 ## Usage
 
@@ -128,13 +141,13 @@ Base Docker image: Debian GNU/Linux bullseye/sid
 
 | Language     | Version                         |
 | ------------ | ------------------------------- |
-| Crystal      | 0.33.0                          |
-| DMD          | v2.091.0                        |
-| Go           | go1.14.1                        |
-| Java         | 14                              |
-| LDC          | 1.20.1                          |
-| Node.js      | v13.12.0                        |
-| PHP          | 7.3.15-3                        |
-| PyPy         | 7.3.0-final0 for Python 3.6.9   |
-| Rust         | 1.44.0-nightly                  |
-| Scala        | 2.13.1                          |
+| Crystal      | 0.35.0                          |
+| DMD          | v2.092.1                        |
+| Go           | go1.14.4                        |
+| Java         | 14.0.1                          |
+| LDC          | 1.21.0                          |
+| Node.js      | v14.4.0                         |
+| PHP          | 7.4.5                           |
+| PyPy         | 7.3.1-final0 for Python 3.6.9   |
+| Rust         | 1.46.0-nightly                  |
+| Scala        | 2.13.2                          |
