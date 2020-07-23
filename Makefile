@@ -1,6 +1,12 @@
+docker_build = docker build suite/ -t simple-web-benchmark
+
 .PHONY: build
 build:
-	docker build suite/ -t simple-web-benchmark
+	$(docker_build)
+
+.PHONY: rebuild
+rebuild:
+	$(docker_build) --no-cache
 
 .PHONY: scaling_governor
 performance_governor:
