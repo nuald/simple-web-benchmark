@@ -1,7 +1,7 @@
 FROM debian:testing
 
-RUN apt update \
-    && apt install -y wget xz-utils build-essential pkg-config cmake lsof fontconfig \
+RUN apt-get update \
+    && apt-get install -y wget xz-utils build-essential pkg-config cmake lsof fontconfig \
        libpcre3-dev libevent-dev libssl-dev zlib1g-dev libfreetype-dev libexpat1-dev \
        python3 python3-twisted php php-dev \
     && pecl install swoole \
@@ -24,21 +24,21 @@ RUN wget --progress=dot:giga -O - \
 ENV PATH="/opt/$CRYSTAL/bin:${PATH}"
 
 # https://github.com/ldc-developers/ldc/releases
-ARG LDC=ldc2-1.22.0-linux-x86_64
+ARG LDC=ldc2-1.23.0-linux-x86_64
 RUN wget --progress=dot:giga -O - \
-	https://github.com/ldc-developers/ldc/releases/download/v1.22.0/$LDC.tar.xz \
+	https://github.com/ldc-developers/ldc/releases/download/v1.23.0/$LDC.tar.xz \
 	| tar -xJ
 ENV PATH="/opt/$LDC/bin/:${PATH}"
 
 # https://golang.org/dl/
 RUN wget --progress=dot:giga -O - \
-        https://golang.org/dl/go1.14.6.linux-amd64.tar.gz \
+        https://golang.org/dl/go1.15.linux-amd64.tar.gz \
 	| tar -xz
 ENV PATH="/opt/go/bin/:${PATH}"
 
 # https://dlang.org/download.html
 RUN wget --progress=dot:giga -O - \
-        http://downloads.dlang.org/releases/2.x/2.093.0/dmd.2.093.0.linux.tar.xz \
+        http://downloads.dlang.org/releases/2.x/2.093.1/dmd.2.093.1.linux.tar.xz \
 	| tar -xJ
 ENV PATH="/opt/dmd2/linux/bin64/:${PATH}"
 
@@ -50,7 +50,7 @@ RUN wget --progress=dot:giga -O - \
 ENV PATH="/opt/scala-$SCALA/bin/:${PATH}"
 
 # https://nodejs.org/en/download/current/
-ARG NODE=v14.5.0
+ARG NODE=v14.9.0
 RUN wget --progress=dot:giga -O - \
 	https://nodejs.org/dist/$NODE/node-$NODE-linux-x64.tar.xz \
 	| tar -xJ
@@ -59,7 +59,7 @@ ENV PATH="/opt/node-$NODE-linux-x64/bin/:${PATH}"
 # https://pypy.org/download.html
 ARG PYPY=pypy3.6-v7.3.1-linux64
 RUN wget --progress=dot:giga -O - \
-	https://bitbucket.org/pypy/pypy/downloads/$PYPY.tar.bz2 \
+        https://downloads.python.org/pypy/$PYPY.tar.bz2 \
 	| tar -xj
 ENV PATH="/opt/$PYPY/bin:${PATH}"
 RUN pypy3 -m ensurepip && pypy3 -m pip install twisted
