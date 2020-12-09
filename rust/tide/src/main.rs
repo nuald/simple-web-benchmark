@@ -10,7 +10,7 @@ fn main() -> Result<(), std::io::Error> {
         app.at("/").get(|_| async { Ok("Hello, world!") });
         app.at("/greeting/:name")
             .get(|req: tide::Request<()>| async move {
-                Ok(format!("Hello, {}", req.param::<String>("name").unwrap()))
+                Ok(format!("Hello, {}", req.param("name").unwrap()))
             });
         app.listen("127.0.0.1:3000").await?;
         Ok(())

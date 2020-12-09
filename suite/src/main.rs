@@ -184,15 +184,12 @@ fn draw<DB: DrawingBackend>(dataset: Vec<(String, &str, Quartiles)>, backend: DB
 where
     DB::ErrorType: 'static,
 {
-    let category = Category::new(
-        "Language",
-        dataset
-            .iter()
-            .unique_by(|x| x.0.clone())
-            .sorted_by(|a, b| b.2.median().partial_cmp(&a.2.median()).unwrap())
-            .map(|x| x.0.clone())
-            .collect(),
-    );
+    let lang_list: Vec<_> = dataset
+        .iter()
+        .unique_by(|x| x.0.clone())
+        .sorted_by(|a, b| b.2.median().partial_cmp(&a.2.median()).unwrap())
+        .map(|x| x.0.clone())
+        .collect();
 
     let mut colors = (0..).map(Palette99::pick);
     let mut offsets = (-10..).step_by(20);
@@ -217,20 +214,23 @@ where
     let mut chart = ChartBuilder::on(&root)
         .x_label_area_size(40)
         .y_label_area_size(100)
-        .build_ranged(0.0..values_range.end + 1.0, category.range())?;
+        .build_cartesian_2d(
+            0.0..values_range.end + 1.0,
+            lang_list[..].into_segmented(),
+        )?;
 
     chart
         .configure_mesh()
         .x_desc("Response, ms")
-        .y_desc(category.name())
-        .y_labels(category.len())
-        .line_style_2(&WHITE)
+        .y_desc("Language")
+        .y_labels(lang_list.len())
+        .light_line_style(&WHITE)
         .draw()?;
 
     for (label, (values, style, offset)) in &series {
         chart
             .draw_series(values.iter().map(|x| {
-                Boxplot::new_horizontal(category.get(&x.0).unwrap(), &x.1)
+                Boxplot::new_horizontal(SegmentValue::CenterOf(&x.0), &x.1)
                     .width(10)
                     .whisker_width(0.5)
                     .style(style)

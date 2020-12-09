@@ -1,4 +1,5 @@
-docker_build = docker build suite/ -t simple-web-benchmark
+docker := env docker
+docker_build = $(docker) build suite/ -t simple-web-benchmark
 
 .PHONY: build
 build:
@@ -14,7 +15,7 @@ performance_governor:
 
 .PHONY: shell
 shell: performance_governor
-	docker run -it --rm -v $(shell pwd):/src --network="host" simple-web-benchmark
+	$(docker) run -it --rm -v $(shell pwd):/src --network="host" simple-web-benchmark
 
 .PHONY: run
 run:

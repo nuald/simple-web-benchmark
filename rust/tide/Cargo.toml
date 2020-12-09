@@ -5,5 +5,5 @@ authors = ["Alexander Slesarev <alex.slesarev@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-tide = "0.13.0"
-async-std = "1.6.3"
+tide = "0.15.0"
+async-std = "1.8.0"

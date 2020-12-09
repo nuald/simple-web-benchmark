@@ -14,10 +14,10 @@ async fn main() -> std::io::Result<()> {
                     .body("Hello world!")
             }))
             .service(
-                web::resource("/greeting/{name}").to(|path: web::Path<(String,)>| {
+                web::resource("/greeting/{name}").to(|path: web::Path<String>| {
                     HttpResponse::Ok()
                         .content_type("text/plain")
-                        .body(format!("Hello {}!", path.0))
+                        .body(format!("Hello {}!", path))
                 }),
             )
     })
