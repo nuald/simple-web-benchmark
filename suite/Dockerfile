@@ -38,7 +38,7 @@ ENV PATH="/opt/go/bin/:${PATH}"
 
 # https://dlang.org/download.html
 RUN wget --progress=dot:giga -O - \
-        http://downloads.dlang.org/releases/2.x/2.094.2/dmd.2.094.2.linux.tar.xz \
+        http://downloads.dlang.org/releases/2.x/2.095.0/dmd.2.095.0.linux.tar.xz \
 	| tar -xJ
 ENV PATH="/opt/dmd2/linux/bin64/:${PATH}"
 
@@ -50,7 +50,7 @@ RUN wget --progress=dot:giga -O - \
 ENV PATH="/opt/scala-$SCALA/bin/:${PATH}"
 
 # https://nodejs.org/en/download/current/
-ARG NODE=v15.3.0
+ARG NODE=v15.5.1
 RUN wget --progress=dot:giga -O - \
 	https://nodejs.org/dist/$NODE/node-$NODE-linux-x64.tar.xz \
 	| tar -xJ
