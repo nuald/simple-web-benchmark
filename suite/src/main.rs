@@ -83,8 +83,7 @@ fn pspawn(cmd: &mut Command) -> UnsignedResult {
 
 fn kill(pid: u32) {
     // Ignore any errors as the process could be finished already
-    let _ = exec(Command::new("kill").args(&["-9", &format!("-{}", pid)]));
-    let _ = exec(Command::new("kill").args(&["-9", &pid.to_string()]));
+    let _ = exec(Command::new("kill").args(&[&pid.to_string()]));
 }
 
 fn kill_processes() -> Result<bool, Box<dyn Error>> {
@@ -214,10 +213,7 @@ where
     let mut chart = ChartBuilder::on(&root)
         .x_label_area_size(40)
         .y_label_area_size(100)
-        .build_cartesian_2d(
-            0.0..values_range.end + 1.0,
-            lang_list[..].into_segmented(),
-        )?;
+        .build_cartesian_2d(0.0..values_range.end + 1.0, lang_list[..].into_segmented())?;
 
     chart
         .configure_mesh()
@@ -303,11 +299,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     "--release",
                 ]))
             }),
-            run: Box::new(|| {
-                pspawn(&mut Command::new(
-                    "rust/actix-web/target/release/actix-web",
-                ))
-            }),
+            run: Box::new(|| pspawn(&mut Command::new("rust/actix-web/target/release/actix-web"))),
         },
     );
     lang_cmds.insert(
