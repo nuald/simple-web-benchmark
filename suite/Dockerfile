@@ -10,47 +10,47 @@ RUN apt-get update \
 WORKDIR /opt
 
 # https://jdk.java.net/
-ARG JDK=15.0.1
+ARG JDK=15.0.2
 RUN wget --progress=dot:giga -O - \
-        https://download.java.net/java/GA/jdk${JDK}/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-${JDK}_linux-x64_bin.tar.gz \
-	| tar -xz
+    https://download.java.net/java/GA/jdk15.0.2/0d1cfde4252546c6931946de8db48ee2/7/GPL/openjdk-${JDK}_linux-x64_bin.tar.gz \
+    | tar -xz
 ENV PATH="/opt/jdk-$JDK/bin:${PATH}"
 
 # https://github.com/crystal-lang/crystal/releases
-ARG CRYSTAL=crystal-0.35.1-1
+ARG CRYSTAL=crystal-0.36.1-1
 RUN wget --progress=dot:giga -O - \
-	https://github.com/crystal-lang/crystal/releases/download/0.35.1/$CRYSTAL-linux-x86_64.tar.gz \
+	https://github.com/crystal-lang/crystal/releases/download/0.36.1/$CRYSTAL-linux-x86_64.tar.gz \
 	| tar -xz
 ENV PATH="/opt/$CRYSTAL/bin:${PATH}"
 
 # https://github.com/ldc-developers/ldc/releases
-ARG LDC=ldc2-1.24.0-linux-x86_64
+ARG LDC=ldc2-1.25.1-linux-x86_64
 RUN wget --progress=dot:giga -O - \
-	https://github.com/ldc-developers/ldc/releases/download/v1.24.0/$LDC.tar.xz \
+	https://github.com/ldc-developers/ldc/releases/download/v1.25.1/$LDC.tar.xz \
 	| tar -xJ
 ENV PATH="/opt/$LDC/bin/:${PATH}"
 
 # https://golang.org/dl/
 RUN wget --progress=dot:giga -O - \
-        https://golang.org/dl/go1.15.6.linux-amd64.tar.gz \
+        https://golang.org/dl/go1.16.linux-amd64.tar.gz \
 	| tar -xz
 ENV PATH="/opt/go/bin/:${PATH}"
 
 # https://dlang.org/download.html
 RUN wget --progress=dot:giga -O - \
-        http://downloads.dlang.org/releases/2.x/2.095.0/dmd.2.095.0.linux.tar.xz \
-	| tar -xJ
+    https://s3.us-west-2.amazonaws.com/downloads.dlang.org/releases/2021/dmd.2.095.1.linux.tar.xz \
+    | tar -xJ
 ENV PATH="/opt/dmd2/linux/bin64/:${PATH}"
 
 # https://www.scala-lang.org/download/
-ARG SCALA=2.13.4
+ARG SCALA=2.13.5
 RUN wget --progress=dot:giga -O - \
 	https://downloads.lightbend.com/scala/$SCALA/scala-$SCALA.tgz \
 	| tar -xz
 ENV PATH="/opt/scala-$SCALA/bin/:${PATH}"
 
 # https://nodejs.org/en/download/current/
-ARG NODE=v15.5.1
+ARG NODE=v15.11.0
 RUN wget --progress=dot:giga -O - \
 	https://nodejs.org/dist/$NODE/node-$NODE-linux-x64.tar.xz \
 	| tar -xJ

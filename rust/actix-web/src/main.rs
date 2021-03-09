@@ -1,6 +1,6 @@
 use actix_web::{web, App, HttpResponse, HttpServer};
 
-#[actix_rt::main]
+#[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let pid = std::process::id().to_string();
     std::fs::write(".pid", &pid).expect("Unable to write file");
