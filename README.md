@@ -142,13 +142,13 @@ Base Docker image: Debian GNU/Linux bullseye/sid
 
 | Language     | Version                         |
 | ------------ | ------------------------------- |
-| Crystal      | 0.36.1                          |
-| DMD          | v2.095.1                        |
-| Go           | go1.16                          |
-| Java         | 15.0.2                          |
+| Crystal      | 1.0.0                           |
+| DMD          | v2.096.0                        |
+| Go           | go1.16.2                        |
+| Java         | 16                              |
 | LDC          | 1.25.1                          |
-| Node.js      | v15.11.0                        |
+| Node.js      | v15.13.0                        |
 | PHP          | 7.4.15                          |
 | PyPy         | 7.3.3-beta0 for Python 3.7.9    |
-| Rust         | 1.52.0-nightly                  |
+| Rust         | 1.53.0-nightly                  |
 | Scala        | 2.13.5                          |

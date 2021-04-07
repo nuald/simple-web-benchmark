@@ -30,7 +30,7 @@ fn main() {
     opts.optflag("p", "prod", "use the vanilla production config");
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
-        Err(f) => panic!(f.to_string()),
+        Err(f) => panic!("{}", f),
     };
 
     let mut config_builder = Config::build(Environment::Production)
