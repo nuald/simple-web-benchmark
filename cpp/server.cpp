@@ -1,6 +1,4 @@
 
-#include "fields_alloc.hpp"
-
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
@@ -37,7 +35,6 @@ public:
   }
 
 private:
-  using alloc_t = fields_alloc<char>;
   using request_body_t = http::string_body;
 
     // The acceptor used to listen for incoming connections.
@@ -49,11 +46,8 @@ private:
     // The buffer for performing reads
   beast::flat_static_buffer<8192> buffer_;
 
-    // The allocator used for the fields in the request and reply.
-  alloc_t alloc_{8192};
-
     // The parser for reading the requests
-  boost::optional<http::request_parser<request_body_t, alloc_t>> parser_;
+  boost::optional<http::request_parser<request_body_t>> parser_;
 
     // The timer putting a time limit on requests.
   net::steady_timer request_deadline_{
@@ -61,10 +55,10 @@ private:
   };
 
   // The string-based response message.
-  boost::optional<http::response<http::string_body, http::basic_fields<alloc_t>>> string_response_;
+  boost::optional<http::response<http::string_body>> string_response_;
 
   // The string-based response serializer.
-  boost::optional<http::response_serializer<http::string_body, http::basic_fields<alloc_t>>> string_serializer_;
+  boost::optional<http::response_serializer<http::string_body>> string_serializer_;
 
   void accept() {
       // Clean up any previous connection.
@@ -97,10 +91,7 @@ private:
     // We construct the dynamic body with a 1MB limit
     // to prevent vulnerability to buffer attacks.
     //
-    parser_.emplace(
-      std::piecewise_construct,
-      std::make_tuple(),
-      std::make_tuple(alloc_));
+    parser_.emplace(std::piecewise_construct, std::make_tuple());
 
     http::async_read(
       socket_,
@@ -115,7 +106,7 @@ private:
       });
   }
 
-  void process_request(http::request<request_body_t, http::basic_fields<alloc_t>> const& req) {
+  void process_request(http::request<request_body_t> const& req) {
     switch (req.method()) {
       case http::verb::get:
       send_response(http::status::ok, "Hello World!");
@@ -132,10 +123,7 @@ private:
   }
 
   void send_response(http::status status, std::string const& body) {
-    string_response_.emplace(
-      std::piecewise_construct,
-      std::make_tuple(),
-      std::make_tuple(alloc_));
+    string_response_.emplace(std::piecewise_construct, std::make_tuple());
 
     string_response_->result(status);
     string_response_->keep_alive(false);
