@@ -71,6 +71,12 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let mut langs: BTreeMap<&str, Box<dyn Fn() -> StringResult>> = BTreeMap::new();
     langs.insert(
+        "C++/g++",
+        Box::new(|| {
+            pexec(Command::new("g++").args(&["-dumpfullversion"]))
+        }),
+    );
+    langs.insert(
         "Rust",
         Box::new(|| {
             let text = pexec(Command::new("rustc").args(&["--version"]))?;

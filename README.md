@@ -51,7 +51,7 @@ Please use the Rust program to run the tests automatically:
     ARGS:
         <lang>...    Sets the languages to test ('all' for all)
 
-    The following languages are supported: crystal, dmd, go, java, ldc2, nodejs, php, python, rust_actix, rust_hyper, rust_rocket, rust_tide, rust_warp, scala.
+    The following languages are supported: cpp, crystal, dmd, go, java, ldc2, nodejs, php, python, rust_actix, rust_hyper, rust_rocket, rust_tide, rust_warp, scala.
 
 And another program to get the versions of the languages:
 
@@ -134,6 +134,12 @@ Uses [Sprint Boot](https://spring.io/projects/spring-boot) project:
 
     make -C java clean run
 
+### C++
+
+Uses [Boost.Beast](www.boost.org/libs/beast) library:
+
+    make -C cpp clean run
+
 # Environment
 
 CPU: Intel(R) Core(TM) i7-10710U, Mem: 16GB LPDDR3 2133MHz
@@ -142,6 +148,7 @@ Base Docker image: Debian GNU/Linux bullseye/sid
 
 | Language     | Version                         |
 | ------------ | ------------------------------- |
+| C++/g++      | 10.2.1                          |
 | Crystal      | 1.0.0                           |
 | DMD          | v2.096.0                        |
 | Go           | go1.16.2                        |

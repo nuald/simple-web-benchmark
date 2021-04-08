@@ -33,4 +33,4 @@ run: target/library.jar
 clean:
 	rm -rf target
 
-.PHONY: clean all
+.PHONY: clean all run
