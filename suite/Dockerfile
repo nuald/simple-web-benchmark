@@ -66,7 +66,8 @@ RUN pypy3 -m ensurepip && pypy3 -m pip install twisted
 
 # https://www.rust-lang.org/tools/install
 ENV CARGO_HOME="/opt/.cargo" PATH="/opt/.cargo/bin:${PATH}"
-RUN wget -O - https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
+# TODO: revert back to latest nightly as soon as tide fixes the compilation
+RUN wget -O - https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly-2021-03-31
 
 RUN wget -O /usr/local/bin/coursier https://git.io/coursier-cli \
     && chmod +x /usr/local/bin/coursier

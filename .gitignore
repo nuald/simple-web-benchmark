@@ -12,3 +12,4 @@ rust/warp/target/
 rust/actix-web/target/
 scala/target/
 java/target/
+cpp/target/
