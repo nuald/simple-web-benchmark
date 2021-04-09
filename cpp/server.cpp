@@ -152,6 +152,7 @@ int main() {
   try {
     auto const address = net::ip::make_address("0.0.0.0");
     auto const port = 3000;
+    auto const workers = std::thread::hardware_concurrency();
     auto const pid = getpid();
     {
       std::ofstream pid_file(".pid");
@@ -163,16 +164,29 @@ int main() {
     net::io_context ioc{1};
 
     // The acceptor receives incoming connections
-    tcp::acceptor acceptor{ioc, {address, port}};
-    for (;;) {
-        // This will receive the new connection
-      tcp::socket socket{ioc};
+    // reuse_addr = true
+    tcp::acceptor acceptor{ioc, {address, port}, true};
 
-        // Block until we get a connection
-      acceptor.accept(socket);
+    for (std::remove_const<decltype(workers)>::type i = 0; i < workers; ++i) {
+      const auto pid = fork();
+      if (pid == -1) {
+        std::cerr << "can't fork, error " << errno << std::endl;
+        return EXIT_FAILURE;
+      }
+      if (pid == 0) {
+        std::cout << format("Worker %d started\n") % getpid();
 
-        // Launch the session, transferring ownership of the socket
-      std::thread{std::bind(&do_session, std::move(socket))}.detach();
+        for (;;) {
+            // This will receive the new connection
+          tcp::socket socket{ioc};
+
+            // Block until we get a connection
+          acceptor.accept(socket);
+
+            // Launch the session, transferring ownership of the socket
+          std::thread{std::bind(&do_session, std::move(socket))}.detach();
+        }
+      }
     }
   } catch (const std::exception& e) {
     std::cerr << "Error: " << e.what() << std::endl;
