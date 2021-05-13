@@ -1,6 +1,6 @@
 # Simple Web Benchmark
 
-A simple web benchmark of Crystal, D, Go, Java, Node.js, PHP, Python, Rust and Scala.
+A simple web benchmark of C++, Crystal, D, Go, Java, Node.js, PHP, Python, Rust and Scala.
 
 ## Results
 

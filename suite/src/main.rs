@@ -158,7 +158,7 @@ fn run_benchmark(lang: &str, is_index: bool) -> Result<Vec<f64>, Box<dyn Error>>
                     }
                     result
                 })
-                .filter_map(|x| x)
+                .flatten()
                 .collect();
             Ok(values)
         })
@@ -513,7 +513,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut dataset = Vec::new();
     let mut dataset_for_print = Vec::new();
     for (lang, lang_cmd) in &lang_cmds {
-        if langs.iter().position(|x| x == lang).is_none() {
+        if !langs.iter().any(|x| x == lang) {
             continue;
         }
 
