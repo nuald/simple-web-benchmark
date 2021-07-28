@@ -5,5 +5,5 @@ authors = ["Roman Proskuryakov <humbug@deeptown.org>"]
 edition = "2018"
 
 [dependencies]
-rocket = "0.4.7"
+rocket = "0.4.10"
 getopts = "0.2.21"

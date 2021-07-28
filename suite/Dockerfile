@@ -10,17 +10,17 @@ RUN apt-get update \
 WORKDIR /opt
 
 # https://jdk.java.net/
-ARG JDK=16.0.1
+ARG JDK=16.0.2
 RUN wget --progress=dot:giga -O - \
-    https://download.java.net/java/GA/jdk16.0.1/7147401fd7354114ac51ef3e1328291f/9/GPL/openjdk-${JDK}_linux-x64_bin.tar.gz \
+    https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945d746/7/GPL/openjdk-${JDK}_linux-x64_bin.tar.gz \
     | tar -xz
 ENV PATH="/opt/jdk-$JDK/bin:${PATH}"
 
 # https://github.com/crystal-lang/crystal/releases
-ARG CRYSTAL=crystal-1.0.0-1
+ARG CRYSTAL=crystal-1.1.0-1
 RUN wget --progress=dot:giga -O - \
-	https://github.com/crystal-lang/crystal/releases/download/1.0.0/$CRYSTAL-linux-x86_64.tar.gz \
-	| tar -xz
+    https://github.com/crystal-lang/crystal/releases/download/1.1.0/$CRYSTAL-linux-x86_64.tar.gz \
+    | tar -xz
 ENV PATH="/opt/$CRYSTAL/bin:${PATH}"
 
 # https://github.com/ldc-developers/ldc/releases
@@ -32,32 +32,32 @@ ENV PATH="/opt/$LDC/bin/:${PATH}"
 
 # https://golang.org/dl/
 RUN wget --progress=dot:giga -O - \
-    https://golang.org/dl/go1.16.4.linux-amd64.tar.gz \
+    https://golang.org/dl/go1.16.6.linux-amd64.tar.gz \
     | tar -xz
 ENV PATH="/opt/go/bin/:${PATH}"
 
 # https://dlang.org/download.html
 RUN wget --progress=dot:giga -O - \
-    https://s3.us-west-2.amazonaws.com/downloads.dlang.org/releases/2021/dmd.2.096.1.linux.tar.xz \
+    https://s3.us-west-2.amazonaws.com/downloads.dlang.org/releases/2021/dmd.2.097.1.linux.tar.xz \
     | tar -xJ
 ENV PATH="/opt/dmd2/linux/bin64/:${PATH}"
 
 # https://www.scala-lang.org/download/
-ARG SCALA=2.13.5
+ARG SCALA=3.0.1
 RUN wget --progress=dot:giga -O - \
-	https://downloads.lightbend.com/scala/$SCALA/scala-$SCALA.tgz \
-	| tar -xz
-ENV PATH="/opt/scala-$SCALA/bin/:${PATH}"
+    https://github.com/lampepfl/dotty/releases/download/$SCALA/scala3-$SCALA.tar.gz \
+    | tar -xz
+ENV PATH="/opt/scala3-$SCALA/bin/:${PATH}"
 
 # https://nodejs.org/en/download/current/
-ARG NODE=v16.1.0
+ARG NODE=v16.5.0
 RUN wget --progress=dot:giga -O - \
 	https://nodejs.org/dist/$NODE/node-$NODE-linux-x64.tar.xz \
 	| tar -xJ
 ENV PATH="/opt/node-$NODE-linux-x64/bin/:${PATH}"
 
 # https://pypy.org/download.html
-ARG PYPY=pypy3.7-v7.3.4-linux64
+ARG PYPY=pypy3.7-v7.3.5-linux64
 RUN wget --progress=dot:giga -O - \
         https://downloads.python.org/pypy/$PYPY.tar.bz2 \
 	| tar -xj
@@ -66,8 +66,7 @@ RUN pypy3 -m ensurepip && pypy3 -m pip install twisted
 
 # https://www.rust-lang.org/tools/install
 ENV CARGO_HOME="/opt/.cargo" PATH="/opt/.cargo/bin:${PATH}"
-# TODO: revert back to latest nightly as soon as tide fixes the compilation
-RUN wget -O - https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly-2021-03-31
+RUN wget -O - https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
 
 RUN wget -O /usr/local/bin/coursier https://git.io/coursier-cli \
     && chmod +x /usr/local/bin/coursier
