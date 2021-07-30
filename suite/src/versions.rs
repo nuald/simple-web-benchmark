@@ -173,6 +173,12 @@ print("%s for Python %s" % (pypy, platform.python_version()))
         "PHP",
         Box::new(|| pexec(Command::new("php").args(&["-r", "echo phpversion();"]))),
     );
+    langs.insert(
+        "Ruby",
+        Box::new(|| pexec(Command::new("ruby").args(&[
+            "-e",
+            "puts \"#{RUBY_VERSION}p#{RUBY_PATCHLEVEL}\""]))),
+    );
 
     for (name, version_lambda) in &langs {
         eprint!("{}", format!("Fetching {} version... ", name));

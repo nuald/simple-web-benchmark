@@ -3,7 +3,7 @@ FROM debian:testing
 RUN apt-get update \
     && apt-get install -y wget xz-utils build-essential pkg-config cmake lsof fontconfig \
        libpcre3-dev libevent-dev libssl-dev zlib1g-dev libfreetype-dev libexpat1-dev \
-       python3 python3-twisted php php-dev git libboost-dev \
+       python3 python3-twisted php php-dev git libboost-dev ruby ruby-dev \
     && pecl install swoole \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 

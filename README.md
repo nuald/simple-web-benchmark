@@ -1,6 +1,6 @@
 # Simple Web Benchmark
 
-A simple web benchmark of C++, Crystal, D, Go, Java, Node.js, PHP, Python, Rust and Scala.
+A simple web benchmark of C++, Crystal, D, Go, Java, Node.js, PHP, Python, Ruby, Rust and Scala.
 
 ## Results
 
@@ -140,6 +140,16 @@ Uses [Boost.Beast](www.boost.org/libs/beast) library:
 
     make -C cpp clean run
 
+### Ruby
+
+Use [Ruby on Rails](https://rubyonrails.org/) framework:
+
+    ruby --jit ruby/inline-rails.rb
+
+Requires [bundler](https://bundler.io/) installation:
+
+    gem install bundler
+
 # Environment
 
 CPU: Intel(R) Core(TM) i7-10710U, Mem: 16GB LPDDR3 2133MHz
@@ -157,5 +167,6 @@ Base Docker image: Debian GNU/Linux bullseye/sid
 | Node.js      | v16.5.0                         |
 | PHP          | 7.4.21                          |
 | PyPy         | 7.3.5-final0 for Python 3.7.10  |
+| Ruby         | 2.7.4p191                       |
 | Rust         | 1.56.0-nightly                  |
 | Scala        | 3.0.1                           |
