@@ -118,7 +118,7 @@ Uses https://akka.io/[Akka] toolkit:
 
 Uses standalone web server and https://www.swoole.co.uk/[Swoole] extension:
 
- php -S 127.0.0.1:3000 php/bare/main.php
+ php -q -S 127.0.0.1:3000 php/bare/main.php
  php -c php/swoole/php.ini php/swoole/main.php
 
 === Python

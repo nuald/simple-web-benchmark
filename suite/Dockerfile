@@ -17,40 +17,40 @@ RUN wget --progress=dot:giga -O - \
 ENV PATH="/opt/jdk-$JDK/bin:${PATH}"
 
 # https://github.com/crystal-lang/crystal/releases
-ARG CRYSTAL=crystal-1.1.0-1
+ARG CRYSTAL=crystal-1.1.1-1
 RUN wget --progress=dot:giga -O - \
-    https://github.com/crystal-lang/crystal/releases/download/1.1.0/$CRYSTAL-linux-x86_64.tar.gz \
+    https://github.com/crystal-lang/crystal/releases/download/1.1.1/$CRYSTAL-linux-x86_64.tar.gz \
     | tar -xz
 ENV PATH="/opt/$CRYSTAL/bin:${PATH}"
 
 # https://github.com/ldc-developers/ldc/releases
-ARG LDC=ldc2-1.26.0-linux-x86_64
+ARG LDC=ldc2-1.27.1-linux-x86_64
 RUN wget --progress=dot:giga -O - \
-	https://github.com/ldc-developers/ldc/releases/download/v1.26.0/$LDC.tar.xz \
+	https://github.com/ldc-developers/ldc/releases/download/v1.27.1/$LDC.tar.xz \
 	| tar -xJ
 ENV PATH="/opt/$LDC/bin/:${PATH}"
 
 # https://golang.org/dl/
 RUN wget --progress=dot:giga -O - \
-    https://golang.org/dl/go1.16.6.linux-amd64.tar.gz \
+    https://golang.org/dl/go1.17.1.linux-amd64.tar.gz \
     | tar -xz
 ENV PATH="/opt/go/bin/:${PATH}"
 
 # https://dlang.org/download.html
 RUN wget --progress=dot:giga -O - \
-    https://s3.us-west-2.amazonaws.com/downloads.dlang.org/releases/2021/dmd.2.097.1.linux.tar.xz \
+    https://s3.us-west-2.amazonaws.com/downloads.dlang.org/releases/2021/dmd.2.097.2.linux.tar.xz \
     | tar -xJ
 ENV PATH="/opt/dmd2/linux/bin64/:${PATH}"
 
 # https://www.scala-lang.org/download/
-ARG SCALA=3.0.1
+ARG SCALA=3.0.2
 RUN wget --progress=dot:giga -O - \
     https://github.com/lampepfl/dotty/releases/download/$SCALA/scala3-$SCALA.tar.gz \
     | tar -xz
 ENV PATH="/opt/scala3-$SCALA/bin/:${PATH}"
 
 # https://nodejs.org/en/download/current/
-ARG NODE=v16.5.0
+ARG NODE=v16.9.0
 RUN wget --progress=dot:giga -O - \
 	https://nodejs.org/dist/$NODE/node-$NODE-linux-x64.tar.xz \
 	| tar -xJ
