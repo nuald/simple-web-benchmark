@@ -1,21 +1,21 @@
 require "http/server"
+require "option_parser"
+
+port = 3000
+OptionParser.parse do |parser|
+  parser.on("--port=PORT", "server port") { |p| port = p.to_i }
+end
 
 reg = %r(^/greeting/([a-z]+)$)
-
-numThread = System.cpu_count
-
-uname = Process.run("uname", {"-or"}) do |proc|
-  proc.output.gets_to_end
-end
 
 pid = Process.pid
 File.open(".pid", "w") do |io|
   io.print pid
 end
 
-puts "Master #{pid} is running"
+puts "Master #{pid} is running on port #{port}"
 
-numThread.times do |i|
+System.cpu_count.times do |i|
   Process.fork do
     puts "Worker #{Process.pid} started"
 
@@ -34,7 +34,7 @@ numThread.times do |i|
       end
     end
 
-    server.listen(port = 3000, reuse_port = true)
+    server.listen(port, true)
   end
 end
 

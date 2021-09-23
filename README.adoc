@@ -72,24 +72,40 @@ The same `Makefile` is used to run those programs (but the commands should be ru
 === Go
 
  go run go/main.go
+ go run go/main.go --port=8000
 
 === Crystal
 
 Using https://crystal-lang.org/reference/installation/[Crystal]:
 
  crystal run --release --no-debug crystal/server.cr
+ crystal run --release --no-debug crystal/server.cr -- --port=8000
 
 === Rust
 
 Please install https://github.com/rust-lang/rustup.rs#working-with-nightly-rust[Nightly Rust].
 
-Sample applications use https://hyper.rs[hyper] HTTP library, https://rocket.rs/[Rocket], https://crates.io/crates/tide[Tide], https://crates.io/crates/warp[warp] and https://actix.rs/[Actix] web frameworks:
+Sample applications use
+https://hyper.rs[hyper] HTTP library,
+https://rocket.rs/[Rocket],
+https://crates.io/crates/tide[Tide],
+https://crates.io/crates/warp[warp] and
+https://actix.rs/[Actix] web frameworks:
 
  cargo run --manifest-path rust/hyper/Cargo.toml --release
+ cargo run --manifest-path rust/hyper/Cargo.toml --release -- --port=8000
+
  cargo run --manifest-path rust/rocket/Cargo.toml --release
+ cargo run --manifest-path rust/rocket/Cargo.toml --release -- --port=8000
+
  cargo run --manifest-path rust/tide/Cargo.toml --release
+ cargo run --manifest-path rust/tide/Cargo.toml --release -- --port=8000
+
  cargo run --manifest-path rust/warp/Cargo.toml --release
+ cargo run --manifest-path rust/warp/Cargo.toml --release -- --port=8000
+
  cargo run --manifest-path rust/actix-web/Cargo.toml --release
+ cargo run --manifest-path rust/actix-web/Cargo.toml --release -- --port=8000
 
 === D
 
@@ -155,7 +171,7 @@ Requires https://bundler.io/[bundler] installation:
 
  gem install bundler
 
-= Environment
+== Environment
 
 CPU: Intel(R) Core(TM) i7-10710U, Mem: 16GB LPDDR3 2133MHz
 
