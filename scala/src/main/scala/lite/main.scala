@@ -10,7 +10,8 @@ object WebServer {
   def main(args: Array[String]): Unit = {
     val pid = ProcessHandle.current().pid().toString
     new java.io.PrintWriter(".pid") { write(pid); close() }
-    println(s"Master ${ pid } is running")
+    val port = sys.env.get("PORT").getOrElse("3000").toInt
+    println(s"Master ${ pid } is running on port ${ port }")
 
     implicit val system = ActorSystem("my-system")
     implicit val executionContext = system.dispatcher
@@ -27,6 +28,6 @@ object WebServer {
         }
       }
 
-    Http().bindAndHandle(route, "localhost", 3000)
+    Http().bindAndHandle(route, "localhost", port)
   }
 }

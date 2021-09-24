@@ -15,7 +15,7 @@ $http->on('request', function ($request, $response) use ($pattern) {
         $response->end('Hello, ' . $matches[1]);
     } else {
         $response->status(404);
-        $response->end();
+        $response->end('404 Not Found');
     }
 });
 

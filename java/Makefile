@@ -1,5 +1,6 @@
 sources=$(shell find src/ -type f -name '*.java')
 main=hello.SampleController
+PORT=3000
 
 all: target/library.jar
 
@@ -28,7 +29,7 @@ target/library.jar: target/classfiles.stamp
 
 # run the application
 run: target/library.jar
-	java -cp $<:$(shell cat target/classpath.line) -Dserver.port=3000 $(main)
+	java -cp $<:$(shell cat target/classpath.line) -Dserver.port=$(PORT) $(main)
 
 clean:
 	rm -rf target

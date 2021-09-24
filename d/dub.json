@@ -11,7 +11,8 @@
         "vibe-d:tls": "notls"
     },
     "versions": [
-        "VibeManualMemoryManagement"
+        "VibeManualMemoryManagement",
+        "VibeDisableCommandLineParsing"
     ],
     "buildTypes": {
         "release": {

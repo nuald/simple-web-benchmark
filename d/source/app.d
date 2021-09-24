@@ -1,38 +1,40 @@
 import core.thread;
-import vibe.d;
+import std.conv;
+import std.getopt;
 import std.regex;
 import std.stdio;
-import std.conv;
+import vibe.d;
 
 auto reg = ctRegex!"^/greeting/([a-z]+)$";
 
-void main()
+void main(string[] args)
 {
+    ushort port = 3000;
+    getopt(args, "port",  &port);
+
     auto pid = to!string(getpid());
     auto file = File(".pid", "w");
     file.write(pid);
     file.close();
-    writefln("Master %s is running", pid);
+    writefln("Master %s is running on port %d", pid, port);
     setupWorkerThreads(logicalProcessorCount + 1);
-    runWorkerTaskDist(&runServer);
+    runWorkerTaskDist(&runServer, port);
     runApplication();
 }
 
-void runServer()
-{
+void runServer(ushort port) {
     auto settings = new HTTPServerSettings;
     settings.options |= HTTPServerOption.reusePort;
-    settings.port = 3000;
+    settings.port = port;
     settings.bindAddresses = ["127.0.0.1"];
     listenHTTP(settings, &handleRequest);
 }
 
 void handleRequest(HTTPServerRequest req,
-                    HTTPServerResponse res)
+                   HTTPServerResponse res)
 {
     if (req.path == "/")
         res.writeBody("Hello, World!", "text/plain");
     else if (auto m = matchFirst(req.path, reg))
         res.writeBody("Hello, " ~ m[1], "text/plain");
 }
-

@@ -1,17 +1,19 @@
+#include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
-#include <boost/asio/ip/tcp.hpp>
 #include <boost/config.hpp>
 #include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
 #include <cstdlib>
+#include <fstream>
+#include <future>
 #include <iostream>
 #include <memory>
+#include <regex>
 #include <string>
 #include <thread>
 #include <unistd.h>
-#include <fstream>
-#include <regex>
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
@@ -151,7 +153,8 @@ void do_session(tcp::socket& socket) {
 int main() {
   try {
     auto const address = net::ip::make_address("0.0.0.0");
-    auto const port = 3000;
+    auto const port_str = getenv("PORT");
+    const ushort port = port_str ? boost::lexical_cast<ushort>(port_str) : 3000;
     auto const workers = std::thread::hardware_concurrency();
     auto const pid = getpid();
     {
@@ -192,4 +195,5 @@ int main() {
     std::cerr << "Error: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
+  std::promise<void>().get_future().wait();
 }

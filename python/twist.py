@@ -29,7 +29,7 @@ class MyServer(resource.Resource):
             request.setHeader(b"Content-type", b"text/plain; charset=utf-8")
             return bytes(response, "utf-8")
         else:
-            return NoResource()
+            return NoResource().render(request)
 
 pid = str(os.getpid())
 with open(".pid", "w") as pidFile:

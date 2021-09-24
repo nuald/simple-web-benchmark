@@ -118,31 +118,42 @@ If ldc2 executable is not in path, please use the fully qualified path name.
 Uses https://vibed.org/[vibe.d] framework:
 
  dub run --root=d --compiler=dmd --build=release --config=dmd
+ dub run --root=d --compiler=dmd --build=release --config=dmd -- --port=8000
+
  dub run --root=d --compiler=ldc2 --build=release --config=ldc
+ dub run --root=d --compiler=ldc2 --build=release --config=ldc -- --port=8000
 
 === Scala
 
 Uses https://akka.io/[Akka] toolkit:
 
  make -C scala clean run
+ make PORT=8000 -C scala clean run
 
 === Node.js
 
  node nodejs/main.js
+ node nodejs/main.js --port=8000
 
 === PHP
 
 Uses standalone web server and https://www.swoole.co.uk/[Swoole] extension:
 
  php -q -S 127.0.0.1:3000 php/bare/main.php
+ php -q -S 127.0.0.1:8000 php/bare/main.php
+
  php -c php/swoole/php.ini php/swoole/main.php
+ php -c php/swoole/php.ini php/swoole/main.php --port=8000
 
 === Python
 
 Uses standalone web server and https://twistedmatrix.com/trac/[Twisted] engine:
 
  python3 python/main.py
+ python3 python/main.py --port=8000
+
  pypy3 python/twist.py
+ pypy3 python/twist.py --port=8000
 
 Please note that CPython has the performance problems running as a standalone server, so we've used PyPy3. To install Twisted please use the pip module:
 
@@ -154,18 +165,21 @@ Please note that CPython has the performance problems running as a standalone se
 Uses https://spring.io/projects/spring-boot[Sprint Boot] project:
 
  make -C java clean run
+ make PORT=8000 -C java clean run
 
 === C{pp}
 
 Uses link:www.boost.org/libs/beast[Boost.Beast] library:
 
  make -C cpp clean run
+ make PORT=8000 -C cpp clean run
 
 === Ruby
 
 Use https://rubyonrails.org/[Ruby on Rails] framework:
 
  ruby --jit ruby/inline-rails.rb
+ ruby --jit ruby/inline-rails.rb --port=8000
 
 Requires https://bundler.io/[bundler] installation:
 

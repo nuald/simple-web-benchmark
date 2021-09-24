@@ -6,7 +6,7 @@ gemfile(true) do
   source 'https://rubygems.org'
 
   gem 'rails', '~> 6.1.4.1'
-  gem 'puma', '~> 5.4.0'
+  gem 'puma', '~> 5.5.0'
 end
 
 require 'action_controller/railtie'
