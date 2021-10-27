@@ -1,12 +1,13 @@
 CXXFLAGS=-Wall -fsanitize=address -std=c++20 -Wextra -pedantic -pthread \
-	-O3 -march=native -Wall -flto=auto -Wa,-mbranches-within-32B-boundaries
+	-O3 -march=native -Wall -flto=auto -Wa,-mbranches-within-32B-boundaries \
+	-Wcast-align
 
 .PHONY: clean run all
 
 all: target/server
 
 target/server: server.cpp | target
-	$(CXX) $(CXXFLAGS) $^ -o $@
+	clang++ $(CXXFLAGS) $^ -o $@
 
 run: target/server
 	$^
@@ -16,4 +17,3 @@ target:
 
 clean:
 	$(RM) -r target
-

@@ -23,8 +23,8 @@ public class SampleController {
     }
 
     public static void main(String[] args) throws Exception {
-        final String pid = String.valueOf(ProcessHandle.current().pid());
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(".pid"))) {
+        final var pid = String.valueOf(ProcessHandle.current().pid());
+        try (final var writer = new BufferedWriter(new FileWriter(".pid"))) {
             writer.write(pid);
         }
         System.out.println("Master " + pid + " is running");
