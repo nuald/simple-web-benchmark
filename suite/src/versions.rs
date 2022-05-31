@@ -12,29 +12,6 @@ thread_local! {
     static LDC_PATTERN: Regex = Regex::new(r"version\s+(.*)\s+\(").unwrap();
 }
 
-fn pad(width: usize, text: &str, fill: char) -> String {
-    let trimmed = text.trim();
-    let fill_len = width - trimmed.len();
-    let fill_str: String = (0..fill_len).map(|_| fill).collect();
-    trimmed.to_owned() + &fill_str
-}
-
-fn lpad_with_fill(text: &str, fill: char) -> String {
-    pad(12, text, fill)
-}
-
-fn lpad(text: &str) -> String {
-    lpad_with_fill(text, ' ')
-}
-
-fn rpad_with_fill(text: &str, fill: char) -> String {
-    pad(31, text, fill)
-}
-
-fn rpad(text: &str) -> String {
-    rpad_with_fill(text, ' ')
-}
-
 fn pexec(cmd: &mut Command) -> StringResult {
     let output = cmd.output()?;
     let str = String::from_utf8(output.stdout)?;
@@ -60,21 +37,12 @@ fn to_result(opt: Option<String>) -> StringResult {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let mut table = vec![
-        format!("| {} | {} |", lpad("Language"), rpad("Version")),
-        format!(
-            "| {} | {} |",
-            lpad_with_fill("-", '-'),
-            rpad_with_fill("-", '-')
-        ),
-    ];
+    let mut table = vec!["|===".to_string(), "| Language | Version".to_string()];
 
     let mut langs: BTreeMap<&str, Box<dyn Fn() -> StringResult>> = BTreeMap::new();
     langs.insert(
-        "C++/g++",
-        Box::new(|| {
-            pexec(Command::new("g++").args(&["-dumpfullversion"]))
-        }),
+        "C{pp}/g{pp}",
+        Box::new(|| pexec(Command::new("g++").args(&["-dumpfullversion"]))),
     );
     langs.insert(
         "Rust",
@@ -104,7 +72,7 @@ func main() {
         Box::new(|| {
             let output = Command::new("scala").args(&["-version"]).output()?;
             let text = String::from_utf8(output.stderr)?;
-            to_result(text.split_whitespace().nth(3).map(String::from))
+            to_result(text.split_whitespace().nth(4).map(String::from))
         }),
     );
     langs.insert(
@@ -134,10 +102,8 @@ class Test {
                     output
                         .lines()
                         .nth(1)
-                        .map(|x| re.captures(x))
-                        .flatten()
-                        .map(|caps| caps.get(1))
-                        .flatten()
+                        .and_then(|x| re.captures(x))
+                        .and_then(|caps| caps.get(1))
                         .map(|v| v.as_str().to_string()),
                 )
             })
@@ -175,16 +141,16 @@ print("%s for Python %s" % (pypy, platform.python_version()))
     );
     langs.insert(
         "Ruby",
-        Box::new(|| pexec(Command::new("ruby").args(&[
-            "-e",
-            "puts \"#{RUBY_VERSION}p#{RUBY_PATCHLEVEL}\""]))),
+        Box::new(|| {
+            pexec(Command::new("ruby").args(&["-e", "puts \"#{RUBY_VERSION}p#{RUBY_PATCHLEVEL}\""]))
+        }),
     );
 
     for (name, version_lambda) in &langs {
-        eprint!("{}", format!("Fetching {} version... ", name));
+        eprint!("Fetching {} version... ", name);
         match version_lambda() {
             Ok(version) => {
-                table.push(format!("| {} | {} |", lpad(name), rpad(&version)));
+                table.push(format!("\n| {}\n| {}", name, &version));
                 eprintln!("ok");
             }
             Err(e) => {
@@ -193,6 +159,7 @@ print("%s for Python %s" % (pypy, platform.python_version()))
         }
     }
     eprintln!("\n");
+    table.push("|===".to_string());
     println!("{}", table.join("\n"));
     Ok(())
 }

@@ -4,7 +4,7 @@
     "targetType": "executable",
     "targetPath": "bin",
     "dependencies": {
-        "vibe-d": "0.9.3",
+        "vibe-d": "0.9.4",
         "vibe-d:tls": "*"
     },
     "subConfigurations": {

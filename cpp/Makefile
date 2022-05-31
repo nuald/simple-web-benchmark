@@ -1,5 +1,5 @@
 CXXFLAGS=-Wall -fsanitize=address -std=c++20 -Wextra -pedantic -pthread \
-	-O3 -march=native -Wall -flto -Wa,-mbranches-within-32B-boundaries
+	-O3 -march=native -Wall -flto=auto -Wa,-mbranches-within-32B-boundaries
 
 .PHONY: clean run all
 

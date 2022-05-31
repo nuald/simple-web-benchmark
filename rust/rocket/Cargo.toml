@@ -2,8 +2,8 @@
 name = "rust-rocket"
 version = "0.1.1"
 authors = ["Roman Proskuryakov <humbug@deeptown.org>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 getopts = "0.2.21"
-rocket = "0.4.10"
+rocket = "0.4.11"

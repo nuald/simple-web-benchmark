@@ -5,8 +5,9 @@ require 'optparse'
 gemfile(true) do
   source 'https://rubygems.org'
 
-  gem 'rails', '~> 6.1.4.1'
-  gem 'puma', '~> 5.5.0'
+  gem 'digest', '~> 3.1.0'
+  gem 'rails', '~> 7.0.3'
+  gem 'puma', '~> 5.6.4'
 end
 
 require 'action_controller/railtie'

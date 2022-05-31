@@ -27,14 +27,10 @@ Enter the shell in the image:
 
  $ docker run -it --rm -v $(pwd):/src --network="host" simple-web-benchmark
 
-There is a `Makefile` that could be used to simlify Docker usage:
+There is a `run.sh` that could be used to simlify Docker usage:
 
-* `make build` (build the image);
-* `make shell` (enter the shell in the image).
-
-Please note that the `make shell` rule requires `cpupower` utility installed
-that is invoked with `sudo` to set cpufreq's performance governon
-(it runs the CPU at the maximum frequence to eliminate throttling issues).
+* `./run.sh build` (build the image);
+* `./run.sh shell` (enter the shell in the image).
 
 === Automation
 
@@ -62,10 +58,10 @@ And another program to get the versions of the languages:
 
  $ cargo run --manifest-path suite/Cargo.toml --bin versions
 
-The same `Makefile` is used to run those programs (but the commands should be run from within the Docker image shell):
+The same `run.sh` is used to run those programs (but the commands should be run from within the Docker image shell):
 
-* `make run` (run all tests);
-* `make versions` (get the versions of the languages).
+* `./run.sh run` (run all tests);
+* `./run.sh versions` (get the versions of the languages).
 
 == Usage
 
@@ -187,46 +183,51 @@ Requires https://bundler.io/[bundler] installation:
 
 == Environment
 
-CPU: Intel(R) Core(TM) i7-10710U, Mem: 16GB LPDDR3 2133MHz
+CPU: Intel(R) Xeon(R) E-2324G, Mem: 16GB DDR4 3200MHz
 
-Base Docker image: Debian GNU/Linux bullseye/sid
+Base Docker image: Debian GNU/Linux bookworm/sid
 
 |===
 | Language | Version
 
-| C{pp}/g{pp}
-| 10.2.1
-
 | Crystal
-| 1.1.0
+| 1.4.1
+
+
+| C{pp}/g{pp}
+| 11.3.0
+
 
 | DMD
-| v2.097.1
+| v2.100.0
 
 | Go
-| go1.16.6
+| go1.18.2
 
 | Java
-| 16.0.2
+| 18.0.1.1
 
 | LDC
-| 1.26.0
+| 1.29.0
 
 | Node.js
-| v16.5.0
+| v18.2.0
+
 
 | PHP
-| 7.4.21
+| 8.1.5
 
 | PyPy
-| 7.3.5-final0 for Python 3.7.10
+| 7.3.9-final0 for Python 3.9.12
+
 
 | Ruby
-| 2.7.4p191
+| 3.0.3p157
+
 
 | Rust
-| 1.56.0-nightly
+| 1.63.0-nightly
 
 | Scala
-| 3.0.1
+| 3.1.2
 |===

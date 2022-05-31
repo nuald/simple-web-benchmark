@@ -3,7 +3,7 @@ extern crate clap;
 
 use chrono::prelude::*;
 
-use clap::{App, Arg};
+use clap::Arg;
 
 use itertools::Itertools;
 use plotters::data::fitting_range;
@@ -148,7 +148,7 @@ fn run_benchmark(lang: &str, is_index: bool) -> Result<Vec<f64>, Box<dyn Error>>
         CSV_PATTERN.with(|re| {
             let values = content
                 .split('\n')
-                .map(|line| {
+                .filter_map(|line| {
                     let mut result = None;
                     if let Some(captures) = re.captures(line) {
                         if let Some(m) = captures.name("responseTime") {
@@ -158,7 +158,6 @@ fn run_benchmark(lang: &str, is_index: bool) -> Result<Vec<f64>, Box<dyn Error>>
                     }
                     result
                 })
-                .flatten()
                 .collect();
             Ok(values)
         })
@@ -200,11 +199,7 @@ where
         entry.0.push((x.0.clone(), &x.2));
     }
 
-    let values: Vec<f32> = dataset
-        .iter()
-        .map(|x| x.2.values().to_vec())
-        .flatten()
-        .collect();
+    let values: Vec<f32> = dataset.iter().flat_map(|x| x.2.values().to_vec()).collect();
     let values_range = fitting_range(values.iter());
 
     let root = backend.into_drawing_area();
@@ -226,7 +221,7 @@ where
     for (label, (values, style, offset)) in &series {
         chart
             .draw_series(values.iter().map(|x| {
-                Boxplot::new_horizontal(SegmentValue::CenterOf(&x.0), &x.1)
+                Boxplot::new_horizontal(SegmentValue::CenterOf(&x.0), x.1)
                     .width(10)
                     .whisker_width(0.5)
                     .style(style)
@@ -335,7 +330,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                         .unwrap()
                         .trim()
                 );
-                pspawn(&mut Command::new("scala").args(&["-cp", &cp, "lite.WebServer"]))
+                pspawn(Command::new("scala").args(&["-cp", &cp, "lite.WebServer"]))
             }),
         },
     );
@@ -351,7 +346,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     "java/target/library.jar:{}",
                     fs::read_to_string("java/target/classpath.line").unwrap()
                 );
-                pspawn(&mut Command::new("java").args(&[
+                pspawn(Command::new("java").args(&[
                     "-cp",
                     &cp,
                     "-Dserver.port=3000",
@@ -365,7 +360,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         Cmd {
             title: "Node.js",
             build: Box::new(|| Ok(())),
-            run: Box::new(|| pspawn(&mut Command::new("node").args(&["nodejs/main.js"]))),
+            run: Box::new(|| pspawn(Command::new("node").args(&["nodejs/main.js"]))),
         },
     );
     lang_cmds.insert(
@@ -437,7 +432,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         Cmd {
             title: "PyPy3/Twisted",
             build: Box::new(|| Ok(())),
-            run: Box::new(|| pspawn(&mut Command::new("pypy3").args(&["python/twist.py"]))),
+            run: Box::new(|| pspawn(Command::new("pypy3").args(&["python/twist.py"]))),
         },
     );
     lang_cmds.insert(
@@ -446,7 +441,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             title: "PHP/Swoole",
             build: Box::new(|| Ok(())),
             run: Box::new(|| {
-                pspawn(&mut Command::new("php").args(&[
+                pspawn(Command::new("php").args(&[
                     "-c",
                     "php/swoole/php.ini",
                     "php/swoole/main.php",
@@ -461,34 +456,36 @@ fn main() -> Result<(), Box<dyn Error>> {
             build: Box::new(|| {
                 pexec(Command::new("make").args(&["-C", "cpp", "clean", "target/server"]))
             }),
-            run: Box::new(|| pspawn(&mut Command::new("cpp/target/server")))
+            run: Box::new(|| pspawn(&mut Command::new("cpp/target/server"))),
         },
     );
 
     let default_file = "result.svg";
-    let matches = App::new("Simple Web Benchmark runner")
+    let matches = clap::Command::new("Simple Web Benchmark runner")
         .version(crate_version!())
-        .usage("cargo run --manifest-path suite/Cargo.toml -- [FLAGS] [OPTIONS] <lang>...")
+        .override_usage("cargo run --manifest-path suite/Cargo.toml -- [FLAGS] [OPTIONS] <lang>...")
         .arg(
-            Arg::with_name("out")
-                .short("o")
+            Arg::new("out")
+                .short('o')
                 .long("out")
                 .value_name("file")
-                .help(&format!(
-                    "Sets an image file to generate ({} by default, PNG/SVG/TSV are supported)",
-                    default_file
-                ))
+                .help(
+                    &format!(
+                        "Sets an image file to generate ({} by default, PNG/SVG/TSV are supported)",
+                        default_file
+                    )[..],
+                )
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("verbose")
+            Arg::new("verbose")
                 .long("verbose")
                 .help("Enables the verbose output"),
         )
         .arg(
-            Arg::with_name("lang")
+            Arg::new("lang")
                 .index(1)
-                .multiple(true)
+                .multiple_occurrences(true)
                 .required(true)
                 .help("Sets the languages to test ('all' for all)"),
         )

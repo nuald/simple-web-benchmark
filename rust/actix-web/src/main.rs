@@ -22,17 +22,19 @@ async fn main() -> Result<()> {
 
     HttpServer::new(|| {
         App::new()
-            .service(web::resource("/").to(|| {
+            .service(web::resource("/").to(|| async {
                 HttpResponse::Ok()
                     .content_type("text/plain")
                     .body("Hello world!")
             }))
-            .service(web::resource("/greeting/{name}").to(|path: Path<String>| {
-                HttpResponse::Ok()
-                    .content_type("text/plain")
-                    .body(format!("Hello {}!", path))
-            }))
-            .default_service(web::to(|| {
+            .service(
+                web::resource("/greeting/{name}").to(|path: Path<String>| async move {
+                    HttpResponse::Ok()
+                        .content_type("text/plain")
+                        .body(format!("Hello {}!", path))
+                }),
+            )
+            .default_service(web::to(|| async {
                 HttpResponse::Ok()
                     .content_type("text/plain")
                     .body("404 Not Found")
