@@ -1,6 +1,6 @@
 [package]
-name = "warp"
-version = "0.1.0"
+name = "warp-test"
+version = "0.2.0"
 authors = ["Alexander Slesarev <alex.slesarev@gmail.com>"]
 edition = "2021"
 

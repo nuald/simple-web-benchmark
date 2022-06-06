@@ -264,7 +264,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     "--release",
                 ]))
             }),
-            run: Box::new(|| pspawn(&mut Command::new("rust/tide/target/release/tide"))),
+            run: Box::new(|| pspawn(&mut Command::new("rust/tide/target/release/tide-test"))),
         },
     );
     lang_cmds.insert(
@@ -279,7 +279,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     "--release",
                 ]))
             }),
-            run: Box::new(|| pspawn(&mut Command::new("rust/warp/target/release/warp"))),
+            run: Box::new(|| pspawn(&mut Command::new("rust/warp/target/release/warp-test"))),
         },
     );
     lang_cmds.insert(
@@ -294,7 +294,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     "--release",
                 ]))
             }),
-            run: Box::new(|| pspawn(&mut Command::new("rust/actix-web/target/release/actix-web"))),
+            run: Box::new(|| pspawn(&mut Command::new("rust/actix-web/target/release/actix-web-test"))),
         },
     );
     lang_cmds.insert(
@@ -311,7 +311,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             }),
             run: Box::new(|| {
                 pspawn(&mut Command::new(
-                    "rust/hyper/target/release/simple-web-server",
+                    "rust/hyper/target/release/hyper-test",
                 ))
             }),
         },
