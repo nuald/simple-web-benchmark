@@ -1,8 +1,8 @@
 #![feature(decl_macro)]
 
 use getopts::Options;
-use rocket::config::{Config, Environment};
-use rocket::http::RawStr;
+use rocket::config::Config;
+use std::net::Ipv4Addr;
 use std::{env, fs, process};
 
 #[rocket::get("/")]
@@ -11,17 +11,17 @@ fn index() -> &'static str {
 }
 
 #[rocket::get("/greeting/<name>")]
-fn greeting(name: &RawStr) -> String {
+fn greeting(name: &str) -> String {
     format!("Hello, {}", name)
 }
 
-fn main() {
+#[rocket::launch]
+fn rocket() -> _ {
     let pid = process::id().to_string();
     fs::write(".pid", &pid).expect("Unable to write file");
 
     let args = env::args().collect::<Vec<String>>();
     let mut opts = Options::new();
-    opts.optflag("p", "prod", "use the vanilla production config");
     opts.optopt("", "port", "server port", "PORT");
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
@@ -32,16 +32,12 @@ fn main() {
 
     println!("Master {} is running on port {}", pid, port);
 
-    let mut config_builder = Config::build(Environment::Production)
-        .address("127.0.0.1")
-        .port(port);
-
-    if !matches.opt_present("p") {
-        config_builder = config_builder.workers(256);
-    }
-
-    let config = config_builder.unwrap();
+    let config = Config {
+        port,
+        address: Ipv4Addr::new(127, 0, 0, 1).into(),
+        ..Config::release_default()
+    };
 
     let app = rocket::custom(config);
-    app.mount("/", rocket::routes![index, greeting]).launch();
+    app.mount("/", rocket::routes![index, greeting])
 }
