@@ -39,21 +39,18 @@ There is a `run.sh` that could be used to simlify Docker usage:
 Please use the Rust program to run the tests automatically:
 
 ....
-USAGE:
-    cargo run --manifest-path suite/Cargo.toml -- [FLAGS] [OPTIONS] <lang>...
+Usage: cargo run --manifest-path suite/Cargo.toml -- [FLAGS] [OPTIONS] <lang>...
 
-FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
-        --verbose    Enables the verbose output
+Arguments:
+  <lang>...  Sets the languages to test ('all' for all)
 
-OPTIONS:
-    -o, --out <file>    Sets an image file to generate (result.svg by default, PNG/SVG/TSV are supported)
+Options:
+  -o, --out [<file>]       Sets an image file to generate (PNG/SVG/TSV are supported) [default: result.svg]
+      --verbose <verbose>  Enables the verbose output
+  -h, --help               Print help
+  -V, --version            Print version
 
-ARGS:
-    <lang>...    Sets the languages to test ('all' for all)
-
-The following languages are supported: cpp, crystal, dmd, go, java, ldc2, nodejs, php, python, rust_actix, rust_hyper, rust_rocket, rust_tide, rust_warp, scala.
+The following languages are supported: crystal, go, nodejs, php, python, rust_actix, rust_hyper_monoio, rust_hyper_tokio, rust_warp, scala.
 ....
 
 And another program to get the versions of the languages:
@@ -82,14 +79,18 @@ Using https://crystal-lang.org/reference/installation/[Crystal]:
 === Rust
 
 Sample applications use
+https://crates.io/crates/monoio[monoio] runtime,
 https://hyper.rs[hyper] HTTP library,
 https://rocket.rs/[Rocket],
 https://crates.io/crates/tide[Tide],
 https://crates.io/crates/warp[warp] and
 https://actix.rs/[Actix] web frameworks:
 
- cargo run --manifest-path rust/hyper/Cargo.toml --release
- cargo run --manifest-path rust/hyper/Cargo.toml --release -- --port=8000
+ cargo run --manifest-path rust/hyper-tokio/Cargo.toml --release
+ cargo run --manifest-path rust/hyper-tokio/Cargo.toml --release -- --port=8000
+
+ cargo run --manifest-path rust/hyper-monoio/Cargo.toml --release
+ cargo run --manifest-path rust/hyper-monoio/Cargo.toml --release -- --port=8000
 
  cargo run --manifest-path rust/rocket/Cargo.toml --release
  cargo run --manifest-path rust/rocket/Cargo.toml --release -- --port=8000

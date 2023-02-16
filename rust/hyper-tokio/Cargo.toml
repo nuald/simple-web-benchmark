@@ -1,5 +1,5 @@
 [package]
-name = "hyper-test"
+name = "hyper-tokio-test"
 version = "0.1.0"
 authors = ["Alexander Slesarev <alex.slesarev@gmail.com>"]
 edition = "2021"

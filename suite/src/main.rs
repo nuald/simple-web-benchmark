@@ -67,12 +67,17 @@ fn pexec(cmd: &mut Command) -> UnitResult {
 }
 
 fn pspawn(cmd: &mut Command) -> UnsignedResult {
+    static PID_FILE: &str = ".pid";
+
     log(&format!("{cmd:?}"));
-    fs::remove_file(".pid")?;
+    let pid_exists = Path::new(PID_FILE).try_exists()?;
+    if pid_exists {
+        fs::remove_file(PID_FILE)?;
+    }
     cmd.spawn()?;
     print!("Waiting");
     for _ in 0..ATTEMPTS {
-        if let Ok(content) = fs::read_to_string(".pid") {
+        if let Ok(content) = fs::read_to_string(PID_FILE) {
             return Ok(content.parse().unwrap());
         }
         std::thread::sleep(std::time::Duration::from_secs(1));
@@ -285,18 +290,33 @@ fn main() -> Result<(), Box<dyn Error>> {
         },
     );
     lang_cmds.insert(
-        "rust_hyper",
+        "rust_hyper_tokio",
         Cmd {
-            title: "Rust/hyper",
+            title: "Rust/hyper-tokio",
             build: Box::new(|| {
                 pexec(Command::new("cargo").args([
                     "build",
                     "--manifest-path",
-                    "rust/hyper/Cargo.toml",
+                    "rust/hyper-tokio/Cargo.toml",
                     "--release",
                 ]))
             }),
-            run: Box::new(|| pspawn(&mut Command::new("rust/hyper/target/release/hyper-test"))),
+            run: Box::new(|| pspawn(&mut Command::new("rust/hyper-tokio/target/release/hyper-tokio-test"))),
+        },
+    );
+    lang_cmds.insert(
+        "rust_hyper_monoio",
+        Cmd {
+            title: "Rust/hyper-monoio",
+            build: Box::new(|| {
+                pexec(Command::new("cargo").args([
+                    "build",
+                    "--manifest-path",
+                    "rust/hyper-monoio/Cargo.toml",
+                    "--release",
+                ]))
+            }),
+            run: Box::new(|| pspawn(&mut Command::new("rust/hyper-monoio/target/release/hyper-monoio-test"))),
         },
     );
     lang_cmds.insert(
@@ -381,6 +401,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .arg(
             Arg::new("verbose")
                 .long("verbose")
+                .action(clap::ArgAction::SetTrue)
                 .help("Enables the verbose output"),
         )
         .arg(

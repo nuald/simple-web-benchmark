@@ -5,7 +5,8 @@ crystal/server
 d/.dub/
 d/build/
 go/build/
-rust/hyper/target/
+rust/hyper-tokio/target/
+rust/hyper-monoio/target/
 rust/rocket/target/
 rust/tide/target/
 rust/warp/target/
