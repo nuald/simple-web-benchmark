@@ -166,43 +166,33 @@ Base Docker image: Debian GNU/Linux bookworm/sid
 | Language | Version
 
 | Crystal
-| 1.4.1
+| 1.7.2
 
 
 | C{pp}/g{pp}
-| 11.3.0
+| 12.2.0
 
-
-| DMD
-| v2.100.0
 
 | Go
-| go1.18.2
+| go1.20.1
 
 | Java
-| 18.0.1.1
-
-| LDC
-| 1.29.0
+| 19.0.2
 
 | Node.js
-| v18.2.0
+| v19.6.0
 
 
 | PHP
-| 8.1.5
+| 8.2.2
 
 | PyPy
-| 7.3.9-final0 for Python 3.9.12
-
-
-| Ruby
-| 3.0.3p157
+| 7.3.11-final0 for Python 3.9.16
 
 
 | Rust
-| 1.63.0-nightly
+| 1.69.0-nightly
 
 | Scala
-| 3.1.2
+| 3.2.2
 |===
