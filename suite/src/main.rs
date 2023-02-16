@@ -384,6 +384,16 @@ fn main() -> Result<(), Box<dyn Error>> {
             }),
         },
     );
+    lang_cmds.insert(
+        "cpp",
+        Cmd {
+            title: "C++/Boost.Beast",
+            build: Box::new(|| {
+                pexec(Command::new("make").args(["-C", "cpp", "clean", "target/server"]))
+            }),
+            run: Box::new(|| pspawn(&mut Command::new("cpp/target/server"))),
+        },
+    );
 
     let default_file = "result.svg";
     let matches = clap::Command::new("Simple Web Benchmark runner")

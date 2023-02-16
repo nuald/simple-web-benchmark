@@ -78,6 +78,8 @@ Using https://crystal-lang.org/reference/installation/[Crystal]:
 
 === Rust
 
+Please install https://github.com/rust-lang/rustup.rs#working-with-nightly-rust[Nightly Rust].
+
 Sample applications use
 https://crates.io/crates/monoio[monoio] runtime,
 https://hyper.rs[hyper] HTTP library,
@@ -190,7 +192,7 @@ Base Docker image: Debian GNU/Linux bookworm/sid
 
 
 | Rust
-| 1.67.1
+| 1.69.0-nightly
 
 | Scala
 | 3.2.2
