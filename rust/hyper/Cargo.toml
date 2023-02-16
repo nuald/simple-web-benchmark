@@ -6,7 +6,7 @@ edition = "2021"
 
 [dependencies]
 getopts = "0.2.21"
-hyper = { version = "0.14.19", features = ["full"] }
+hyper = { version = "0.14.24", features = ["full"] }
 lazy_static = "1.4.0"
-regex = "1.5.6"
-tokio = { version = "1.18.2", features = ["full"] }
+regex = "1.7.1"
+tokio = { version = "1.25.0", features = ["full"] }

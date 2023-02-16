@@ -18,7 +18,7 @@ async fn main() -> Result<()> {
     };
 
     let port = matches.opt_get::<u16>("port").unwrap().unwrap_or(3000);
-    println!("Master {} is running on port {}", pid, port);
+    println!("Master {pid} is running on port {port}");
 
     HttpServer::new(|| {
         App::new()
@@ -31,7 +31,7 @@ async fn main() -> Result<()> {
                 web::resource("/greeting/{name}").to(|path: Path<String>| async move {
                     HttpResponse::Ok()
                         .content_type("text/plain")
-                        .body(format!("Hello {}!", path))
+                        .body(format!("Hello {path}!"))
                 }),
             )
             .default_service(web::to(|| async {
@@ -40,7 +40,7 @@ async fn main() -> Result<()> {
                     .body("404 Not Found")
             }))
     })
-    .bind(format!("0.0.0.0:{}", port))?
+    .bind(format!("0.0.0.0:{port}"))?
     .run()
     .await
 }

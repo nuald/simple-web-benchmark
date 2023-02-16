@@ -7,18 +7,17 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 hostName = "127.0.0.1"
 parser = argparse.ArgumentParser()
-parser.add_argument('--port', help='server port', default="3000")
+parser.add_argument("--port", help="server port", default="3000")
 args = parser.parse_args()
 hostPort = int(args.port)
 reg = re.compile("^/greeting/([a-z]+)$")
 
 
 class MyServer(BaseHTTPRequestHandler):
-
     def do_GET(self):
         self.send_response(200)
         response = None
-        if self.path == '/':
+        if self.path == "/":
             response = "Hello World!"
         else:
             match = reg.match(self.path)

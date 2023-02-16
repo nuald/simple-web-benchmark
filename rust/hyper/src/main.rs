@@ -36,7 +36,7 @@ async fn main() {
     };
 
     let port = matches.opt_get::<u16>("port").unwrap().unwrap_or(3000);
-    println!("Master {} is running on port {}", pid, port);
+    println!("Master {pid} is running on port {port}");
 
     let addr = ([127, 0, 0, 1], port).into();
     let new_svc = make_service_fn(|_conn| async {
@@ -46,6 +46,6 @@ async fn main() {
     let server = Server::bind(&addr).serve(new_svc);
 
     if let Err(e) = server.await {
-        eprintln!("server error: {}", e);
+        eprintln!("server error: {e}");
     }
 }

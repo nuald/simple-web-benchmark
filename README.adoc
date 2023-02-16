@@ -3,7 +3,7 @@
 :pp: {plus}{plus}
 :toc:
 
-A simple web benchmark of C{pp}, Crystal, D, Go, Java, Node.js, PHP, Python, Ruby, Rust and Scala.
+A simple web benchmark of C{pp}, Crystal, Go, Java, Node.js, PHP, Python, Rust and Scala.
 
 == Results
 
@@ -103,22 +103,6 @@ https://actix.rs/[Actix] web frameworks:
  cargo run --manifest-path rust/actix-web/Cargo.toml --release
  cargo run --manifest-path rust/actix-web/Cargo.toml --release -- --port=8000
 
-=== D
-
-Two compilers are tested:
-
-* DMD (a reference D compiler);
-* https://github.com/ldc-developers/ldc#installation[LDC] (LLVM-based D compiler).
-If ldc2 executable is not in path, please use the fully qualified path name.
-
-Uses https://vibed.org/[vibe.d] framework:
-
- dub run --root=d --compiler=dmd --build=release --config=dmd
- dub run --root=d --compiler=dmd --build=release --config=dmd -- --port=8000
-
- dub run --root=d --compiler=ldc2 --build=release --config=ldc
- dub run --root=d --compiler=ldc2 --build=release --config=ldc -- --port=8000
-
 === Scala
 
 Uses https://akka.io/[Akka] toolkit:
@@ -133,7 +117,7 @@ Uses https://akka.io/[Akka] toolkit:
 
 === PHP
 
-Uses standalone web server and https://www.swoole.co.uk/[Swoole] extension:
+Uses standalone web server and https://openswoole.com/[Open Swoole] extension:
 
  php -q -S 127.0.0.1:3000 php/bare/main.php
  php -q -S 127.0.0.1:8000 php/bare/main.php
@@ -169,17 +153,6 @@ Uses link:www.boost.org/libs/beast[Boost.Beast] library:
 
  make -C cpp clean run
  make PORT=8000 -C cpp clean run
-
-=== Ruby
-
-Use https://rubyonrails.org/[Ruby on Rails] framework:
-
- ruby --jit ruby/inline-rails.rb
- ruby --jit ruby/inline-rails.rb --port=8000
-
-Requires https://bundler.io/[bundler] installation:
-
- gem install bundler
 
 == Environment
 

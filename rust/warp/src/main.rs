@@ -7,7 +7,7 @@ async fn handle_not_found(err: Rejection) -> Result<impl Reply, Rejection> {
     if err.is_not_found() {
         Ok(reply::with_status("NOT_FOUND", StatusCode::NOT_FOUND))
     } else {
-        eprintln!("unhandled rejection: {:?}", err);
+        eprintln!("unhandled rejection: {err:?}");
         Ok(reply::with_status(
             "INTERNAL_SERVER_ERROR",
             StatusCode::INTERNAL_SERVER_ERROR,
@@ -29,10 +29,10 @@ async fn main() {
     };
 
     let port = matches.opt_get::<u16>("port").unwrap().unwrap_or(3000);
-    println!("Master {} is running on port {}", pid, port);
+    println!("Master {pid} is running on port {port}");
 
     let index = path::end().map(|| "Hello, World!");
-    let greeting = warp::path!("greeting" / String).map(|name| format!("Hello, {}", name));
+    let greeting = warp::path!("greeting" / String).map(|name| format!("Hello, {name}"));
 
     let routes = warp::get()
         .and(index.or(greeting))

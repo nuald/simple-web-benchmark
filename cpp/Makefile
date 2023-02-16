@@ -7,7 +7,7 @@ CXXFLAGS=-Wall -fsanitize=address -std=c++20 -Wextra -pedantic -pthread \
 all: target/server
 
 target/server: server.cpp | target
-	clang++ $(CXXFLAGS) $^ -o $@
+	$(CXX) $(CXXFLAGS) $^ -o $@
 
 run: target/server
 	$^

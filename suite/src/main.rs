@@ -62,12 +62,12 @@ fn exec(cmd: &mut Command) -> UnitResult {
 }
 
 fn pexec(cmd: &mut Command) -> UnitResult {
-    log(&format!("{:?}", cmd));
+    log(&format!("{cmd:?}"));
     exec(cmd)
 }
 
 fn pspawn(cmd: &mut Command) -> UnsignedResult {
-    log(&format!("{:?}", cmd));
+    log(&format!("{cmd:?}"));
     fs::remove_file(".pid")?;
     cmd.spawn()?;
     print!("Waiting");
@@ -83,13 +83,11 @@ fn pspawn(cmd: &mut Command) -> UnsignedResult {
 
 fn kill(pid: u32) {
     // Ignore any errors as the process could be finished already
-    let _ = exec(Command::new("kill").args(&[&pid.to_string()]));
+    let _ = exec(Command::new("kill").args([&pid.to_string()]));
 }
 
 fn kill_processes() -> Result<bool, Box<dyn Error>> {
-    let output = Command::new("lsof")
-        .args(&["-Fp", "-i", ":3000"])
-        .output()?;
+    let output = Command::new("lsof").args(["-Fp", "-i", ":3000"]).output()?;
     let output = String::from_utf8(output.stdout)?;
     let found = LSOF_PATTERN.with(|re| {
         let mut result = false;
@@ -112,7 +110,7 @@ fn run_hey(additional: &[&str], capture: bool) -> Result<Option<String>, Box<dyn
     };
     let mut cmd = Command::new("hey");
     cmd.stdout(stdout)
-        .args(&["-n", "50000", "-c", "256", "-t", "10"])
+        .args(["-n", "50000", "-c", "256", "-t", "10"])
         .args(additional);
     if capture {
         let child = cmd.spawn()?;
@@ -140,7 +138,7 @@ fn run_benchmark(lang: &str, is_index: bool) -> Result<Vec<f64>, Box<dyn Error>>
     run_hey(&["-o", "csv", &url], true)?;
 
     // Second run, for UI
-    println!("[{}] {}", lang, url);
+    println!("[{lang}] {url}");
     run_hey(&[&url], false)?;
 
     // Third run, for stats
@@ -172,7 +170,7 @@ fn run(lang_cmd: &Cmd, verbose: bool) -> Result<(Vec<f64>, Vec<f64>), Box<dyn Er
     let index_values = run_benchmark(lang_cmd.title, true)?;
     let pattern_values = run_benchmark(lang_cmd.title, false)?;
     if verbose {
-        log(&format!("Killing {} process tree...", pid));
+        log(&format!("Killing {pid} process tree..."));
     }
     kill(pid);
     Ok((index_values, pattern_values))
@@ -215,7 +213,7 @@ where
         .x_desc("Response, ms")
         .y_desc("Language")
         .y_labels(lang_list.len())
-        .light_line_style(&WHITE)
+        .light_line_style(WHITE)
         .draw()?;
 
     for (label, (values, style, offset)) in &series {
@@ -234,7 +232,7 @@ where
         .configure_series_labels()
         .position(SeriesLabelPosition::UpperRight)
         .background_style(WHITE.filled())
-        .border_style(&BLACK.mix(0.5))
+        .border_style(BLACK.mix(0.5))
         .legend_area_size(22)
         .draw()?;
     Ok(())
@@ -247,7 +245,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         Cmd {
             title: "Go",
             build: Box::new(|| {
-                pexec(Command::new("go").args(&["build", "-o", "go/build/main", "go/main.go"]))
+                pexec(Command::new("go").args(["build", "-o", "go/build/main", "go/main.go"]))
             }),
             run: Box::new(|| pspawn(&mut Command::new("go/build/main"))),
         },
@@ -257,7 +255,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         Cmd {
             title: "Rust/Tide",
             build: Box::new(|| {
-                pexec(Command::new("cargo").args(&[
+                pexec(Command::new("cargo").args([
                     "build",
                     "--manifest-path",
                     "rust/tide/Cargo.toml",
@@ -272,7 +270,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         Cmd {
             title: "Rust/warp",
             build: Box::new(|| {
-                pexec(Command::new("cargo").args(&[
+                pexec(Command::new("cargo").args([
                     "build",
                     "--manifest-path",
                     "rust/warp/Cargo.toml",
@@ -287,14 +285,18 @@ fn main() -> Result<(), Box<dyn Error>> {
         Cmd {
             title: "Rust/Actix",
             build: Box::new(|| {
-                pexec(Command::new("cargo").args(&[
+                pexec(Command::new("cargo").args([
                     "build",
                     "--manifest-path",
                     "rust/actix-web/Cargo.toml",
                     "--release",
                 ]))
             }),
-            run: Box::new(|| pspawn(&mut Command::new("rust/actix-web/target/release/actix-web-test"))),
+            run: Box::new(|| {
+                pspawn(&mut Command::new(
+                    "rust/actix-web/target/release/actix-web-test",
+                ))
+            }),
         },
     );
     lang_cmds.insert(
@@ -302,18 +304,14 @@ fn main() -> Result<(), Box<dyn Error>> {
         Cmd {
             title: "Rust/hyper",
             build: Box::new(|| {
-                pexec(Command::new("cargo").args(&[
+                pexec(Command::new("cargo").args([
                     "build",
                     "--manifest-path",
                     "rust/hyper/Cargo.toml",
                     "--release",
                 ]))
             }),
-            run: Box::new(|| {
-                pspawn(&mut Command::new(
-                    "rust/hyper/target/release/hyper-test",
-                ))
-            }),
+            run: Box::new(|| pspawn(&mut Command::new("rust/hyper/target/release/hyper-test"))),
         },
     );
     lang_cmds.insert(
@@ -321,7 +319,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         Cmd {
             title: "Scala/Akka",
             build: Box::new(|| {
-                pexec(Command::new("make").args(&["-C", "scala", "clean", "target/library.jar"]))
+                pexec(Command::new("make").args(["-C", "scala", "clean", "target/library.jar"]))
             }),
             run: Box::new(|| {
                 let cp = format!(
@@ -330,7 +328,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                         .unwrap()
                         .trim()
                 );
-                pspawn(Command::new("scala").args(&["-cp", &cp, "lite.WebServer"]))
+                pspawn(Command::new("scala").args(["-cp", &cp, "lite.WebServer"]))
             }),
         },
     );
@@ -339,14 +337,14 @@ fn main() -> Result<(), Box<dyn Error>> {
         Cmd {
             title: "Java/Spring Boot",
             build: Box::new(|| {
-                pexec(Command::new("make").args(&["-C", "java", "clean", "target/library.jar"]))
+                pexec(Command::new("make").args(["-C", "java", "clean", "target/library.jar"]))
             }),
             run: Box::new(|| {
                 let cp = format!(
                     "java/target/library.jar:{}",
                     fs::read_to_string("java/target/classpath.line").unwrap()
                 );
-                pspawn(Command::new("java").args(&[
+                pspawn(Command::new("java").args([
                     "-cp",
                     &cp,
                     "-Dserver.port=3000",
@@ -360,39 +358,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         Cmd {
             title: "Node.js",
             build: Box::new(|| Ok(())),
-            run: Box::new(|| pspawn(Command::new("node").args(&["nodejs/main.js"]))),
-        },
-    );
-    lang_cmds.insert(
-        "ldc2",
-        Cmd {
-            title: "D (LDC/vibe.d)",
-            build: Box::new(|| {
-                pexec(Command::new("dub").args(&[
-                    "build",
-                    "--root=d",
-                    "--compiler=ldc2",
-                    "--build=release",
-                    "--config=ldc",
-                ]))
-            }),
-            run: Box::new(|| pspawn(&mut Command::new("d/build/ldc/vibedtest"))),
-        },
-    );
-    lang_cmds.insert(
-        "dmd",
-        Cmd {
-            title: "D (DMD/vibe.d)",
-            build: Box::new(|| {
-                pexec(Command::new("dub").args(&[
-                    "build",
-                    "--root=d",
-                    "--compiler=dmd",
-                    "--build=release",
-                    "--config=dmd",
-                ]))
-            }),
-            run: Box::new(|| pspawn(&mut Command::new("d/build/dmd/vibedtest"))),
+            run: Box::new(|| pspawn(Command::new("node").args(["nodejs/main.js"]))),
         },
     );
     lang_cmds.insert(
@@ -400,7 +366,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         Cmd {
             title: "Crystal",
             build: Box::new(|| {
-                pexec(Command::new("crystal").args(&[
+                pexec(Command::new("crystal").args([
                     "build",
                     "--release",
                     "--no-debug",
@@ -417,7 +383,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         Cmd {
             title: "Rust/rocket",
             build: Box::new(|| {
-                pexec(Command::new("cargo").args(&[
+                pexec(Command::new("cargo").args([
                     "build",
                     "--manifest-path",
                     "rust/rocket/Cargo.toml",
@@ -432,7 +398,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         Cmd {
             title: "PyPy3/Twisted",
             build: Box::new(|| Ok(())),
-            run: Box::new(|| pspawn(Command::new("pypy3").args(&["python/twist.py"]))),
+            run: Box::new(|| pspawn(Command::new("pypy3").args(["python/twist.py"]))),
         },
     );
     lang_cmds.insert(
@@ -441,7 +407,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             title: "PHP/Swoole",
             build: Box::new(|| Ok(())),
             run: Box::new(|| {
-                pspawn(Command::new("php").args(&[
+                pspawn(Command::new("php").args([
                     "-c",
                     "php/swoole/php.ini",
                     "php/swoole/main.php",
@@ -454,7 +420,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         Cmd {
             title: "C++/Boost.Beast",
             build: Box::new(|| {
-                pexec(Command::new("make").args(&["-C", "cpp", "clean", "target/server"]))
+                pexec(Command::new("make").args(["-C", "cpp", "clean", "target/server"]))
             }),
             run: Box::new(|| pspawn(&mut Command::new("cpp/target/server"))),
         },
@@ -469,13 +435,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .short('o')
                 .long("out")
                 .value_name("file")
-                .help(
-                    &format!(
-                        "Sets an image file to generate ({} by default, PNG/SVG/TSV are supported)",
-                        default_file
-                    )[..],
-                )
-                .takes_value(true),
+                .help("Sets an image file to generate (PNG/SVG/TSV are supported)")
+                .default_value(default_file)
+                .num_args(0..=1),
         )
         .arg(
             Arg::new("verbose")
@@ -485,23 +447,25 @@ fn main() -> Result<(), Box<dyn Error>> {
         .arg(
             Arg::new("lang")
                 .index(1)
-                .multiple_occurrences(true)
+                .action(clap::ArgAction::Append)
                 .required(true)
                 .help("Sets the languages to test ('all' for all)"),
         )
-        .after_help(
-            &format!(
-                "The following languages are supported: {}.",
-                lang_cmds.keys().join(", ")
-            )[..],
-        )
+        .after_help(&format!(
+            "The following languages are supported: {}.",
+            lang_cmds.keys().join(", ")
+        ))
         .get_matches();
-    let verbose = matches.is_present("verbose");
-    let mut langs: Vec<&str> = matches.values_of("lang").unwrap().collect();
-    if langs.iter().any(|&x| x == "all") {
-        langs = lang_cmds.iter().map(|(key, _)| *key).collect();
+    let verbose = matches.contains_id("verbose");
+    let mut langs: Vec<String> = matches
+        .get_many::<String>("lang")
+        .unwrap()
+        .map(|s| s.to_string())
+        .collect();
+    if langs.iter().any(|x| x == "all") {
+        langs = lang_cmds.keys().map(|key| key.to_string()).collect();
     }
-    let file = matches.value_of("out").unwrap_or(default_file);
+    let file = matches.get_one::<String>("out").unwrap();
     let ext = Path::new(file)
         .extension()
         .ok_or_else(|| Box::new(errors::UnknownFileTypeError {}))?;

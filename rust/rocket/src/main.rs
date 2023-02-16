@@ -1,5 +1,3 @@
-#![feature(decl_macro)]
-
 use getopts::Options;
 use rocket::config::Config;
 use std::net::Ipv4Addr;
@@ -12,7 +10,7 @@ fn index() -> &'static str {
 
 #[rocket::get("/greeting/<name>")]
 fn greeting(name: &str) -> String {
-    format!("Hello, {}", name)
+    format!("Hello, {name}")
 }
 
 #[rocket::launch]
@@ -30,7 +28,7 @@ fn rocket() -> _ {
 
     let port = matches.opt_get::<u16>("port").unwrap().unwrap_or(3000);
 
-    println!("Master {} is running on port {}", pid, port);
+    println!("Master {pid} is running on port {port}");
 
     let config = Config {
         port,

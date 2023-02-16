@@ -1,12 +1,15 @@
 <?php
+use OpenSwoole\Http\Server;
+use OpenSwoole\Http\Request;
+use OpenSwoole\Http\Response;
 
 $options = getopt("", ["port::"]);
 $port = array_key_exists("port", $options) ? intval($options["port"]) : 3000;
 
-$http = new swoole_http_server('127.0.0.1', $port);
+$http = new OpenSwoole\HTTP\Server('127.0.0.1', $port);
 $pattern = '/\/greeting\/([a-z]+)/';
 
-$http->on('request', function ($request, $response) use ($pattern) {
+$http->on('request', function (Request $request, Response $response) use ($pattern) {
     $response->header('Content-Type', 'text/plain; charset=utf-8');
     $uri = $request->server['request_uri'];
     if ($uri == '/') {

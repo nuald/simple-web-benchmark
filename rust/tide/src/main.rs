@@ -17,7 +17,7 @@ fn main() -> Result<(), std::io::Error> {
     };
 
     let port = matches.opt_get::<u16>("port").unwrap().unwrap_or(3000);
-    println!("Master {} is running on port {}", pid, port);
+    println!("Master {pid} is running on port {port}");
 
     task::block_on(async {
         let mut app = tide::new();
@@ -41,7 +41,7 @@ fn main() -> Result<(), std::io::Error> {
             .get(|req: Request<()>| async move {
                 Ok(format!("Hello, {}", req.param("name").unwrap()))
             });
-        app.listen(format!("127.0.0.1:{}", port)).await?;
+        app.listen(format!("127.0.0.1:{port}")).await?;
         Ok(())
     })
 }
