@@ -61,7 +61,7 @@ RUN pypy3 -m ensurepip \
 
 # https://www.rust-lang.org/tools/install
 ENV CARGO_HOME="/home/dev/bin/.cargo" PATH="/home/dev/bin/.cargo/bin:${PATH}"
-RUN curl https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
+RUN curl https://sh.rustup.rs | sh -s -- -y
 
 RUN curl -Lo /home/dev/bin/coursier https://git.io/coursier-cli \
     && chmod +x /home/dev/bin/coursier

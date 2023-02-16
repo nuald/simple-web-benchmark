@@ -81,8 +81,6 @@ Using https://crystal-lang.org/reference/installation/[Crystal]:
 
 === Rust
 
-Please install https://github.com/rust-lang/rustup.rs#working-with-nightly-rust[Nightly Rust].
-
 Sample applications use
 https://hyper.rs[hyper] HTTP library,
 https://rocket.rs/[Rocket],
@@ -191,7 +189,7 @@ Base Docker image: Debian GNU/Linux bookworm/sid
 
 
 | Rust
-| 1.69.0-nightly
+| 1.67.1
 
 | Scala
 | 3.2.2
