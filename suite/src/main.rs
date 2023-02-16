@@ -251,21 +251,6 @@ fn main() -> Result<(), Box<dyn Error>> {
         },
     );
     lang_cmds.insert(
-        "rust_tide",
-        Cmd {
-            title: "Rust/Tide",
-            build: Box::new(|| {
-                pexec(Command::new("cargo").args([
-                    "build",
-                    "--manifest-path",
-                    "rust/tide/Cargo.toml",
-                    "--release",
-                ]))
-            }),
-            run: Box::new(|| pspawn(&mut Command::new("rust/tide/target/release/tide-test"))),
-        },
-    );
-    lang_cmds.insert(
         "rust_warp",
         Cmd {
             title: "Rust/warp",
@@ -333,27 +318,6 @@ fn main() -> Result<(), Box<dyn Error>> {
         },
     );
     lang_cmds.insert(
-        "java",
-        Cmd {
-            title: "Java/Spring Boot",
-            build: Box::new(|| {
-                pexec(Command::new("make").args(["-C", "java", "clean", "target/library.jar"]))
-            }),
-            run: Box::new(|| {
-                let cp = format!(
-                    "java/target/library.jar:{}",
-                    fs::read_to_string("java/target/classpath.line").unwrap()
-                );
-                pspawn(Command::new("java").args([
-                    "-cp",
-                    &cp,
-                    "-Dserver.port=3000",
-                    "hello.SampleController",
-                ]))
-            }),
-        },
-    );
-    lang_cmds.insert(
         "nodejs",
         Cmd {
             title: "Node.js",
@@ -376,21 +340,6 @@ fn main() -> Result<(), Box<dyn Error>> {
                 ]))
             }),
             run: Box::new(|| pspawn(&mut Command::new("crystal/server"))),
-        },
-    );
-    lang_cmds.insert(
-        "rust_rocket",
-        Cmd {
-            title: "Rust/rocket",
-            build: Box::new(|| {
-                pexec(Command::new("cargo").args([
-                    "build",
-                    "--manifest-path",
-                    "rust/rocket/Cargo.toml",
-                    "--release",
-                ]))
-            }),
-            run: Box::new(|| pspawn(&mut Command::new("rust/rocket/target/release/rust-rocket"))),
         },
     );
     lang_cmds.insert(

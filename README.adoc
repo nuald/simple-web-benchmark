@@ -7,6 +7,8 @@ A simple web benchmark of C{pp}, Crystal, Go, Java, Node.js, PHP, Python, Rust a
 
 == Results
 
+Top performers:
+
 image::./suite/results/result.svg[SVG Plot]
 
 == Testing
