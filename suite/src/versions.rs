@@ -68,11 +68,7 @@ func main() {
     );
     langs.insert(
         "Scala",
-        Box::new(|| {
-            let output = Command::new("scala").args(["-version"]).output()?;
-            let text = String::from_utf8(output.stderr)?;
-            to_result(text.split_whitespace().nth(4).map(String::from))
-        }),
+        Box::new(|| pexec(Command::new("scala").args(["version", "--scala"]))),
     );
     langs.insert(
         "Java",

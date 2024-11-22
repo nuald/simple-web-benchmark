@@ -256,6 +256,21 @@ fn main() -> Result<(), Box<dyn Error>> {
         },
     );
     lang_cmds.insert(
+        "rust_rocket",
+        Cmd {
+            title: "Rust/Rocket",
+            build: Box::new(|| {
+                pexec(Command::new("cargo").args([
+                    "build",
+                    "--manifest-path",
+                    "rust/rocket/Cargo.toml",
+                    "--release",
+                ]))
+            }),
+            run: Box::new(|| pspawn(&mut Command::new("rust/rocket/target/release/rocket-test"))),
+        },
+    );
+    lang_cmds.insert(
         "rust_warp",
         Cmd {
             title: "Rust/warp",
@@ -301,7 +316,11 @@ fn main() -> Result<(), Box<dyn Error>> {
                     "--release",
                 ]))
             }),
-            run: Box::new(|| pspawn(&mut Command::new("rust/hyper-tokio/target/release/hyper-tokio-test"))),
+            run: Box::new(|| {
+                pspawn(&mut Command::new(
+                    "rust/hyper-tokio/target/release/hyper-tokio-test",
+                ))
+            }),
         },
     );
     lang_cmds.insert(
@@ -316,24 +335,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                     "--release",
                 ]))
             }),
-            run: Box::new(|| pspawn(&mut Command::new("rust/hyper-monoio/target/release/hyper-monoio-test"))),
-        },
-    );
-    lang_cmds.insert(
-        "scala",
-        Cmd {
-            title: "Scala/Akka",
-            build: Box::new(|| {
-                pexec(Command::new("make").args(["-C", "scala", "clean", "target/library.jar"]))
-            }),
             run: Box::new(|| {
-                let cp = format!(
-                    "scala/target/library.jar:{}",
-                    fs::read_to_string("scala/target/classpath.line")
-                        .unwrap()
-                        .trim()
-                );
-                pspawn(Command::new("scala").args(["-cp", &cp, "lite.WebServer"]))
+                pspawn(&mut Command::new(
+                    "rust/hyper-monoio/target/release/hyper-monoio-test",
+                ))
             }),
         },
     );
@@ -371,7 +376,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         },
     );
     lang_cmds.insert(
-        "php",
+        "php_swoole",
         Cmd {
             title: "PHP/Swoole",
             build: Box::new(|| Ok(())),
@@ -382,16 +387,6 @@ fn main() -> Result<(), Box<dyn Error>> {
                     "php/swoole/main.php",
                 ]))
             }),
-        },
-    );
-    lang_cmds.insert(
-        "cpp",
-        Cmd {
-            title: "C++/Boost.Beast",
-            build: Box::new(|| {
-                pexec(Command::new("make").args(["-C", "cpp", "clean", "target/server"]))
-            }),
-            run: Box::new(|| pspawn(&mut Command::new("cpp/target/server"))),
         },
     );
 
@@ -421,7 +416,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .required(true)
                 .help("Sets the languages to test ('all' for all)"),
         )
-        .after_help(&format!(
+        .after_help(format!(
             "The following languages are supported: {}.",
             lang_cmds.keys().join(", ")
         ))

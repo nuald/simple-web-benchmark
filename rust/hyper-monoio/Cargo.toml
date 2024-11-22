@@ -1,15 +1,17 @@
 [package]
 edition = "2021"
 name = "hyper-monoio-test"
-version = "0.1.0"
+version = "0.2.1"
 authors = ["Alexander Slesarev <alex.slesarev@gmail.com>"]
 
 [dependencies]
-futures = "0.3.26"
-getopts = "0.2.21"
-hyper = {version = "0.14.24", features = ["http1", "client", "server", "stream"]}
-lazy_static = "1.4.0"
-monoio = "0.0.9"
-monoio-compat = "0.0.9"
-regex = "1.7.1"
-tokio = {version = "1.25.0", default-features = false, features = ["io-util"]}
+futures = "0.3"
+getopts = "0.2"
+hyper = {version = "1", features = ["http1", "client", "server"]}
+lazy_static = "1"
+monoio = "0.2"
+monoio-compat = { version = "0.2", features = ["hyper"] }
+regex = "1"
+tokio = {version = "1", default-features = false, features = ["io-util"]}
+hyper-util = { version = "0.1", features = ["full"] }
+http-body-util = "0.1"

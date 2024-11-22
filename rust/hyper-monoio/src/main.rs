@@ -2,59 +2,60 @@
 
 use getopts::Options;
 use regex::Regex;
+use std::convert::Infallible;
 use std::net::SocketAddr;
 use std::{env, fs, process, thread};
 
 use futures::Future;
-use hyper::{server::conn::Http, service::service_fn};
-use hyper::{Body, Request, Response, StatusCode};
-use monoio::net::TcpListener;
-use monoio_compat::TcpStreamCompat;
+use http_body_util::Full;
+use hyper::body::Bytes;
+use hyper::{server::conn::http1, service::service_fn};
+use hyper::{Request, Response, StatusCode};
+use monoio::{io::IntoPollIo, net::TcpListener};
 
 lazy_static::lazy_static! {
     static ref GREETING_RE: Regex = Regex::new(r"^/greeting/([a-z]+)$").unwrap();
 }
 
-#[derive(Clone)]
-struct HyperExecutor;
-
-impl<F> hyper::rt::Executor<F> for HyperExecutor
+async fn serve_http<S, F, E, A>(addr: A, service: S) -> std::io::Result<()>
 where
-    F: Future + 'static,
-    F::Output: 'static,
-{
-    fn execute(&self, fut: F) {
-        monoio::spawn(fut);
-    }
-}
-
-async fn serve_http<S, F, R, A>(addr: A, service: S) -> std::io::Result<()>
-where
-    S: FnMut(Request<Body>) -> F + 'static + Copy,
-    F: Future<Output = Result<Response<Body>, R>> + 'static,
-    R: std::error::Error + 'static + Send + Sync,
+    S: Copy + Fn(Request<hyper::body::Incoming>) -> F + 'static,
+    F: Future<Output = Result<Response<Full<Bytes>>, E>> + 'static,
+    E: std::error::Error + 'static + Send + Sync,
     A: Into<SocketAddr>,
 {
     let listener = TcpListener::bind(addr.into())?;
     loop {
         let (stream, _) = listener.accept().await?;
-        monoio::spawn(
-            Http::new()
-                .with_executor(HyperExecutor)
-                .serve_connection(TcpStreamCompat::new(stream), service_fn(service)),
-        );
+        let stream_poll = monoio_compat::hyper::MonoioIo::new(stream.into_poll_io()?);
+        monoio::spawn(async move {
+            // Handle the connection from the client using HTTP1 and pass any
+            // HTTP requests received on that connection to the `hello` function
+            if let Err(err) = http1::Builder::new()
+                .serve_connection(stream_poll, service_fn(service))
+                .await
+            {
+                println!("Error serving connection: {:?}", err);
+            }
+        });
     }
 }
 
-async fn hyper_handler(req: Request<Body>) -> Result<Response<Body>, std::convert::Infallible> {
+async fn hello_world(
+    req: Request<hyper::body::Incoming>,
+) -> Result<Response<Full<Bytes>>, Infallible> {
     match req.uri().path() {
-        "/" => Ok(Response::new(Body::from("Hello World!"))),
+        "/" => Ok(Response::new(Full::new(Bytes::from("Hello World!")))),
         path => match GREETING_RE.captures(path) {
-            Some(cap) => Ok(Response::new(Body::from(format!("Hello, {}", &cap[1])))),
-            None => Ok(Response::builder()
-                .status(StatusCode::NOT_FOUND)
-                .body(Body::from("404 Not Found\n"))
-                .unwrap()),
+            Some(cap) => Ok(Response::new(Full::new(Bytes::from(format!(
+                "Hello, {}",
+                &cap[1]
+            ))))),
+            None => {
+                let mut resp = Response::new(Full::new(Bytes::from("404 Not Found\n")));
+                *resp.status_mut() = StatusCode::NOT_FOUND;
+                Ok(resp)
+            }
         },
     }
 }
@@ -81,7 +82,7 @@ fn main() {
                 let mut rt = monoio::RuntimeBuilder::<monoio::FusionDriver>::new()
                     .build()
                     .unwrap();
-                rt.block_on(async move { serve_http(([0, 0, 0, 0], port), hyper_handler).await })
+                rt.block_on(async move { serve_http(([0, 0, 0, 0], port), hello_world).await })
             })
         })
         .collect();

@@ -161,39 +161,40 @@ Uses link:www.boost.org/libs/beast[Boost.Beast] library:
 
 CPU: Intel(R) Xeon(R) E-2324G, Mem: 16GB DDR4 3200MHz
 
-Base Docker image: Debian GNU/Linux bookworm/sid
+Base Docker image: Debian GNU/Linux trixie/sid
 
 |===
 | Language | Version
 
 | Crystal
-| 1.7.2
+| 1.14.0
 
 
 | C{pp}/g{pp}
-| 12.2.0
+| 14.2.0
 
 
 | Go
-| go1.20.1
+| go1.23.3
 
 | Java
-| 19.0.2
+| 23.0.1
 
 | Node.js
-| v19.6.0
+| v23.2.0
 
 
 | PHP
-| 8.2.2
+| 8.2.24
 
 | PyPy
-| 7.3.11-final0 for Python 3.9.16
+| 7.3.17-final0 for Python 3.10.14
 
 
 | Rust
-| 1.69.0-nightly
+| 1.84.0-nightly
 
 | Scala
-| 3.2.2
+| 3.5.2
+
 |===

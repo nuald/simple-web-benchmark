@@ -28,7 +28,7 @@ target/library.jar: target/classfiles.stamp
 
 # run the application
 run: target/library.jar
-	@scala -cp $<:$(shell cat target/classpath.line) $(main)
+	@scala -cp $<:$(shell cat target/classpath.line) $^ --main-class $(main)
 
 clean:
 	rm -rf target

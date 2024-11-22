@@ -38,10 +38,6 @@ versions() {
     cargo run --manifest-path suite/Cargo.toml --bin versions
 }
 
-update_apt() {
-    ./suite/update_apt.rb suite/apt.pkgs
-}
-
 lint() {
     docker run --rm -i hadolint/hadolint < suite/Dockerfile
 }

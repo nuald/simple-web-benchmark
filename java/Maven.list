@@ -2,5 +2,5 @@
 #
 # lines starting with # are ignored
 #
-org.springframework.boot:spring-boot-starter:3.0.2
-org.springframework.boot:spring-boot-starter-web:3.0.2
+org.springframework.boot:spring-boot-starter:3.4.0
+org.springframework.boot:spring-boot-starter-web:3.4.0
