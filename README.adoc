@@ -76,6 +76,14 @@ Using https://crystal-lang.org/reference/installation/[Crystal]:
  crystal run --release --no-debug crystal/server.cr
  crystal run --release --no-debug crystal/server.cr -- --port=8000
 
+=== D
+
+Uses https://trikko.github.io/serverino/[Serverino] framework:
+
+dub run -b=release
+dub run -b=release -- --port=8000
+
+
 === Rust
 
 Please install https://github.com/rust-lang/rustup.rs#working-with-nightly-rust[Nightly Rust].

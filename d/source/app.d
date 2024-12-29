@@ -5,7 +5,6 @@ import std.getopt;
 import std.process: thisProcessID;
 import std.regex: ctRegex, matchFirst;
 import std.stdio: File, writeln;
-import std.logger: LogLevel;
 
 auto ctr= ctRegex!("/greeting/([a-z]+)");
 
@@ -24,7 +23,6 @@ ushort port;
     return ServerinoConfig
         .create()
         .enableKeepAlive()
-        .setLogLevel(LogLevel.critical)
         .addListener("0.0.0.0", port)
         .setWorkers(25);
 }
