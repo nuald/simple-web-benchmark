@@ -368,6 +368,19 @@ fn main() -> Result<(), Box<dyn Error>> {
         },
     );
     lang_cmds.insert(
+        "d",
+        Cmd {
+            title: "D",
+            build: Box::new(|| {
+                pexec(Command::new("dub").args([
+                    "build",
+                    "-b=release",
+                ]))
+            }),
+            run: Box::new(|| pspawn(&mut Command::new("d/d_serverino"))),
+        },
+    );
+    lang_cmds.insert(
         "python",
         Cmd {
             title: "PyPy3/Twisted",

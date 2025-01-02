@@ -1,0 +1,13 @@
+{
+	"authors": [
+		"Sergei Giniatulin"
+	],
+	"copyright": "Copyright © 2024, Sergei Giniatulin",
+	"dependencies": {
+		"serverino": "~>0.7.13"
+	},
+    "dflags-ldc": ["-mcpu=native"],
+	"description": "Simple Web bench in D",
+	"license": "MIT",
+	"name": "d_serverino"
+}
