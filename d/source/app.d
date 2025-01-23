@@ -1,6 +1,7 @@
 module app;
 
 import serverino;
+import core.cpuid: coresPerCPU;
 import std.getopt;
 import std.process: thisProcessID;
 import std.regex: ctRegex, matchFirst;
@@ -9,11 +10,11 @@ import std.stdio: File, writeln;
 auto ctr= ctRegex!("/greeting/([a-z]+)");
 
 mixin ServerinoMain;
-ushort port;
+ushort port = 3000;
 
 @onDaemonStart save_pid() {
     auto f = File(".pid", "w+");
-    f.writeln(thisProcessID);
+    f.write(thisProcessID);
     writeln(i"Master $(thisProcessID) is running on port $(port)");
 }
 
@@ -24,16 +25,17 @@ ushort port;
         .create()
         .enableKeepAlive()
         .addListener("0.0.0.0", port)
-        .setWorkers(25);
+        .setWorkers(coresPerCPU());
 }
 
 @endpoint void hello(Request req, Output output) {
-    if (req.uri == "/")
+    const path = req.path;
+    if (path == "/")
         output ~= "Hello world!";
     else {
-        auto ch = req.uri.matchFirst(ctr);
+        auto ch = path.matchFirst(ctr);
         if (!ch.empty)
-            output ~= ch[1];
+            output ~= "Hello, " ~ ch[1];
         else {
             output.status = 404;
             return;

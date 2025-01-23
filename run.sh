@@ -1,6 +1,6 @@
 #!/bin/sh -xe
 
-docker_build="docker build suite/ -t simple-web-benchmark"
+docker_build="docker build --progress=plain suite/ -t simple-web-benchmark"
 docker_run="docker run -it --rm -v $PWD:/src --network=\"host\" simple-web-benchmark"
 exit_trap_command=""
 

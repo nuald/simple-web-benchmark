@@ -8,7 +8,7 @@ mod errors;
 type StringResult = Result<String, Box<dyn Error>>;
 
 thread_local! {
-    static LDC_PATTERN: Regex = Regex::new(r"version\s+(.*)\s+\(").unwrap();
+    static LDC_PATTERN: Regex = Regex::new(r"LDC - the LLVM D compiler \((.*)\)").unwrap();
 }
 
 fn pexec(cmd: &mut Command) -> StringResult {
@@ -48,6 +48,19 @@ fn main() -> Result<(), Box<dyn Error>> {
         Box::new(|| {
             let text = pexec(Command::new("rustc").args(["--version"]))?;
             to_result(text.split_whitespace().nth(1).map(String::from))
+        }),
+    );
+    langs.insert(
+        "D/ldc2",
+        Box::new(|| {
+            let text = pexec(Command::new("ldc2").args(["--version"]))?;
+            LDC_PATTERN.with(|re| {
+                to_result(
+                    re.captures(&text)
+                        .map(|caps| caps.get(1).map(|m| m.as_str().to_string()))
+                        .flatten(),
+                )
+            })
         }),
     );
     langs.insert(

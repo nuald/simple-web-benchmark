@@ -372,10 +372,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         Cmd {
             title: "D",
             build: Box::new(|| {
-                pexec(Command::new("dub").args([
-                    "build",
-                    "-b=release",
-                ]))
+                pexec(Command::new("dub").args(["build", "--root=d", "-b=release"]))
             }),
             run: Box::new(|| pspawn(&mut Command::new("d/d_serverino"))),
         },

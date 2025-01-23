@@ -80,8 +80,8 @@ Using https://crystal-lang.org/reference/installation/[Crystal]:
 
 Uses https://trikko.github.io/serverino/[Serverino] framework:
 
-dub run -b=release
-dub run -b=release -- --port=8000
+ dub run --root=d -b=release
+ dub run --root=d -b=release -- --port=8000
 
 
 === Rust
@@ -182,6 +182,9 @@ Base Docker image: Debian GNU/Linux trixie/sid
 | 14.2.0
 
 
+| D/ldc2
+| 1.40.0
+
 | Go
 | go1.23.3
 
@@ -200,7 +203,7 @@ Base Docker image: Debian GNU/Linux trixie/sid
 
 
 | Rust
-| 1.84.0-nightly
+| 1.85.0-nightly
 
 | Scala
 | 3.5.2

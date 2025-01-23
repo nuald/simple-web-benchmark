@@ -54,9 +54,9 @@ ENV PATH="/home/dev/bin/$CRYSTAL/bin:${PATH}"
 # https://github.com/ldc-developers/ldc/releases
 ARG D=1.40.0
 RUN curl -L \
-    https://github.com/ldc-developers/ldc/releases/download/v$D/ldc2-$D-linux-x86_64.tar.xz \
-    | tar -xz
-ENV PATH="/home/dev/bin/ldc2-linux-x86_64/bin:${PATH}"
+    https://github.com/ldc-developers/ldc/releases/download/v${D}/ldc2-${D}-linux-x86_64.tar.xz \
+    | tar -xJ
+ENV PATH="/home/dev/bin/ldc2-${D}-linux-x86_64/bin:${PATH}"
 
 # https://golang.org/dl/
 RUN curl -L \
