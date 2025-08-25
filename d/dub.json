@@ -4,7 +4,7 @@
 	],
 	"copyright": "Copyright © 2024, Sergei Giniatulin",
 	"dependencies": {
-		"serverino": "~>0.7.16"
+		"serverino": "~>0.7.18"
 	},
     "dflags-ldc": ["-mcpu=native"],
 	"description": "Simple Web bench in D",

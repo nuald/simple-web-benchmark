@@ -2,7 +2,7 @@
 name = "rocket-test"
 version = "0.2.0"
 authors = ["Roman Proskuryakov <humbug@deeptown.org>", "Alexander Slesarev <alex.slesarev@gmail.com>"]
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 getopts = "0.2"

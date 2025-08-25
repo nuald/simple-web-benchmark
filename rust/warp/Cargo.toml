@@ -2,9 +2,9 @@
 name = "warp-test"
 version = "0.2.0"
 authors = ["Alexander Slesarev <alex.slesarev@gmail.com>"]
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-getopts = "0.2.21"
-tokio = { version = "1.25.0", features = ["full"] }
-warp = "0.3.3"
+getopts = "0.2"
+tokio = { version = "1", features = ["full"] }
+warp = { version = "0.4", features = ["server"] }

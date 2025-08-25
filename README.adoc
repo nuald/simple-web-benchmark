@@ -175,7 +175,7 @@ Base Docker image: Debian GNU/Linux trixie/sid
 | Language | Version
 
 | Crystal
-| 1.14.0
+| 1.17.1
 
 
 | C{pp}/g{pp}
@@ -183,29 +183,29 @@ Base Docker image: Debian GNU/Linux trixie/sid
 
 
 | D/ldc2
-| 1.40.0
+| 1.41.0
 
 | Go
-| go1.23.3
+| go1.25.0
 
 | Java
-| 23.0.1
+| 24.0.2
 
 | Node.js
-| v23.2.0
+| v24.5.0
 
 
 | PHP
-| 8.2.24
+| 8.4.11
 
 | PyPy
-| 7.3.17-final0 for Python 3.10.14
+| 7.3.20-final0 for Python 3.11.13
 
 
 | Rust
-| 1.85.0-nightly
+| 1.91.0-nightly
 
 | Scala
-| 3.5.2
+| 3.7.2
 
 |===

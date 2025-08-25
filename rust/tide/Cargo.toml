@@ -2,7 +2,7 @@
 name = "tide-test"
 version = "0.2.0"
 authors = ["Alexander Slesarev <alex.slesarev@gmail.com>"]
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 async-std = "1"

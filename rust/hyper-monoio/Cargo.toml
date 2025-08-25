@@ -1,8 +1,8 @@
 [package]
-edition = "2021"
 name = "hyper-monoio-test"
 version = "0.2.1"
 authors = ["Alexander Slesarev <alex.slesarev@gmail.com>"]
+edition = "2024"
 
 [dependencies]
 futures = "0.3"

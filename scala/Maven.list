@@ -2,6 +2,6 @@
 #
 # lines starting with # are ignored
 #
-com.typesafe.akka:akka-http_3:10.6.0-M1
-com.typesafe.akka:akka-actor_3:2.9.0-M2
-com.typesafe.akka:akka-stream_3:2.9.0-M2
+com.typesafe.akka:akka-http_3:10.7.1
+com.typesafe.akka:akka-actor_3:2.10.7
+com.typesafe.akka:akka-stream_3:2.10.7

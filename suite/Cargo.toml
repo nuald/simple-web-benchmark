@@ -14,8 +14,8 @@ name = "main"
 path = "src/main.rs"
 
 [dependencies]
-chrono = "0.4.23"
-regex = "1.7.1"
-itertools = "0.10.5"
-clap = { version = "4.1.6", features = ["cargo"] }
-plotters = "0.3.4"
+chrono = "0.4"
+regex = "1"
+itertools = "0.14"
+clap = { version = "4", features = ["cargo"] }
+plotters = "0.3"

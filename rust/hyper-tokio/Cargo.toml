@@ -2,7 +2,7 @@
 name = "hyper-tokio-test"
 version = "0.2.1"
 authors = ["Alexander Slesarev <alex.slesarev@gmail.com>"]
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 getopts = "0.2"

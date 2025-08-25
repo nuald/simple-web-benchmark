@@ -1,4 +1,4 @@
-FROM debian:trixie-20241016-slim
+FROM debian:trixie-20250811-slim
 
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 \
     DEBIAN_FRONTEND=noninteractive
@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN update-ca-certificates \
     && pecl channel-update pecl.php.net \
-    && pecl install openswoole-22.1.2
+    && pecl install openswoole-25.2.0
 
 RUN useradd -m dev
 USER dev
@@ -38,21 +38,21 @@ WORKDIR /home/dev/bin
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # https://jdk.java.net/
-ARG JDK=23.0.1
+ARG JDK=24.0.2
 RUN curl \
-    https://download.java.net/java/GA/jdk${JDK}/c28985cbf10d4e648e4004050f8781aa/11/GPL/openjdk-${JDK}_linux-x64_bin.tar.gz \
+    https://download.java.net/java/GA/jdk${JDK}/fdc5d0102fe0414db21410ad5834341f/12/GPL/openjdk-${JDK}_linux-x64_bin.tar.gz \
     | tar -xz
 ENV PATH="/home/dev/bin/jdk-$JDK/bin:${PATH}"
 
 # https://github.com/crystal-lang/crystal/releases
-ARG CRYSTAL=crystal-1.14.0-1
+ARG CRYSTAL=crystal-1.17.1-1
 RUN curl -L \
-    https://github.com/crystal-lang/crystal/releases/download/1.14.0/$CRYSTAL-linux-x86_64.tar.gz \
+    https://github.com/crystal-lang/crystal/releases/download/1.17.1/$CRYSTAL-linux-x86_64.tar.gz \
     | tar -xz
 ENV PATH="/home/dev/bin/$CRYSTAL/bin:${PATH}"
 
 # https://github.com/ldc-developers/ldc/releases
-ARG D=1.40.0
+ARG D=1.41.0
 RUN curl -L \
     https://github.com/ldc-developers/ldc/releases/download/v${D}/ldc2-${D}-linux-x86_64.tar.xz \
     | tar -xJ
@@ -60,26 +60,26 @@ ENV PATH="/home/dev/bin/ldc2-${D}-linux-x86_64/bin:${PATH}"
 
 # https://golang.org/dl/
 RUN curl -L \
-    https://go.dev/dl/go1.23.3.linux-amd64.tar.gz \
+    https://go.dev/dl/go1.25.0.linux-amd64.tar.gz \
     | tar -xz
 ENV PATH="/home/dev/bin/go/bin/:${PATH}"
 
 # https://www.scala-lang.org/download/
-ARG SCALA=3.5.2
+ARG SCALA=3.7.2
 RUN curl -L \
     https://github.com/lampepfl/dotty/releases/download/$SCALA/scala3-$SCALA.tar.gz \
     | tar -xz
 ENV PATH="/home/dev/bin/scala3-$SCALA/bin/:${PATH}"
 
 # https://nodejs.org/en/download/current/
-ARG NODE=v23.2.0
+ARG NODE=v24.5.0
 RUN curl \
     https://nodejs.org/dist/$NODE/node-$NODE-linux-x64.tar.xz \
     | tar -xJ
 ENV PATH="/home/dev/bin/node-$NODE-linux-x64/bin/:${PATH}"
 
 # https://pypy.org/download.html
-ARG PYPY=pypy3.10-v7.3.17-linux64
+ARG PYPY=pypy3.11-v7.3.20-linux64
 RUN curl \
     https://downloads.python.org/pypy/$PYPY.tar.bz2 \
     | tar -xj \
