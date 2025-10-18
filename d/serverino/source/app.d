@@ -1,13 +1,13 @@
 module app;
 
 import serverino;
-import core.cpuid: coresPerCPU;
 import std.getopt;
 import std.process: thisProcessID;
 import std.regex: ctRegex, matchFirst;
 import std.stdio: File, writeln;
+import std.parallelism: totalCPUs;
 
-auto ctr= ctRegex!("/greeting/([a-z]+)");
+auto ctr = ctRegex!("/greeting/([a-z]+)$");
 
 mixin ServerinoMain;
 ushort port = 3000;
@@ -25,7 +25,7 @@ ushort port = 3000;
         .create()
         .enableKeepAlive()
         .addListener("0.0.0.0", port)
-        .setWorkers(coresPerCPU());
+        .setDaemonInstances(totalCPUs);
 }
 
 @endpoint void hello(Request req, Output output) {

@@ -1,0 +1,16 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/d_serverino
+d_serverino.so
+d_serverino.dylib
+d_serverino.dll
+d_serverino.a
+d_serverino.lib
+d_serverino-test-*
+*.exe
+*.pdb
+*.o
+*.obj
+*.lst
