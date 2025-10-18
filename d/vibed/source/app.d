@@ -6,7 +6,7 @@ import vibe.http.router;
 
 import std.getopt;
 import std.process: thisProcessID;
-import std.regex: ctRegex, matchAll;
+import std.regex: ctRegex, matchFirst;
 import std.stdio: File, writeln;
 import std.parallelism: totalCPUs;
 

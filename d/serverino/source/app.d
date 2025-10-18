@@ -1,11 +1,12 @@
 module app;
 
-import serverino;
 import std.getopt;
 import std.process: thisProcessID;
 import std.regex: ctRegex, matchFirst;
 import std.stdio: File, writeln;
 import std.parallelism: totalCPUs;
+
+import serverino;
 
 auto ctr = ctRegex!("/greeting/([a-z]+)$");
 
