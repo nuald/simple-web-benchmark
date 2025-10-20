@@ -368,13 +368,23 @@ fn main() -> Result<(), Box<dyn Error>> {
         },
     );
     lang_cmds.insert(
-        "d",
+        "d_serverino",
         Cmd {
-            title: "D",
+            title: "D/Serverino",
             build: Box::new(|| {
-                pexec(Command::new("dub").args(["build", "--root=d", "-b=release"]))
+                pexec(Command::new("dub").args(["build", "--root=d/serverino", "-b=release"]))
             }),
-            run: Box::new(|| pspawn(&mut Command::new("d/d_serverino"))),
+            run: Box::new(|| pspawn(&mut Command::new("d/serverino/d_serverino"))),
+        },
+    );
+    lang_cmds.insert(
+        "d_vibed",
+        Cmd {
+            title: "D/Vibe.D",
+            build: Box::new(|| {
+                pexec(Command::new("dub").args(["build", "--root=d/vibed", "-b=release"]))
+            }),
+            run: Box::new(|| pspawn(&mut Command::new("d/vibed/d_vibed"))),
         },
     );
     lang_cmds.insert(
