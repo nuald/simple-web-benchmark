@@ -1,13 +1,15 @@
 module app;
 
-import serverino;
-import core.cpuid: coresPerCPU;
 import std.getopt;
 import std.process: thisProcessID;
 import std.regex: ctRegex, matchFirst;
 import std.stdio: File, writeln;
+import std.parallelism: totalCPUs;
+import std.array: empty;
 
-auto ctr= ctRegex!("/greeting/([a-z]+)");
+import serverino;
+
+auto ctr = ctRegex!("/greeting/([a-z]+)$");
 
 mixin ServerinoMain;
 ushort port = 3000;
@@ -25,20 +27,26 @@ ushort port = 3000;
         .create()
         .enableKeepAlive()
         .addListener("0.0.0.0", port)
-        .setWorkers(coresPerCPU());
+        .setDaemonInstances(totalCPUs);
 }
 
-@endpoint void hello(Request req, Output output) {
-    const path = req.path;
-    if (path == "/")
-        output ~= "Hello world!";
-    else {
-        auto ch = path.matchFirst(ctr);
-        if (!ch.empty)
-            output ~= "Hello, " ~ ch[1];
-        else {
-            output.status = 404;
-            return;
-        }
-    }
+@endpoint 
+@route!("/")
+void hello(Output output) {
+    output ~= "Hello world!";
+}
+
+@endpoint
+@route!(req => !(req.path).matchFirst(ctr).empty)
+void greetings(Request req, Output output) {
+    output ~= "Hello, " ~ req.path[10..$]; 
+}
+
+@endpoint @priority(-1)
+void page404(Output output)
+{
+	output.status = 404;
+	output.addHeader("Content-Type", "text/plain");
+
+	output.write("Page not found!");
 }

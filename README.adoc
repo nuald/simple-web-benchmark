@@ -78,11 +78,13 @@ Using https://crystal-lang.org/reference/installation/[Crystal]:
 
 === D
 
-Uses https://trikko.github.io/serverino/[Serverino] framework:
+Uses https://trikko.github.io/serverino/[Serverino] and https://github.com/vibe-d/vibe-http[Vibe.D] frameworks:
 
- dub run --root=d -b=release
- dub run --root=d -b=release -- --port=8000
+ dub run --root=d/serverino -b=release
+ dub run --root=d/serverino -b=release -- --port=8000
 
+ dub run --root=d/vibed -b=release
+ dub run --root=d/vibed -b=release -- --port=8000
 
 === Rust
 
